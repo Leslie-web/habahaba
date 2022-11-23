@@ -1,0 +1,13 @@
+@media all and (max-width: 1500px) {
+  #item_name {
+    width: 40.5vw;
+  }
+  #quantity_per_acre {
+    width: 26.2vw;
+  }
+  #price_per_kg {
+    width: 40.5vw;
+  }
+}
+
+/*# sourceMappingURL=vendor_product_verification.css.map */

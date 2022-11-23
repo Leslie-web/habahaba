@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Habahaba Ukulima</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/materialize.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/habahaba_ukulima.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/m_icons.css') }}">
+    <link rel="manifest" href="../static/js/manifest.json">
+
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/jquery-3.6.1.min.js') }}"></script>
+
+    <!--IOS support-->
+    <link rel="apple-touch-icon" href="../static/images/pngwing.com.png">
+    <meta name="apple-web-app-status-bar" content="#00b0ff">
+</head>
+<body>
+<section id="section1">
+    <div class="row">
+        <h4 style="text-align: center;" id="heading">Ukulima wallet</h4>
+    </div>
+    <div class="row">
+        <ion-icon name="wallet" id="wallet_icon"></ion-icon>
+    </div>
+    <div class="row" id="row2">
+        <h5 style="text-align: center;">Account Balance:</h5>
+
+        {% for amount in balance %}
+            <h4 style="text-align: center">Ksh {{ amount['balance'] }}</h4>
+        {% endfor %}
+    </div>
+    <div class="row" id="row3">
+        {#        add funds#}
+        <a href="#add_funds_modal" class="modal-trigger">
+            <button class="btn waves-ripple" id="add_funds">Add funds</button>
+        </a>
+        {#        modal#}
+        <div class="modal" id="add_funds_modal">
+            <div class="modal-content black-text">
+                <h4>Add funds</h4>
+                <div class="row">
+                    <div class="input-field">
+                        <input type="number" name="add_funds_amount" id="add_funds_amount" class="validate">
+                        <label for="add_funds_amount">Amount</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <button class="btn waves-effect waves-light waves-ripple" type="submit">Add Funds</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#!" class="modal-close waves-effect waves-red btn-flat">Close</a>
+            </div>
+        </div>
+
+        {#        set target modal#}
+        <a href="#set_target" class="modal-trigger">
+            <button class="btn waves-ripple" id="add_funds">Set Target</button>
+        </a>
+        {#        modal#}
+        <div class="modal" id="set_target">
+            <div class="modal-content black-text">
+                <h4>Set Target</h4>
+                {#                set target form#}
+                
+            </div>
+        </div>
+        <button class="btn waves-ripple" id="withdraw_funds">Redeem funds</button>
+    </div>
+</section>
+
+<section id="section2">
+    <ul class="tabs black-text" id="tabs-swipe-demo">
+        <li class="tab col s3"><a href="#transactions">History</a></li>
+        <li class="tab col s3"><a href="#save">Target & Savings</a></li>
+        <li class="tab col s3"><a href="#partners">Partners</a></li>
+    </ul>
+</section>
+
+<section id="section3">
+    <div id="transactions">
+        <div class="transaction1">
+            <div class="pretext">
+                Payment made to xyz store
+            </div>
+            <div class="value">
+                ksh -100
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="display: flex; justify-content: center">
+        {#        PROGRESS BAR#}
+        <div id="save">
+            <div class="progress_bar black-text" id="progress_bar">
+                <div class="circular_progress">
+                    <span class="progress_value">0%</span>
+                </div>
+                <span class="texts" id="texts">Saved x out of y</span>
+
+            </div>
+
+            <div class="row">
+                <div class="row" style="display: flex; justify-content: center; gap: 1em;">
+                    <!-- Modal Trigger -->
+                    <a href="#modal1" class="waves-effect waves-light btn modal-trigger green lighten-2">Set Target</a>
+                    <a href="#modal2" class="waves-effect waves-light btn modal-trigger green lighten-2">Add savings</a>
+                </div>
+                <!-- Modal Structure -->
+                <div id="modal1" class="modal">
+                    <div class="modal-content black-text">
+                        <h4>Edit Target</h4>
+                        <form action="">
+                            <div class="row">
+                                <input type="text" name="wallet_holder" hidden id="defaults"
+                                       value="{{ session['f_name'] }} {{ session['l_name'] }}">
+                                <input type="text" name="holder_email" hidden id="defaults"
+                                       value="{{ session['email'] }}">
+                                {#                                <input type="text" name="wallet_holder" id="defaults">#}
+                                <label for="defaults"></label>
+                                <div class="input-field col s12">
+                                    <input type="number" name="target" id="target" class="validate">
+                                    <label for="target" class="active">Target</label>
+                                </div>
+                                <div class="input-field col s12">
+                                    <input type="date" name="save_until" id="save_until" class="validate">
+                                    <label for="save_until">Save until</label>
+                                </div>
+                            </div>
+                            <div class="row" style="display: flex; justify-content: center;">
+                                <button type="submit" class="btn waves-ripple waves-effect waves-light green lighten-2">
+                                    Submit
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="modal2" class="modal">
+                    <div class="modal-content black-text">
+                        <h4>Target</h4>
+                        <form action="">
+                            <div class="row">
+                                <input type="text" name="wallet_holder" hidden id="defaults"
+                                       value="{{ session['f_name'] }} {{ session['l_name'] }}">
+                                <input type="text" name="holder_email" hidden id="defaults"
+                                       value="{{ session['email'] }}">
+                                {#                                <input type="text" name="wallet_holder" id="defaults">#}
+                                <label for="defaults"></label>
+                                <div class="input-field col s12">
+                                    <input type="number" name="amount" id="amount" class="validate">
+                                    <label for="amount" class="active">Amount</label>
+                                </div>
+                            </div>
+                            <div class="row" style="display: flex; justify-content: center;">
+                                <button type="submit" class="btn waves-ripple waves-effect waves-light green lighten-2">
+                                    Submit
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{#[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[JAVASCRIPT]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]#}
+<script type="text/javascript" src="{{ url_for('static', filename='/js/materialize.min.js') }}"></script>
+{#link to app.js for service worker#}
+<script src="../static/js/app.js"></script>
+<script>
+    //stop auto submit on reload
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+    }
+
+    //tabs
+    $(document).ready(function () {
+        $('.tabs').tabs();
+    });
+
+    //Input
+    $(document).ready(function () {
+        M.updateTextFields()
+    });
+
+    //Modal
+    document.addEventListener('DOMContentLoaded', function () {
+        let elems = document.querySelectorAll('.modal');
+        let instances = M.Modal.init(elems, {
+            opacity: 0.7
+        })
+    })
+
+    //PROGRESS BAR
+    let circular_progress = document.querySelector('.circular_progress'),
+        progress_value = document.querySelector('.progress_value')
+
+    let progressStartValue = 0,
+        progress_end_value = 50,
+        speed = 100;
+
+    let progress = setInterval(() => {
+        progressStartValue++;
+        progress_value.textContent = progressStartValue + "%"
+
+        circular_progress.style.background = `conic-gradient(#ef9a9a ${progressStartValue * 3.6}deg, white 0deg)`
+        if (progressStartValue === progress_end_value) {
+            clearInterval(progress)
+        }
+        console.log(progressStartValue);
+    }, speed);
+</script>
+{#ionicons#}
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+</body>
+</html>

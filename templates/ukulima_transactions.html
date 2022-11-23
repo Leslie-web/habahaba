@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/materialize.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/ukulima_transactions.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/jquery.dataTables.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/m_icons.css') }}">
+    <link rel="manifest" href="../static/js/manifest.json">
+
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/jquery-3.6.1.min.js') }}"></script>
+
+    <!--IOS support-->
+    <link rel="apple-touch-icon" href="../static/images/pngwing.com.png">
+    <meta name="apple-web-app-status-bar" content="#00b0ff">
+
+    {#    chart.js#}
+</head>
+<body>
+{#navbar#}
+<nav class="nav-wrapper green lighten-2 {#hide-on-med-and-down#} hide-on-med-and-down">
+    <a href="#" class="sidenav-trigger" data-target="mobile_links">
+        <i class="material-icons">menu</i>
+    </a>
+    <a href="#" class="brand-logo">Habahaba Ukulima</a>
+    <ul class="right hide-on-med-and-down">
+        <li><a href="{{ url_for('ukulima') }}">Ukulima Wallet</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Services</a></li>
+        <li><a href="{{ url_for('user_logout') }}">Logout</a></li>
+    </ul>
+</nav>
+<a href="#" class="sidenav-trigger btn transparent hide-on-med-and-up" data-target="mobile_links">
+    <i class="material-icons">menu</i>
+</a>
+<ul class="sidenav" id="mobile_links">
+    <div class="nav_container"
+         style="height: 100vw; display: flex; flex-direction: column; justify-content: space-between">
+        <ul class="top">
+            <li><a href="{{ url_for('ukulima') }}">Ukulima Wallet</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="#">About</a></li>
+        </ul>
+        <ul class="logout">
+            <li><a href="{{ url_for('user_logout') }}">Logout</a></li>
+        </ul>
+    </div>
+</ul>
+
+<a href="{{ url_for('ukulima') }}" class="btn-floating waves-effect waves-light {#blue lighten-3#} hide-on-large-only"
+   id="back_button">
+    <ion-icon name="arrow-back-outline" class="back_icon"></ion-icon>
+</a>
+
+<div class="section1">
+    <div class="row">
+        <div class="icon_description">
+            <h3 style="text-align: center;">Transactions</h3>
+        </div>
+        <div class="main_icon">
+            <ion-icon name="stats-chart-outline" class="target_icon"></ion-icon>
+        </div>
+        <div class="line" style="width: 20vw;display: flex; margin: 2em auto auto; border: 1px solid white">
+
+        </div>
+    </div>
+
+</div>
+
+<div class="section4 text-black" style="background-color: white; padding: 2em; ">
+    <div class="heading" style="text-align: center; text-decoration: underline; color: black !important;">
+        <h4>Deposited</h4>
+    </div>
+    <div class="deposits_table" style="padding: 2em; color: black !important;">
+        <table class="display" id="transactions">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Deposited to</th>
+                <th>Amount saved</th>
+                <th>Item saved</th>
+                <th>Date Deposited</th>
+                <th>Time Deposited</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {% for transaction in transactions %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ transaction['org_name'] }}</td>
+                    <td>{{ transaction['amount_sent'] }}</td>
+                    <td>{{ transaction['payment_for'] }}</td>
+                    <td>{{ transaction['date_sent'] }}</td>
+                    <td>{{ transaction['time_sent'] }}</td>
+
+                </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{#[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[JAVASCRIPT]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]#}
+{#ionicons#}
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='/js/materialize.min.js') }}"></script>
+{#link to app.js for service worker#}
+<script src="../static/js/app.js"></script>
+{#datatales#}
+<script type="text/javascript" src="{{ url_for('static', filename='/js/jquery.dataTables.min.js') }}"></script>
+<script>
+    //stop auto submit on reload
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+    }
+    //sidenav
+    $(document).ready(function () {
+        $('.sidenav').sidenav();
+    });
+
+    //Dropdown
+    $(document).ready(function () {
+        $('select').formSelect()
+    });
+
+    //datatables
+    $(document).ready(function () {
+        $('#example').DataTable();
+    });
+
+    $(document).ready(function () {
+        $('#transactions').DataTable();
+    });
+
+    $(document).ready(function () {
+        $('#example1').DataTable();
+    });
+    //collapsible
+    document.addEventListener('DOMContentLoaded', function () {
+        let elems = document.querySelectorAll('.collapsible');
+        let instances = M.Collapsible.init(elems, {
+            inDuration: 300
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[JQUERY MAP]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+data.map(
+                        item => {
+                            if (my_data === item.crop_type) {
+                                partners += `
+                                    <li style="display: flex; justify-content: space-between">
+                                    <ol>
+                                         ${item.vendor_name} ${item.vendor_email} ${item.phone_no}
+                                          <a href="#modal1" class="btn waves-effect waves-light modal-trigger"
+                                            style="border-radius: 60px; width: 2em; height: 2em;
+                                            display: inline-flex; justify-content: center; align-items: center;
+                                            font-weight: bold">+</a>
+                                    </ol>
+
+                                    </li>
+                                <div class="modal black-text" id="modal1">
+                                                <div class="modal-content">
+                                                    <h4>Partners</h4>
+                                                    <div class="mydata">
+
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+                                                </div>
+                                            </div>`;
+                            }
+                        })
+[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[JQUERY MAP]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]

@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Habahaba Ukulima</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/materialize.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/ukulima.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/m_icons.css') }}">
+    <link rel="manifest" href="../static/js/manifest.json">
+
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/jquery-3.6.1.min.js') }}"></script>
+
+    <!--IOS support-->
+    <link rel="apple-touch-icon" href="../static/images/pngwing.com.png">
+    <meta name="apple-web-app-status-bar" content="#00b0ff">
+
+    {#    GSAP#}
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/gsap.min.js') }}" defer></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/ukulima_animations.js') }}" defer></script>
+</head>
+<body>
+{#navbar#}
+<nav class="nav-wrapper green lighten-2 {#hide-on-med-and-down#} hide-on-small-and-down">
+    <a href="#" class="sidenav-trigger" data-target="mobile_links">
+        <i class="material-icons">menu</i>
+    </a>
+    <a href="{{ url_for('user_homepage') }}" class="brand-logo">Habahaba Ukulima</a>
+    <ul class="right hide-on-med-and-down">
+        <li><a href="{{ url_for('user_homepage') }}">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Services</a></li>
+        <li><a href="{{ url_for('user_logout') }}">Logout</a></li>
+    </ul>
+</nav>
+<a href="#" class="sidenav-trigger btn transparent hide-on-med-and-up" data-target="mobile_links">
+    <i class="material-icons">menu</i>
+</a>
+<ul class="sidenav" id="mobile_links">
+    <div class="nav_container"
+         style="height: 100vw; display: flex; flex-direction: column; justify-content: space-between">
+        <ul class="top">
+            <li><a href="{{ url_for('user_homepage') }}">Home</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="#">About</a></li>
+        </ul>
+        <ul class="logout">
+            <li><a href="{{ url_for('user_logout') }}">Logout</a></li>
+        </ul>
+    </div>
+</ul>
+
+<section class="section1">
+    <div class="row">
+        <h4 style="text-align: center;" id="heading">Ukulima wallet</h4>
+    </div>
+    <div class="row" style="text-align: center">
+        <ion-icon name="wallet" id="wallet_icon"></ion-icon>
+    </div>
+    <div class="row" id="details_row">
+        <div class="left_sides">
+            <a href="{{ url_for('ukulima_funds') }}" class="btn waves-light waves-effect left_side">Deposit</a>
+        </div>
+        <div class="right_sides">
+            <a href="{{ url_for('redemption') }}"
+               class="btn waves-light waves-effect right_side">Redeem</a>
+        </div>
+    </div>
+    <div class="row" id="row2">
+        <h5 style="text-align: center;">Saved Items:</h5>
+        {#        {% if current_balance != None %}#}
+        {#            <h4 style="text-align: center"><b>ksh {{ current_balance['balance'] }}.00</b></h4>#}
+        {#        {% elif current_balance == None %}#}
+        {#            <h4 style="text-align: center">Ksh 0.00</h4>#}
+        {##}
+        {#        {% endif %}#}
+        {#        {{ current_balance }}#}
+        <div class="carousel" id="items_carousel" style="height: 15em">
+            {% for item in user_items %}
+                {#                {{ item['sender_id'] }}#}
+                {% if session['user_id']|string in item['sender_id'] %}
+                    <a href="#one!" class="carousel-item" style="height: 8em">
+                        <div class="item_one black-text"
+                             style="background-color: rgb(255 255 255 / 0.8); padding: 0.1em 1em;border-radius: 30px; text-align: center;">
+                            <h4>{{ item['payment_for'] }}</h4>
+                            <p>{{ "%.2f"| format(item['amount_sent'] / item['price_per_kg']) }} KGs</p>
+                        </div>
+                    </a>
+                {% else %}
+                    No items available
+                {% endif %}
+            {% endfor %}
+
+        </div>
+    </div>
+    <div class="row">
+        {% include 'includes/_flashmsg.html' %}
+    </div>
+    <div class="row fund">
+        {#        <a href="#modal1" class="add_funds btn modal-trigger">Add to wallet</a>#}
+
+        {#        modal#}
+        <div class="modal" id="modal1">
+            <div class="modal-content black-text">
+                <h4 style="text-align: center">Add Funds</h4>
+
+                <form action="{{ url_for('ukulima') }}" method="post">
+                    <div class="row">
+                        <input type="text" name="client_id" id="defaults" value="{{ session['user_id'] }}" readonly
+                               hidden>
+                        <input type="text" name="client_name" id="defaults"
+                               value="{{ session['f_name'] }} {{ session['l_name'] }}" readonly hidden>
+                        <input type="text" name="client_phone" id="defaults" value="{{ session['phone_no'] }}" readonly
+                               hidden>
+                        <label for="defaults" hidden></label>
+
+                        <div class="input-field col s12">
+                            <input type="number" name="amount_added" id="amount_added" class="validate">
+                            <label for="amount_added">Enter amount</label>
+                        </div>
+                    </div>
+                    <div class="row" style="display: flex; justify-content: center;">
+                        <input type="submit" class="btn waves-effect waves-light z-depth-3">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer black-text">
+                <a href="#!" class="modal-close waves-effect waves-red btn-flat">Close</a>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="padding: 2em">
+        <hr>
+    </div>
+</section>
+<div class="section2">
+
+
+    {#    partners#}
+    <a href="{{ url_for('ukulima_partners') }}">
+        <div class="target_container" id="partners">
+            <div class="target_icon_container">
+                {#            <ion-icon name="card-outline" class="target_icon"></ion-icon>#}
+                <ion-icon name="people-outline" class="target_icon"></ion-icon>
+            </div>
+            <div class="divider">
+
+            </div>
+            <div class="target_content">
+                Partners
+            </div>
+            <div class="target_description">
+                Partner with others
+            </div>
+        </div>
+    </a>
+    {#    target#}
+    <a href="{{ url_for('targets') }}">
+        <div class="target_container" id="target">
+            <div class="target_icon_container">
+                <ion-icon name="radio-button-on-outline" class="target_icon"></ion-icon>
+            </div>
+            <div class="divider">
+
+            </div>
+            <div class="target_content">
+                Status
+            </div>
+            <div class="target_description">
+                Set or adjust targets
+            </div>
+        </div>
+    </a>
+
+    {#    funds#}
+    <a href="{{ url_for('ukulima_funds') }}">
+        <div class="target_container" id="funds">
+            <div class="target_icon_container">
+                <ion-icon name="card-outline" class="target_icon"></ion-icon>
+            </div>
+            <div class="divider">
+
+            </div>
+            <div class="target_content">
+                {#                Funds#}
+                Deposit
+            </div>
+            <div class="target_description">
+                Deposit to partner
+            </div>
+        </div>
+    </a>
+
+
+    {#    transactions#}
+    <a href="{{ url_for('ukulima_transactions') }}">
+        <div class="target_container" id="transactions">
+            <div class="target_icon_container">
+                <ion-icon name="stats-chart-outline" class="target_icon"></ion-icon>
+            </div>
+            <div class="divider">
+
+            </div>
+            <div class="target_content" style="padding: 5px">
+                Transactions
+            </div>
+            <div class="target_description" style="text-align: center">
+                Check out how much you have saved and spent
+            </div>
+        </div>
+    </a>
+
+    {#    Offers#}
+    <a href="{{ url_for('ukulima_offers') }}">
+        <div class="target_container" id="offers">
+            <div class="target_icon_container">
+                <ion-icon name="pricetags-outline" class="target_icon"></ion-icon>
+            </div>
+            <div class="divider">
+
+            </div>
+            <div class="target_content" style="padding: 5px">
+                Offers
+            </div>
+            <div class="target_description" style="text-align: center">
+                See what offers are available
+            </div>
+        </div>
+    </a>
+
+</div>
+{#<div class="footer" style="background-color: green; height: 50vw">#}
+{#    The thing#}
+{#</div>#}
+{#[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[JAVASCRIPT]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]#}
+{#GSAP#}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/ScrollTrigger.min.js"></script>
+<script>
+    gsap.to(".left_side", {
+        scrollTrigger: {
+            trigger: '.left_side',
+            start: 'bottom',
+            scrub: 1,
+            end: '+=50'
+        },
+        x: -300,
+        opacity: 0
+    });
+    gsap.to(".right_side", {
+        scrollTrigger: {
+            trigger: '.left_side',
+            start: 'bottom',
+            scrub: 1,
+            end: '+=50'
+        },
+        x: 300,
+        opacity: 0
+    });
+    gsap.to("#item_carousel", {
+        scrollTrigger: {
+            trigger: '#item_carousel',
+            start: 'top',
+            scrub: 1,
+            end: '+=1000'
+        },
+        x: 250,
+        opacity: 0
+    });
+</script>
+{#ionicons#}
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='/js/materialize.min.js') }}"></script>
+{#link to app.js for service worker#}
+<script src="../static/js/app.js"></script>
+<script>
+    //stop auto submit on reload
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+    }
+    //sidenav
+    $(document).ready(function () {
+        $('.sidenav').sidenav();
+
+        //modal
+        $('.modal').modal();
+
+        //carousel
+        $('.carousel.carousel-slider').carousel({
+            fullWidth: true,
+            indicators: true
+        })
+        //other carousel
+        $('.carousel').carousel({
+            indicators: true,
+            noWrap: true
+        })
+    });
+</script>
+</body>
+</html>

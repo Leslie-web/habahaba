@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+
+<form action="" method="post">
+    {% set this_array = [] %}
+    {% set vendor_id = '' %}
+    {% for materials in all_materials %}
+        {#        {{ materials }}#}
+        {#        {{ this_array + materials['vendor_id'] }};#}
+        {{ vendor_id|int + materials['vendor_id'] }}
+
+        <hr>
+        <input type="text" name="vendor_id[]" id="defaults" value="{{ materials['vendor_id'] }}">
+        <input type="text" name="vendor_id" id="defaults" value="{{ materials['vendor_name'] }}">
+        <input type="text" name="vendor_id" id="defaults" value="{{ materials['org_name'] }}">
+        <input type="text" name="vendor_id" id="defaults" value="{{ materials['payment_method'] }}">
+        <input type="time" name="" id="">
+        <label for="defaults"></label>
+    {% endfor %}
+    <hr>
+    <input type="submit">
+</form>
+{{ all_materials }}
+<hr>
+{{ values[0:] }}
+<h3>{{ this_array }}</h3>
+</body>
+</html>

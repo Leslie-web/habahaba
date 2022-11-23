@@ -1,0 +1,202 @@
+body {
+  background-image: url("../images/plant.jpg");
+  background-position: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  background-blend-mode: multiply;
+  background-attachment: fixed;
+  color: white;
+  width: 100vw;
+}
+
+#wallet_icon {
+  font-size: 10em;
+}
+
+.fund {
+  display: flex;
+  justify-content: center;
+  column-gap: 1em;
+}
+.fund .add_funds {
+  background-color: transparent;
+  width: 15em;
+  border-radius: 50px;
+  border: 1px solid white;
+  transition: 300ms ease-in-out;
+}
+.fund .add_funds:hover {
+  background-color: white;
+  color: black;
+  box-shadow: 0 0 15px -1px white;
+}
+
+.section2 {
+  width: 100vw;
+  padding-right: 2em;
+  padding-left: 2em;
+}
+
+.section2 {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1em;
+}
+
+.target_container {
+  width: 22em;
+  height: 16em;
+  background-color: rgba(255, 255, 255, 0.8);
+  color: black;
+  box-shadow: 0 0 10px -2px white;
+  border-radius: 20px;
+  display: grid;
+  padding: 1em;
+  grid-template-columns: 3fr 1px 2fr;
+  transition: 300ms ease-out;
+}
+.target_container .divider {
+  width: 1px;
+  height: 11em;
+  border: 1px solid black;
+}
+.target_container:hover {
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+}
+.target_container:hover .target_description {
+  border-top: 1px solid white;
+}
+.target_container:hover .divider {
+  border: 1px solid white;
+}
+.target_container .target_icon_container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.target_container .target_icon_container .target_icon {
+  font-size: 4em;
+}
+.target_container .target_content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  font-size: 1.5em;
+}
+.target_container .target_description {
+  border-top: 1px solid black;
+  grid-column: 1/5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#details_row {
+  display: flex;
+  justify-content: center;
+  column-gap: 2em;
+}
+#details_row .left_side {
+  width: 10em;
+  background-color: transparent;
+  border-radius: 30px;
+  border: 1px solid whitesmoke;
+  transition: 300ms ease-out;
+}
+#details_row .left_side:hover {
+  background-color: white;
+  color: black;
+  box-shadow: 0 0 12px -1px white;
+  border: 2px solid black;
+}
+#details_row .right_side {
+  width: 10em;
+  background-color: transparent;
+  border-radius: 30px;
+  border: 1px solid whitesmoke;
+  transition: 300ms ease-out;
+}
+#details_row .right_side:hover {
+  background-color: white;
+  color: black;
+  box-shadow: 0 0 12px -1px white;
+  border: 2px solid black;
+}
+
+@media all and (max-width: 1000px) {
+  .section2 {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1em;
+  }
+  .target_container {
+    width: 22em;
+    height: 16em;
+    background-color: rgba(255, 255, 255, 0.8);
+    color: black;
+    box-shadow: 0 0 10px -2px white;
+    border-radius: 20px;
+    display: grid;
+    padding: 1em;
+    grid-template-columns: 3fr 1px 2fr;
+    transition: 300ms ease-out;
+  }
+  .target_container .divider {
+    width: 1px;
+    height: 11em;
+    border: 1px solid black;
+  }
+  .target_container:hover {
+    cursor: pointer;
+    background-color: rgba(68, 201, 50, 0.5);
+    color: white;
+  }
+  .target_container:hover .target_description {
+    border-top: 1px solid white;
+  }
+  .target_container:hover .divider {
+    border: 1px solid white;
+  }
+  .target_container .target_icon_container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .target_container .target_icon_container .target_icon {
+    font-size: 4em;
+  }
+  .target_container .target_content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 1.5em;
+  }
+  .target_container .target_description {
+    border-top: 1px solid black;
+    grid-column: 1/5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+@media all and (max-width: 425px) {
+  body {
+    background-image: url("../images/plant.jpg");
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-color: rgba(0, 0, 0, 0.5);
+    background-blend-mode: multiply;
+    color: white;
+  }
+  .section2 a {
+    margin-bottom: 1em;
+  }
+}
+
+/*# sourceMappingURL=ukulima.css.map */

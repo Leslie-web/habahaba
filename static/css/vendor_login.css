@@ -1,0 +1,37 @@
+body {
+  height: 100vh;
+  display: grid;
+  place-items: center;
+  background-image: url("/static/_public/images/bg/maize2.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+.details_container {
+  display: block;
+  width: 70vw;
+  margin: auto;
+  padding: 5em;
+  border-radius: 50px;
+  background: #ffffff;
+  box-shadow: 5px 5px 40px black, -5px -5px 40px black;
+}
+
+@media all and (max-width: 500px) {
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .details_container {
+    width: 100vw;
+    padding: 1em;
+    box-shadow: none;
+  }
+  .details_container h3 {
+    text-decoration: underline;
+  }
+}
+
+/*# sourceMappingURL=vendor_login.css.map */

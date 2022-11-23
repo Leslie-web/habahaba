@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Document</title>
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/index.css') }}">
+    {#    <link rel="manifest" href="{{ url_for('static', filename='/js/manifest.json') }}">#}
+    {#    <link rel="manifest" href="../static/js/manifest.json">#}
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+</head>
+<body>
+
+<nav class="nav-wrapper lighten-3">
+    <a href="#" class="sidenav-trigger" data-target="mobile_links">
+        <i class="material-icons">menu</i>
+    </a>
+    <a href="#" class="brand-logo ">LOGO</a>
+    <ul class="right hide-on-med-and-down">
+        <li><a href="#">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Services</a></li>
+        <li><a href="#">Logout</a></li>
+    </ul>
+
+</nav>
+<ul class="sidenav" id="mobile_links">
+    <li><a href="#">Home</a></li>
+    <li><a href="#">About</a></li>
+    <li><a href="#">Services</a></li>
+    <li><a href="#">Logout</a></li>
+</ul>
+
+{#wallets#}
+{#<div id="wallet1">#}
+{#    <div id="wallet1_content"></div>#}
+{#</div>#}
+{##}
+{#<div id="wallet2">#}
+{#    <div id="wallet2_content"></div>#}
+{#</div>#}
+
+{#tabs#}
+<section id="section1" class="red lighten-2">
+    <div class="row red lighten-2" style="width: 100vw; padding: 0;margin: 0;">
+        <div class="col s12 red lighten-2" style="width: 100vw; padding: 0; margin: 0;">
+            <ul class="tabs red lighten-2" style="width: 100vw;">
+                <li class="tab col s6 "><a href="#section2" class="white-text">Home</a></li>
+                <li class="tab col s6 "><a href="#section3" class="white-text">History</a></li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section id="section2">
+    {#carousel#}
+
+    <div class="carousel center"
+         style="width: 80vw; height: 80vh;">
+        {#    first carousel#}
+
+        <div class="row carousel-item" href="#one!" style="height: 50vh; cursor: pointer">
+            <div class="col s12 m7">
+                <div class="card" style="width: 50vw">
+                    <div class="card-image">
+                        <div id="image1" style="height: 30vh; width: 50vw"></div>
+                        <span class="card-title">
+                    <h3>Wallet 1</h3>
+                </span>
+                    </div>
+                    <div class="card-content">
+                        <p>I am a very simple card. I am good at containing small bits of information.
+                            I am convenient because I require little markup to use effectively.</p>
+                    </div>
+                    <div class="card-action">
+                        {#                <a href="#">This is a link</a>#}
+                        <center><a class=" waves-effect waves-ripple btn" href="#" style="width: 8em;">Explore</a>
+                        </center>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {#    second carousel#}
+        <center>
+            <div class="row carousel-item" href="#two!">
+                <div class="col s12 m7">
+                    <div class="card" style="width: 50vw">
+                        <div class="card-image">
+                            <div id="image2" style="width: 50vw; height: 30vh"></div>
+                            <span class="card-title">
+                    <h3>Wallet 2</h3>
+                </span>
+                        </div>
+                        <div class="card-content">
+                            <p>I am a very simple card. I am good at containing small bits of information.
+                                I am convenient because I require little markup to use effectively.</p>
+                        </div>
+                        <div class="card-action">
+                            {#                <a href="#">This is a link</a>#}
+                            <center><a class=" waves-effect waves-ripple btn" href="#"
+                                       style="width: 8em;">Explore</a>
+                            </center>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </center>
+
+        {#    third carousel#}
+        <center>
+            <div class="row carousel-item" href="#two!">
+                <div class="col s12 m7">
+                    <div class="card" style="width: 50vw;">
+                        <div class="card-image">
+                            <div id="image3" style="width: 50vw; height: 30vh;"></div>
+                            <span class="card-title">
+                    <h3>Wallet 3</h3>
+                </span>
+                        </div>
+                        <div class="card-content">
+                            <p>I am a very simple card. I am good at containing small bits of information.
+                                I am convenient because I require little markup to use effectively.</p>
+                        </div>
+                        <div class="card-action">
+                            {#                <a href="#">This is a link</a>#}
+                            <center><a class=" waves-effect waves-ripple btn" href="#" style="width: 8em;"
+                                       id="explore_btn">Explore</a>
+                            </center>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </center>
+    </div>
+
+</section>
+
+
+{#    <a href="#one!" class="carousel-item"><img src="../static/images/pexels-mo-eid-9454915.jpg" alt=""></a>#}
+{#<a href="#two!" class="carousel-item"><img src="../static/images/pexels-sohail-nachiti-807598.jpg" alt=""></a>#}
+{#<a href="#three!" class="carousel-item"><img src="../static/images/pexels-mnm-zameer-3308588.jpg" alt=""></a>#}
+</div>
+
+<section id="section3">
+    <h2 style="text-align: center">HISTORY</h2>
+    <a href="{{ url_for('page_flip') }}" class="green lighten-2 waves-light btn"
+       style="display: grid; width: 8em; margin: auto;">Page
+        flip</a>
+</section>
+<!-- Compiled and minified JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script>
+    //sidenav
+    $(document).ready(function () {
+        $('.sidenav').sidenav();
+    });
+
+    //tabs
+    //let instance = M.Tabs.init(el, {
+    //   duration: 300
+    //})
+    document.addEventListener('DOMContentLoaded', function () {
+        let el = document.querySelectorAll('.tabs');
+        let instance = M.Tabs.init(el, {
+            duration: 300
+        })
+    })
+
+    {#carousel#}
+    document.addEventListener('DOMContentLoaded', function () {
+        let elems = document.querySelectorAll('.carousel');
+        let instances = M.Carousel.init(elems, {
+            duration: 500,
+            fullWidth: true,
+            numVisible: 5,
+            indicators: true,
+            noWrap: false,
+            shift: 200,
+            dist: -500
+        });
+    });
+
+    {#Collapsible#}
+    document.addEventListener('DOMContentLoaded', function () {
+        let elems = document.querySelectorAll('.collapsible')
+        let instances = M.Collapsible.init(elems, {
+            inDuration: 400,
+            outDuration: 400
+        })
+    })
+</script>
+</body>
+</html>
+{#go back to jquery#}

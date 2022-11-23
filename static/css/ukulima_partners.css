@@ -1,0 +1,52 @@
+body {
+  background-image: url("../images/plant.jpg");
+  background-position: top;
+  background-color: rgba(0, 0, 0, 0.5);
+  background-blend-mode: multiply;
+  background-attachment: fixed;
+  color: white;
+}
+
+#icon_container {
+  display: flex;
+  justify-content: center;
+}
+#icon_container .target_icon {
+  font-size: 90px;
+}
+
+#back_button {
+  display: grid;
+  place-items: center;
+}
+#back_button .back_icon {
+  font-size: 2em;
+}
+
+#heading_list {
+  display: grid;
+  justify-content: center;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+#heading_items {
+  display: grid;
+  justify-content: center;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  background-color: transparent;
+}
+#heading_items #icon_container {
+  width: 2.5em;
+  height: 2.5em;
+  background-color: green;
+  color: white;
+  border-radius: 50%;
+}
+
+@media all and (max-width: 425px) {
+  #heading_list {
+    border-bottom: 1px solid black;
+  }
+}
+
+/*# sourceMappingURL=ukulima_partners.css.map */

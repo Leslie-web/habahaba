@@ -1,0 +1,61 @@
+body {
+  background-image: url("../images/plant.jpg");
+  background-position: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  background-blend-mode: multiply;
+  background-attachment: fixed;
+  color: white;
+}
+
+#back_button {
+  display: grid;
+  place-items: center;
+}
+#back_button .back_icon {
+  font-size: 2em;
+}
+
+#icon_container {
+  text-align: center;
+}
+
+.target_icon {
+  font-size: 150px;
+  padding-top: 0;
+}
+
+.fund_buttons {
+  display: flex;
+  justify-content: center;
+  column-gap: 1em;
+}
+.fund_buttons .add_funds {
+  background-color: transparent;
+  width: 15em;
+  border-radius: 15px;
+  border: 1px solid white;
+  transition: 300ms ease-in-out;
+}
+.fund_buttons .add_funds:hover {
+  background-color: white;
+  color: black;
+  box-shadow: 0 0 15px -1px white;
+}
+.fund_buttons .redeem_voucher {
+  background-color: transparent;
+  width: 15em;
+  border-radius: 15px;
+  border: 1px solid white;
+  transition: 300ms ease-in-out;
+}
+.fund_buttons .redeem_voucher:hover {
+  background-color: white;
+  color: black;
+  box-shadow: 0 0 15px -1px white;
+}
+
+.section2 {
+  background-color: white;
+}
+
+/*# sourceMappingURL=ukulima_funds.css.map */

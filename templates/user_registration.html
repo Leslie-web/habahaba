@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/materialize.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/user_registration.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/m_icons.css') }}">
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/jquery-3.6.1.min.js') }}"></script>
+    <link rel="manifest" href="../static/js/manifest.json">
+    <!--IOS support-->
+    <link rel="apple-touch-icon" href="../static/images/pngwing.com.png">
+    <meta name="apple-web-app-status-bar" content="#00b0ff">
+</head>
+<body>
+<form action="{{ url_for('user_registration') }}" method="post">
+    <div class="row">
+        {% include 'includes/_flashmsg.html' %}
+    </div>
+    <div class="details_container">
+        <div class="row">
+            <h3 style="text-align: center;">User Registration Form</h3>
+        </div>
+        <div class="row">
+            {#        first name#}
+            <div class="input-field col s6">
+                <input type="text" name="f_name" id="f_name" class="validate">
+                <label for="f_name">First Name:</label>
+            </div>
+
+            {#        last name#}
+            <div class="input-field col s6">
+                <input type="text" name="l_name" id="l_name" class="validate">
+                <label for="l_name">Last Name:</label>
+            </div>
+
+
+        </div>
+        <div class="row">
+            {#            gender#}
+            <div class="input-field col s12">
+                <select name="gender" id="gender">
+                    <option value="" disabled selected>Choose Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+                <label for="gender">Gender:</label>
+            </div>
+        </div>
+
+        {#        date of birth#}
+        <div class="row">
+            <div class="input-field col s12">
+                <input type="date" name="dob" id="dob" class="validate">
+                <label for="dob">Date of Birth:</label>
+            </div>
+        </div>
+
+        {#    Phone number#}
+        <div class="row">
+            <div class="input-field col s12">
+                <input type="number" name="phone_no" id="phone_no" class="validate" data-length="10">
+                <label for="phone_no">Phone Number:</label>
+            </div>
+        </div>
+
+        {#        ID Number#}
+        <div class="row">
+            <div class="input-field col s12">
+                <input type="number" name="id_no" id="id_no" class="validate">
+                <label for="id_no">ID Number:</label>
+            </div>
+        </div>
+
+        {#    Organization name#}
+        {#        <div class="row">#}
+        {#            <div class="input-field col s12">#}
+        {#                <input type="text" name="org_name" id="org_name" class="validate">#}
+        {#                <label for="org_name">Organization Name:</label>#}
+        {#            </div>#}
+        {#        </div>#}
+
+        {#    Email address#}
+        <div class="row">
+            <div class="input-field col s12">
+                <input type="text" name="email" id="email" class="validate">
+                <label for="email">Email:</label>
+            </div>
+        </div>
+
+        {#    Password#}
+        <div class="row">
+            <div class="input-field col s12">
+                <input type="password" name="password" id="password" class="validate">
+                <label for="password">Password:</label>
+            </div>
+        </div>
+        <div class="row" style="display: flex; justify-content: center">
+            <button class="btn waves-effect waves-light" type="submit" id="submit_button">Submit
+                <i class="material-icons right">send</i>
+            </button>
+        </div>
+        <div class="row" style="text-align: center">
+            <a href="{{ url_for('user_login') }}">Login Instead</a>
+        </div>
+    </div>
+</form>
+
+
+<script type="text/javascript" src="{{ url_for('static', filename='/js/materialize.min.js') }}"></script>
+{#link to app.js for service worker#}
+<script src="../static/js/app.js"></script>
+<script>
+    //regular inputs
+    $(document).ready(function () {
+        M.updateTextFields();
+    });
+
+    //date input
+    document.addEventListener('DOMContentLoaded', function () {
+        let elems = document.querySelectorAll('.datepicker')
+        let instances = M.Datepicker.init(elems, {
+            autoClose: true,
+            format: 'mm-dd-yyyy'
+        });
+    });
+
+    //data length
+    $(document).ready(function () {
+        $('input#phone_no').characterCounter();
+    });
+
+    //select options
+    document.addEventListener('DOMContentLoaded', function () {
+        let elems = document.querySelectorAll('select');
+        let instances = M.FormSelect.init(elems, {
+            classes: ''
+        })
+    })
+
+    //sop auto submit on reload
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+    }
+</script>
+</body>
+</html>

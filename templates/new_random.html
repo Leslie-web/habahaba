@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/materialize.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/user_registration.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/m_icons.css') }}">
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/jquery-3.6.1.min.js') }}"></script>
+</head>
+<body>
+{% include 'includes/_flashmsg.html' %}
+<div id="goods">
+    <h3 style="text-align: center;"><u>Add Crop</u></h3>
+    <div class="goods_details">
+
+        {% include 'includes/_flashmsg.html' %}
+        <form action="{{ url_for('new_thing') }}" method="post">
+            <input type="text" name="payment_method" id="defaults" value="{{ session['payment_method'] }}">
+            <input type="text" name="acc_number" id="defaults" value="{{ session['acc_number'] }}">
+            <input type="text" name="phone_no" id="defaults" value="{{ session['phone_no'] }}">
+            <label for="defaults"></label>
+            <input type="text" name="vendor_name" id="defaults"
+                   value="{{ session['f_name'] }} {{ session['l_name'] }}">
+            <input type="text" name="vendor_email" id="defaults" value="{{ session['email'] }}">
+            <div class="row" style="padding-right: 5.5em; padding-left: 5.5em">
+                <div class="input-field col s12">
+                    {#                    <select name="crop_type" id="goods_type" class="validate" required>#}
+                    {#                        <option value="" disabled selected>Please select a type of crop</option>#}
+                    {#                        {% for category in categories %}#}
+                    {#                            <option value="{{ category['category_name'] }}">{{ category['category_name'] }}</option>#}
+                    {#                        {% endfor %}#}
+                    {#                    </select>#}
+                    {#                    <label for="goods_type">Type of crop</label>#}
+                </div>
+            </div>
+            <div class="row" id="acres_row" style="padding-right: 5.5em; padding-left: 5.5em">
+                <div class="input-field col s12">
+                    <input type="number" name="land_size" id="land" class="validate" required>
+                    <label for="land">Quantity needed per 1 acre</label>
+                </div>
+            </div>
+            <div class="row" style="padding-right: 5.5em; padding-left: 5.5em">
+                <div class="input-field col s12">
+                    <input type="number" name="price" id="price" class="validate" required>
+                    <label for="price">Price per bag</label>
+                </div>
+            </div>
+            {#                    <div class="input-field col">#}
+            {#                        <input type="number" name="0.75_acre" id="0.75_acre" class="validate" required>#}
+            {#                        <label for="0.75_acre">Quantity needed in 0.75 acres</label>#}
+            {#                    </div>#}
+            {#                    <div class="input-field col">#}
+            {#                        <input type="number" name="0.5_acre" id="0.5_acre" class="validate" required>#}
+            {#                        <label for="0.5_acre">Quantity needed in 0.5 acres</label>#}
+            {#                    </div>#}
+            {#                    <div class="input-field col">#}
+            {#                        <input type="number" name="0.25_acre" id="0.25_acre" class="validate" required>#}
+            {#                        <label for="0.25_acre">Quantity needed in 0.25 acres</label>#}
+            {#                    </div>#}
+            {#                </div>#}
+            <div class="row" style="display: flex; justify-content: center">
+                <button class="btn waves-light" type="submit" id="submit_button">Submit
+                    <i class="material-icons right">send</i>
+                </button>
+                {#                    <input type="submit" class="btn waves-light waves-effect">#}
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript" src="{{ url_for('static', filename='/js/materialize.min.js') }}"></script>
+<script>
+    //regular inputs
+    $(document).ready(function () {
+        M.updateTextFields();
+    });
+
+    //date input
+    document.addEventListener('DOMContentLoaded', function () {
+        let elems = document.querySelectorAll('.datepicker')
+        let instances = M.Datepicker.init(elems, {
+            autoClose: true,
+            format: 'mm-dd-yyyy'
+        });
+    });
+
+    //data length
+    $(document).ready(function () {
+        $('input#phone_no').characterCounter();
+    });
+
+    //select options
+    document.addEventListener('DOMContentLoaded', function () {
+        let elems = document.querySelectorAll('select');
+        let instances = M.FormSelect.init(elems, {
+            classes: ''
+        })
+    })
+
+    //sop auto submit on reload
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+    }
+</script>
+</body>
+</html>

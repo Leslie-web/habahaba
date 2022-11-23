@@ -1,0 +1,36 @@
+body {
+  background-image: url("../images/plant.jpg");
+  background-position: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  background-blend-mode: multiply;
+  background-attachment: fixed;
+  color: white;
+  width: 100vw;
+}
+
+#back_button {
+  display: grid;
+  place-items: center;
+}
+#back_button .back_icon {
+  font-size: 2em;
+}
+
+.section1 .main_icon {
+  text-align: center;
+  font-size: 105px;
+  margin-bottom: 0.5em;
+}
+.section1 .underline {
+  display: flex;
+  margin: auto;
+  width: 30vw;
+  height: 1px;
+  border: 1px solid white;
+}
+.section1 .heading_content {
+  text-align: center;
+  text-decoration: underline;
+}
+
+/*# sourceMappingURL=ukulima_redemption.css.map */

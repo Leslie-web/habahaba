@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Redemption</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/materialize.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/ukulima_redemption.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/m_icons.css') }}">
+    <link rel="manifest" href="../static/js/manifest.json">
+
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/jquery-3.6.1.min.js') }}"></script>
+    <!--IOS support-->
+    <link rel="apple-touch-icon" href="../static/images/pngwing.com.png">
+    <meta name="apple-web-app-status-bar" content="#00b0ff">
+    {#    font-awesome#}
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    {#    datatables#}
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/jquery.dataTables.min.css') }}">
+</head>
+<body>
+{#navbar#}
+<nav class="nav-wrapper green lighten-2 hide-on-med-and-down hide-on-small-and-down">
+    <a href="#" class="sidenav-trigger" data-target="mobile_links">
+        <i class="material-icons">menu</i>
+    </a>
+    <a href="{{ url_for('user_homepage') }}" class="brand-logo">Habahaba Ukulima</a>
+    <ul class="right hide-on-med-and-down">
+        <li><a href="{{ url_for('ukulima') }}">Ukulima wallet</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Services</a></li>
+        <li><a href="{{ url_for('user_logout') }}">Logout</a></li>
+    </ul>
+</nav>
+
+<ul class="sidenav" id="mobile_links">
+    <div class="nav_container"
+         style="height: 100vw; display: flex; flex-direction: column; justify-content: space-between">
+        <ul class="top">
+            <li><a href="{{ url_for('ukulima') }}">Ukulima wallet</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="#">About</a></li>
+        </ul>
+        <ul class="logout">
+            <li><a href="{{ url_for('user_logout') }}">Logout</a></li>
+        </ul>
+    </div>
+</ul>
+<a href="{{ url_for('ukulima') }}" class="btn-floating waves-effect waves-light {#blue lighten-3#} hide-on-large-only"
+   id="back_button" style="background-color: transparent;">
+    <ion-icon name="arrow-back-outline" class="back_icon"></ion-icon>
+</a>
+
+
+<div class="section1">
+    <div class="main_icon">
+        <i class="fa fa-handshake-o"></i>
+    </div>
+    <div class="underline">
+
+    </div>
+    <div class="heading_content">
+        <h2>Redeemable Items</h2>
+    </div>
+</div>
+
+<div class="section2">
+    <div class="flash">
+        {% include 'includes/_flashmsg.html' %}
+    </div>
+    <ul class="tabs" id="tabs-swipe-demo" style="border-radius: 45px 45px 0 0 ">
+        <li class="tab col s6"><a href="#test-swipe-1">Redeemable Items</a></li>
+        <li class="tab col s6"><a href="#test-swipe-2">Redemption History</a></li>
+    </ul>
+
+    <div class="col s12 white black-text" id="test-swipe-1" style="padding: 2em;">
+        <table class="display" id="itemsTable">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Organization</th>
+                <th>Item name</th>
+                <th>Redeemable Amount (in KGs)</th>
+                <th>Target (in Ksh)</th>
+                <th>Quantity redeemed</th>
+                <th>Amount Redeemed</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {% for item in redeemable_items %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ item.org_name }}</td>
+                    <td>{{ item.payment_for }}</td>
+                    <td>{{ "%.2f"|format(item.redeemable_amount / item.price_per_kg) }}</td>
+                    <td>{{ item.saving_target }}</td>
+                    {#                amount redeemed#}
+                    {% if item.quantity_redeemed == None %}
+                        <td>0</td>
+                    {% else %}
+                        <td>{{ item.amount_redeemed }}</td>
+                    {% endif %}
+                    {#                quantity redeemed#}
+                    {% if item.quantity_redeemed == None %}
+                        <td>0</td>
+                    {% else %}
+                        <td>{{ item.quantity_redeemed }}</td>
+                    {% endif %}
+
+                    {#                MODAL BUTTON#}
+                    <td>
+                        <form action="{{ url_for('redemption') }}" method="post">
+                            <a href="#modal1" class="btn waves-effect modal-trigger"
+                               style="border-radius: 30px">Redeem</a>
+                            {#                            modal body#}
+                            <div class="modal" id="modal1">
+                                <div class="modal-content">
+                                    <h5>How much {{ item.payment_for }} would you like to redeem?</h5>
+                                    <label for="defaults"></label>
+                                    {#                                    data from payments table#}
+                                    <input type="number" name="redeemable_amount" id="defaults"
+                                           value="{{ item.amount_sent / item.price_per_kg }}" readonly>
+                                    <input type="number" name="payment_id" id="defaults"
+                                           value="{{ item.payment_id }}" readonly hidden>
+                                    <input type="number" name="price_per_kg" id="defaults"
+                                           value="{{ item.price_per_kg }}" readonly hidden>
+                                    {#                                    vendors data#}
+                                    <input type="number" name="vendor_id" id="defaults" value="{{ vendor_id }}">
+                                    <input type="text" name="vendor_id" id="defaults" value="{{ vendor_name }}">
+                                    <input type="text" name="vendor_id" id="defaults" value="{{ vendor_email }}">
+                                    <input type="text" name="vendor_id" id="defaults" value="{{ org_name }}">
+                                    <input type="number" name="vendor_id" id="defaults"
+                                           value="{{ session['f_name'] }} {{ session['l_name'] }}">
+                                    <input type="number" name="vendor_id" id="defaults" value="{{ vendor_id }}">
+                                    <input type="number" name="vendor_id" id="defaults" value="{{ vendor_id }}">
+                                    <input type="number" name="vendor_id" id="defaults" value="{{ vendor_id }}">
+                                    <input type="number" name="vendor_id" id="defaults" value="{{ vendor_id }}">
+                                    <input type="number" name="vendor_id" id="defaults" value="{{ vendor_id }}">
+                                    <div class="input-field col s12">
+                                        <input type="number" name="redeem" id="redeem" class="validate" required>
+                                        <label for="redeem">Amount for redemption in KGs</label>
+                                    </div>
+                                    <div class="submit_button">
+                                        <button type="submit" class="btn waves-effect" id="submit_btn">Redeem</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="col s12" id="test-swipe-2">
+        Two
+    </div>
+</div>
+{#[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[JAVASCRIPT]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]#}
+{#ionicons#}
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='/js/materialize.min.js') }}"></script>
+{#link to app.js for service worker#}
+<script src="../static/js/app.js"></script>
+{#        datatables#}
+<script type="text/javascript" src="{{ url_for('static', filename='/js/jquery.dataTables.min.js') }}"></script>
+<script>
+    //stop auto submit on reload
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+    }
+    //sidenav
+    $(document).ready(function () {
+        $('.sidenav').sidenav();
+    });
+
+    //datatables
+    $(document).ready(function () {
+        $('#itemsTable').DataTable();
+    });
+
+    //Dropdown
+    $(document).ready(function () {
+        $('select').formSelect()
+    });
+
+    //tabs
+    $(document).ready(function () {
+        $('.tabs').tabs();
+
+        //modal
+        $('.modal').modal();
+    })
+    //collapsible
+    document.addEventListener('DOMContentLoaded', function () {
+        let elems = document.querySelectorAll('.collapsible');
+        let instances = M.Collapsible.init(elems, {
+            inDuration: 300
+        });
+    });
+
+</script>
+</body>
+</html>

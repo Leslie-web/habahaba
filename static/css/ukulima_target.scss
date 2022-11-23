@@ -1,0 +1,128 @@
+body {
+  background-image: url("../images/pexels-andre-moura-4021523.jpg");
+  background-color: rgb(0 0 0/ 0.5);
+  background-blend-mode: multiply;
+  color: white;
+}
+
+#back_button {
+  display: grid;
+  place-items: center;
+
+  .back_icon {
+    font-size: 2em;
+  }
+}
+
+//[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[PROGRESS BAR]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+.progress_bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  transition: 500ms ease-in-out;
+  row-gap: 30px;
+  width: 500px;
+  padding: 50px 0;
+  /*background-color: #0d6efd;*/
+  border-radius: 8px;
+}
+
+.circular_progress {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 250px;
+  width: 250px;
+  border-radius: 50%;
+  background: conic-gradient(#0d6efd 3.6deg, white 0deg);
+  box-shadow: 0 0 10px -1px white;
+}
+
+.circular_progress::before {
+  position: absolute;
+  content: '';
+  height: 210px;
+  width: 210px;
+  border-radius: 50%;
+  //background: white;
+  background-image: url("../images/pexels-andre-moura-4021523.jpg");
+  background-color: rgb(0 0 0/ 0.5);
+  background-blend-mode: multiply;
+  box-shadow: inset 0 0 5px -1px rgb(255 255 255 / 0.5);
+}
+
+.progress_value {
+  font-family: "MV Boli", sans-serif;
+  position: relative;
+  font-size: 30px;
+  font-weight: 500;
+  color: white;
+}
+
+.texts {
+  color: white;
+  font-family: "MV Boli", sans-serif;
+  position: relative;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+//[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[PROGRESS BAR]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+
+.section2 {
+  background-color: rgb(255 255 255 / 0.8);
+  margin-left: 2em;
+  margin-right: 2em;
+  border-radius: 20px;
+}
+
+#heading_list {
+  display: grid;
+  justify-content: center;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+#heading_items {
+  display: grid;
+  justify-content: center;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  background-color: transparent;
+
+  #icon_container {
+    width: 2.5em;
+    height: 2.5em;
+    background-color: green;
+    color: white;
+    border-radius: 50%;
+  }
+}
+
+#set_target_btn {
+  background-color: transparent;
+  border-radius: 25px;
+  border: 1px solid white;
+  transition: 300ms ease;
+
+  &:hover {
+    background-color: white;
+    color: black;
+    border: 1px solid black;
+  }
+}
+
+//[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[MEDIA QUERIES]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+@media all and (max-width: 425px) {
+//  Select button
+  .section2{
+    display: block;
+    width: 95vw;
+    margin: auto;
+  }
+  #target_row{
+    h4{
+      margin-bottom: 1em;
+    }
+  }
+}

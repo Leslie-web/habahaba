@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>User Onboarding</title>
+</head>
+<body>
+
+{% extends 'vendor_home.html' %}
+{% block dashboard %}
+    <section class="content-header" style="width: 93%; margin-left: 5.6%; padding-left: 0; ">
+        <h2> Client Registration</h2>
+        <ol class="breadcrumb">
+            <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Client Registration</li>
+        </ol>
+    </section>
+{% endblock %}
+{% block content %}
+    <br>
+    <div class="content-top-1 box box-success">
+        <div class="box-body">
+            <br>
+            <div class="details_container">
+                <form action="{{ url_for('vendor_user_onboarding') }}">
+                    {#                    <div class="row">#}
+                    {#                        <h3 style="text-align: center;">Client Registration Form</h3>#}
+                    {#                    </div>#}
+                    {#                    <div class="row">#}
+                    {#        first name#}
+                    {#                        <div class="col-md-6">#}
+                    {#                            <label for="f_name" class="visually-hidden"></label>#}
+                    {#                            <div class="input-group">#}
+                    {#                                <div class="input-group-addon">First Name:</div>#}
+                    {#                                <input type="text" name="f_name" id="f_name" class="form-control col-md-4" required>#}
+                    {#                            </div>#}
+                    {#                        </div>#}
+
+                    {#                        FIRST NAME#}
+                    <div class="form-group row">
+                        <label for="f_name" class="col-sm-2 col-form-label">First Name:</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="f_name" name="f_name" required>
+                        </div>
+                    </div>
+                    {#                last name#}
+                    {#                        <div class="col-md-6">#}
+                    {#                            <label for="l_name" class="visually-hidden"></label>#}
+                    {#                            <div class="input-group">#}
+                    {#                                <div class="input-group-addon">Last Name:</div>#}
+                    {#                                <input type="text" name="l_name" id="l_name" class="form-control" required>#}
+                    {#                            </div>#}
+                    {#                        </div>#}
+
+                    {#                        LAST NAME#}
+                    <div class="form-group row">
+                        <label for="l_name" class="col-sm-2 col-form-label">Last Name:</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="l_name" name="l_name" required>
+                        </div>
+                    </div>
+                    {#                    </div>#}
+                    <br>
+                    <div class="row">
+                        {#            gender#}
+                        <div class="form-group row">
+                            {#                 <label for="gender" class="col-sm-2 col-form-label">Gender</label>#}
+                            <div class="col-md-12" style="display: flex;">
+                                <label for="gender" class="col-sm-2 col-form-label">Gender</label>
+                                <select name="gender" id="gender" class="form-control"
+                                        style="width: 81.5%; margin-left: 1em;" required>
+                                    <option value="" disabled selected>Choose Gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                                {#                                <label for="gender" class="visually-hidden" hidden>Gender:</label>#}
+                            </div>
+                        </div>
+                    </div>
+                    {#        date of birth#}
+                    {#                    <div class="row">#}
+                    {#                        <div class="col-md-4">#}
+                    {#                            <label for="dob"></label>#}
+                    {#                            <div class="input-group">#}
+                    {# <div class="input-group-addon" #}{#style="width: 10em;">Date of
+{#                    Birth:#}
+                    {#            </div>#}
+                    {#                                <input type="date" name="dob" id="dob" class="form-control" required>#}
+                    {#                            </div>#}
+                    {#                        </div>#}
+                    {#                    </div>#}
+
+                    {#            DATE OF BIRTH#}
+                    <div class="form-group row">
+                        <label for="dob" class="col-sm-2 col-form-label">Date of Birth:</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="dob" name="dob" required>
+                        </div>
+                    </div>
+                    {#    Phone number#}
+                    {#                    <div class="row">#}
+                    {#                        <div class="">#}
+                    {#                            <div class="col-md-12">#}
+                    {#                                <label for="phone_no"></label>#}
+                    {#                                <div class="input-group">#}
+                    {#<div class="input-group-addon" {#style="width: 10em;">Phone#}
+                    {#                    Number:#}
+                    {#            </div>#}
+
+                    {#                                    <input type="number" name="phone_no" id="phone_no" class="form-control" required>#}
+                    {#                                </div>#}
+                    {#                            </div>#}
+                    {#                        </div>#}
+                    {#                    </div>#}
+
+                    {#            PHONE NUMBER#}
+                    <div class="form-group row">
+                        <label for="phone_no" class="col-sm-2 col-form-label">Phone Number:</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="phone_no" name="phone_no" required>
+                        </div>
+                    </div>
+                    {#    ID number#}
+                    {#                    <div class="row">#}
+                    {#                        <div class="input-field col s12">#}
+                    {#                            <div class="col-md-12">#}
+                    {#                                <label for="id_no"></label>#}
+                    {#                                <div class="input-group">#}
+                    {#                                    <div class="input-group-addon" {#style="width: 10em;">{#ID Number:</div>#}
+                    {#                                    <input type="number" name="id_no" id="id_no" class="form-control" required>#}
+                    {#                                </div>#}
+                    {#                            </div>#}
+                    {#                        </div>#}
+                    {#                    </div>#}
+                    <div class="form-group row">
+                        <label for="id_no" class="col-sm-2 col-form-label">ID Number:</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="id_no" name="id_no" required>
+                        </div>
+                    </div>
+
+                    {#    Email address#}
+                    {#                    <div class="row">#}
+                    {#                        <div class="input-field col s12">#}
+                    {#                            <div class="col-md-12">#}
+                    {#                                <label for="email"></label>#}
+                    {#                                <div class="input-group">#}
+                    {#                                    <div class="input-group-addon">Email:</div>#}
+                    {#                                    <input type="email" name="email" id="email" class="form-control" required>#}
+                    {#                                </div>#}
+                    {#                            </div>#}
+                    {#                        </div>#}
+                    {#                    </div>#}
+
+                    {#                    EMAIL ADDRESS#}
+                    <div class="form-group row">
+                        <label for="email" class="col-sm-2 col-form-label">Email:</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="email" name="email" required>
+                        </div>
+                    </div>
+
+                    {#    Password#}
+                    {#                    <div class="row">#}
+                    {#                        <div class="input-field col s12">#}
+                    {#                            <div class="col-md-12">#}
+                    {#                                <label for="password"></label>#}
+                    {#                                <div class="input-group">#}
+                    {#                                                        <div class="input-group-addon" {#style="width: 10em;">Password:#}
+                    {#            </div>#}
+
+                    {#                                    <input type="password" name="password" id="password" class="form-control" required>#}
+                    {#                                </div>#}
+                    {#                            </div>#}
+                    {#                        </div>#}
+                    {#                    </div>#}
+
+                    {#            PASSWORD#}
+                    <div class="form-group row">
+                        <label for="password" class="col-sm-2 col-form-label">Password:</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="password" name="password" required>
+                        </div>
+                    </div>
+                    <div class="" style="display: flex; justify-content: center;">
+                        <button type="submit" class="btn btn-outline-success"
+                                style="outline: 1px solid green; display: flex; justify-content: center; align-items: center; margin-top: 1em;">
+                            Submit
+                            {#                    <i class="material-icons right">send</i>#}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/materialize.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/ukulima_target.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/m_icons.css') }}">
+    <link rel="manifest" href="../static/js/manifest.json">
+
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/jquery-3.6.1.min.js') }}"></script>
+
+    <!--IOS support-->
+    <link rel="apple-touch-icon" href="../static/images/pngwing.com.png">
+    <meta name="apple-web-app-status-bar" content="#00b0ff">
+</head>
+<body>
+{#<table class="striped">#}
+{#    <thead>#}
+{#    <tr>#}
+{#        <th>Name</th>#}
+{#        <th>Email</th>#}
+{#        <th>Location</th>#}
+{#        <th>Paymet method</th>#}
+{#        <th>Product</th>#}
+{#    </tr>#}
+{#    </thead>#}
+{#    <tbody>#}
+{% for vendors in vendor_materials %}
+    <tr>
+        <td>{{ vendors['vendor_name'] }}</td>
+        <td>{{ vendors['vendor_email'] }}</td>
+        <td>{{ vendors['location'] }}</td>
+        <td>{{ vendors['payment_method'] }}</td>
+        <td>{{ vendors['crop_type'] }}</td>
+    </tr>
+{% endfor %}
+{#    </tbody>#}
+{#</table>#}
+
+{#[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[JAVASCRIPT]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]#}
+{#ionicons#}
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='/js/materialize.min.js') }}"></script>
+{#link to app.js for service worker#}
+<script src="../static/js/app.js"></script>
+<script>
+    //stop auto submit on reload
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+    }
+</script>
+</body>
+</html>

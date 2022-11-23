@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Offers</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/materialize.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/ukulima_offers.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/m_icons.css') }}">
+    <link rel="manifest" href="../static/js/manifest.json">
+
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/jquery-3.6.1.min.js') }}"></script>
+
+    <!--IOS support-->
+    <link rel="apple-touch-icon" href="../static/images/pngwing.com.png">
+    <meta name="apple-web-app-status-bar" content="#00b0ff">
+</head>
+<body>
+{#navbar#}
+<nav class="nav-wrapper green lighten-2 hide-on-med-and-down hide-on-small-and-down">
+    <a href="#" class="sidenav-trigger" data-target="mobile_links">
+        <i class="material-icons">menu</i>
+    </a>
+    <a href="{{ url_for('user_homepage') }}" class="brand-logo">Habahaba Ukulima</a>
+    <ul class="right hide-on-med-and-down">
+        <li><a href="{{ url_for('ukulima') }}">Ukulima wallet</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Services</a></li>
+        <li><a href="{{ url_for('user_logout') }}">Logout</a></li>
+    </ul>
+</nav>
+{#<a href="#" class="sidenav-trigger btn transparent hide-on-med-and-up" data-target="mobile_links">#}
+{#    <i class="material-icons">menu</i>#}
+{#</a>#}
+<ul class="sidenav" id="mobile_links">
+    <div class="nav_container"
+         style="height: 100vw; display: flex; flex-direction: column; justify-content: space-between">
+        <ul class="top">
+            <li><a href="{{ url_for('ukulima') }}">Ukulima wallet</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="#">About</a></li>
+        </ul>
+        <ul class="logout">
+            <li><a href="{{ url_for('user_logout') }}">Logout</a></li>
+        </ul>
+    </div>
+</ul>
+<a href="{{ url_for('ukulima') }}" class="btn-floating waves-effect waves-light {#blue lighten-3#} hide-on-large-only"
+   id="back_button" style="background-color: transparent;">
+    <ion-icon name="arrow-back-outline" class="back_icon"></ion-icon>
+</a>
+<div class="row">
+    <h3 style="text-align: center">Offers</h3>
+    <div class="row" style="display: flex; justify-content: center;">
+        <ion-icon name="pricetags-outline" id="offers_icon"></ion-icon>
+    </div>
+    <div class="row" style="text-align: center">
+        <p style="font-size: 20px"><b><i>{{ total_rows.0['count(*)'] }}</i></b> offers available</p>
+    </div>
+</div>
+{#<div class="section1 black-text">#}
+
+{#    {% for offers in available_offers %}#}
+{#        {% if offers['offer_status'] == 'accepted' %}#}
+{##}
+{#            <div class="offer_card z-depth-4">#}
+{#                <div class="offers_header">#}
+{#                    {{ offers['org_name'] }}#}
+{#                </div>#}
+{#                <div class="offers_body">#}
+{#                    <div class="offer_item">#}
+{#                        Item: {{ offers['offer_name'] }}#}
+{#                    </div>#}
+{#                    <div class="percentage_off">#}
+{#                        {{ offers['percentage_off'] }}% off#}
+{#                    </div>#}
+{#                    <div class="actions">#}
+{#                        <a href="#" class="btn waves-light waves-effect green lighten-2">View Deal</a>#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div class="offers_footer">#}
+{#                    <div class="valid_until">#}
+{#                        Valid Until: {{ offers['valid_until'] }}#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#        {% else %}#}
+{#            <h5 style="text-align: center">No offers available</h5>#}
+{#        {% endif %}#}
+{#    {% endfor %}#}
+{#</div>#}
+
+
+<div class="section2 black-text">
+    {% for offers in available_offers %}
+        {% if offers|count > 1 %}
+            {% if offers['offer_status'] == 'accepted' %}
+                <div class="offers_container">
+                    <div class="offers_card">
+                        <div class="offers_content">
+                            <div class="offers_header offer_details">
+                                <ion-icon name="bag-check-outline" style="font-size: 25px"></ion-icon>
+                                <h3>{{ offers.org_name }}</h3>
+                            </div>
+                            <div class="offer_details offer_details">
+                                <ion-icon name="pricetag-outline" style="font-size: 25px"></ion-icon>
+                                <h5>{{ offers.offer_name }} at <b>{{ offers.percentage_off }}%</b> off</h5>
+                            </div>
+                            <div class="view_btn">
+                                <button class="btn waves-light">View Deal</button>
+                            </div>
+                            <br>
+                            <div class="offer_date">
+                                <ion-icon name="calendar-outline" style="font-size: 25px"></ion-icon>
+                                &nbsp
+                                <h6>Valid until: <b>{{ offers.valid_until }}</b></h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% else %}
+
+            <h4>No offers available</h4>
+        {% endif %}
+    {% endfor %}
+</div>
+
+{#[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[JAVASCRIPT]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]#}
+{#ionicons#}
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='/js/materialize.min.js') }}"></script>
+{#link to app.js for service worker#}
+<script src="../static/js/app.js"></script>
+<script>
+    //stop auto submit on reload
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+    }
+    //sidenav
+    $(document).ready(function () {
+        $('.sidenav').sidenav();
+    });
+
+    //Dropdown
+    $(document).ready(function () {
+        $('select').formSelect()
+    });
+
+    //collapsible
+    document.addEventListener('DOMContentLoaded', function () {
+        let elems = document.querySelectorAll('.collapsible');
+        let instances = M.Collapsible.init(elems, {
+            inDuration: 300
+        });
+    });
+</script>
+
+</body>
+</html>

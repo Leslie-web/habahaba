@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Register Product</title>
+    {#    <link rel="stylesheet" href="{{ url_for('static', filename='/css/materialize.min.css') }}">#}
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/vendor_product_verification.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/m_icons.css') }}">
+    <link rel="stylesheet" href="../static/js/manifest.json">
+
+    {#    bootstrap#}
+    {#    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css' ) }}">#}
+    <link href="/static/_public/css/bootstrap.min.css" rel='stylesheet' type='text/css'/>
+
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/jquery-3.6.1.min.js') }}"></script>
+    <link rel="manifest" href="../static/js/manifest.json">
+
+    <!--IOS support-->
+    <link rel="apple-touch-icon" href="../static/images/pngwing.com.png">
+    <meta name="apple-web-app-status-bar" content="#00b0ff">
+</head>
+<body>
+{% extends 'vendor_home.html' %}
+{% block dashboard %}
+    <section class="content-header" style="width: 93%; margin-left: 5.6%; padding-left: 0; ">
+        <h2> Add Products</h2>
+        <ol class="breadcrumb">
+            <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Add Products</li>
+        </ol>
+    </section>
+{% endblock %}
+{% block content %}
+    <br>
+    <div class="content-top-1 box box-success">
+        <div class="box-body">
+            <br>
+            <div class="section1">
+                <form action="{{ url_for('vendor_product_verification') }}" method="post">
+                    <div class="flash" style="text-align: center">
+                        {% include 'includes/flashmsg_bootstrap.html' %}
+                    </div>
+                    <div class="col-md-12" id="details_container">
+                        {#                defaults#}
+                        <input type="text" name="vendor_id" id="defaults" value="{{ session['vendor_id'] }}" readonly
+                               hidden>
+                        <input type="text" name="vendor_name" id="defaults"
+                               value="{{ session['f_name'] }} {{ session['l_name'] }}" readonly hidden>
+                        {#                <input type="text" name="payment_method" id="defaults" value="{{ session['payment_method'] }}" readonly#}
+                        {#                       hidden>#}
+                        {#                <input type="text" name="acc_number" id="defaults" value="{{ session['acc_number'] }}" readonly hidden>#}
+                        <input type="text" name="location" id="defaults" value="{{ session['location'] }}" readonly
+                               hidden>
+                        <input type="text" name="org_name" id="defaults" value="{{ session['org_name'] }}" readonly
+                               hidden>
+                        <input type="text" name="phone_no" id="defaults" value="{{ session['phone_no'] }}" readonly
+                               hidden>
+                        <input type="text" name="vendor_name" id="defaults"
+                               value="{{ session['f_name'] }} {{ session['l_name'] }}" readonly hidden>
+                        <input type="text" name="vendor_email" id="defaults" value="{{ session['email'] }}" readonly
+                               hidden>
+                        <label for="defaults"></label>
+                        {#                defaults#}
+
+                        <div class="rows" style="display: flex">
+                            <label for="category" style="text-align: left; margin-left: -1em">Category:</label>
+                            <select name="category" id="category" class="form-control" required
+                                    style="width: 50vw; margin-left: 15.2em; ">
+                                <option value="" selected disabled>Please select a category</option>
+                                <option value="Crop">Crop</option>
+                                <option value="Fertilizer">Fertilizer</option>
+                            </select>
+                        </div>
+                        <label for="category" class="visually-hidden" hidden>Category</label>
+                        <br>
+                    </div>
+
+                    {#            <div class="col-md-12">#}
+                    {#                <label for="item_name"></label>#}
+                    {#                <div class="input-group">#}
+                    {#                    <div class="input-group-addon" style="width: 10vw">Item Name:</div>#}
+                    {#                    <input type="text" name="item_name" id="item_name" class="form-control" required>#}
+                    {#                </div>#}
+                    {#            </div>#}
+
+                    {#            ITEM NAME#}
+                    <div class="form-group row">
+                        <label for="item_name" class="col-sm-2 col-form-label">Item Name:</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="item_name" name="item_name" required
+                                   style="width: 50vw">
+                        </div>
+                    </div>
+
+                    {#            <div class="col-md-12">#}
+                    {#                <label for="quantity_per_acre"></label>#}
+                    {#                <div class="input-group">#}
+                    {#                    <div class="input-group-addon" style="width: 1vw">Quantity needed per acre (in KGs):</div>#}
+                    {#                    <input type="number" name="quantity_per_acre" id="quantity_per_acre" class="form-control" required>#}
+                    {#                </div>#}
+                    {#            </div>#}
+
+                    {#            QUANTITY PER KG#}
+                    <div class="form-group row">
+                        <label for="quantity_per_kg" class="col-sm-2 col-form-label">Quantity per acre (in KGs):</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="quantity_per_kg" name="quantity_per_kg" required
+                                   style="width: 50vw">
+                        </div>
+                    </div>
+
+                    {#            PRICE PER KG#}
+                    {#            <div class="col-md-12" style="margin-bottom: 2em;">#}
+                    {#                <label for="price_per_kg"></label>#}
+                    {#                <div class="input-group">#}
+                    {#                    <div class="input-group-addon" style="width: 10vw">Price per KG:</div>#}
+                    {#                    <input type="number" name="price_per_kg" id="price_per_kg" class="form-control" required>#}
+                    {#                </div>#}
+                    {#            </div>#}
+
+                    <div class="form-group row">
+                        <label for="price_per_kg" class="col-sm-2 col-form-label">Price per KG:</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="price_per_kg" name="price_per_kg" required
+                                   style="width: 50vw">
+                        </div>
+                    </div>
+
+                    <br>
+
+                    <fieldset>
+                        <legend>Regions where products are available</legend>
+                        <div class="col-md-12">
+                            <div style="width: 50%; display: grid; grid-template-columns: 5em 2em;">
+                                <label for="Nairobi">Nairobi</label>
+                                <input type="checkbox" name="region" id="Nairobi" value="Nairobi">
+                            </div>
+                            <div style="width: 50%; display: grid; grid-template-columns: 5em 2em;">
+                                <label for="Eldoret">Eldoret</label>
+                                <input type="checkbox" name="region" id="Eldoret" value="Eldoret">
+                            </div>
+                            <div style="width: 50%; display: grid; grid-template-columns: 5em 2em;">
+                                <label for="Mombasa">Mombasa</label>
+                                <input type="checkbox" name="region" id="Mombasa" value="Mombasa">
+                            </div>
+                            <div style="width: 50%; display: grid; grid-template-columns: 5em 2em;">
+                                <label for="Kisumu">Kisumu</label>
+                                <input type="checkbox" name="region" id="Kisumu" value="Kisumu">
+                            </div>
+                        </div>
+                    </fieldset>
+                    {#            <div class="submit_button">#}
+                    <br>
+                    <button type="submit" class="btn btn-outline-success"
+                            style="outline: 1px solid green; display: block; width: 10em; margin: auto;"
+                            id="submit_btn">
+                        Submit
+                    </button>
+                    {#            </div>#}
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {#    [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[JAVASCRIPT]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]#}
+    <!-- Bootstrap -->
+    <script src="{{ url_for('static', filename='/js/bootstrap.bundle.min.js') }}"></script>
+    {#link to app.js for service worker#}
+    <script src="../static/js/app.js"></script>
+    <script>
+        //stop auto reload on submit
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+        }
+
+        function downloadPDFWithBrowserPrint() {
+            window.print()
+        }
+
+        {#document.querySelector('#example').addEventListener('click', downloadPDFWithBrowserPrint)#}
+        //making sure a checkbox is checked and prevent form submission
+        $(document).ready(function () {
+            $('#submit_btn').click(function () {
+                if ($('#Nairobi').prop('checked') === false && $('#Mombasa').prop('checked') === false &&
+                    $('#Kisumu').prop('checked') === false && $('#Eldoret').prop('checked') === false) {
+                    alert('Please check a checkbox')
+
+                    //prevent form submission
+                    $('form').click(function (event) {
+                        event.preventDefault()
+                    });
+                }
+            });
+        });
+
+        {#remember to cancel form submission#}
+    </script>
+{% endblock %}
+</body>
+</html>

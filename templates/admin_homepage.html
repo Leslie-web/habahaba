@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/materialize.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/admin_homepage.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/m_icons.css') }}">
+
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/jquery-3.6.1.min.js') }}"></script>
+
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/materialize.min.js') }}"></script>
+    <link rel="manifest" href="../static/js/manifest.json">
+
+    <!--IOS support-->
+    <link rel="apple-touch-icon" href="../static/images/pngwing.com.png">
+    <meta name="apple-web-app-status-bar" content="#00b0ff">
+</head>
+<body>
+navbar
+<nav class="nav-wrapper green lighten-2 {#hide-on-med-and-down hide-on-small-and-down">#}
+    <a href=" #
+" class="sidenav-trigger" data-target="mobile_links">
+<i class="material-icons">menu</i>
+</a>
+<a href="{{ url_for('admin_homepage') }}" class="brand-logo">Admin</a>
+<ul class="right hide-on-med-and-down">
+    <li><a href="{{ url_for('admin_homepage') }}">Home</a></li>
+    <li><a href="#">About</a></li>
+    <li><a href="#">Services</a></li>
+    <li><a href="{{ url_for('admin_logout') }}">Logout</a></li>
+</ul>
+</nav>
+<a href="#" class="sidenav-trigger btn transparent hide-on-med-and-up" data-target="mobile_links">
+    <i class="material-icons">menu</i>
+</a>
+<ul class="sidenav" id="mobile_links">
+    <div class="nav_container"
+         style="height: 100vw; display: flex; flex-direction: column; justify-content: space-between">
+        <ul class="top">
+            <li><a href="{{ url_for('admin_homepage') }}">Home</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="#">About</a></li>
+        </ul>
+        <ul class="logout">
+            <li><a href="{{ url_for('admin_logout') }}">Logout</a></li>
+        </ul>
+    </div>
+</ul>
+
+<div class="row">
+    <div class="row" id="onboarding">
+        <h4>Onboard Members</h4>
+        <div class="row" id="onboarding_parties">
+            <a href="{{ url_for('admin_onboarding_users') }}" class="black-text">
+                <div class="onboard_users">
+                    <ion-icon name="person-add-outline" class="person"></ion-icon>
+                    <p>Add User</p>
+                </div>
+            </a>
+            <a href="{{ url_for('vendor_onboarding') }}" class="black-text">
+                <div class="onboard_partners">
+                    <ion-icon name="people-outline" class="people"></ion-icon>
+                    <p>Add Vendor/Partner</p>
+                </div>
+            </a>
+        </div>
+        <hr>
+    </div>
+    <div class="row" id="vendor_promotions">
+        <h4>Promotions</h4>
+        <div class="row" id="promotions">
+            <a href="{{ url_for('validate_offers') }}" class="black-text">
+                <div class="row" id="offers">
+                    <ion-icon name="pricetags-outline" class="promo"></ion-icon>
+                    <p>Promotions</p>
+                </div>
+            </a>
+
+        </div>
+    </div>
+    <hr>
+    <div class="vendor_products">
+        <h4>Vendor Products</h4>
+        <div class="row" id="products_items">
+            <a href="{{ url_for('admin_product_verification') }}" class="black-text">
+                <div class="row" id="products">
+                    <ion-icon name="bag-check-outline" class="product_icon"></ion-icon>
+                    <p>Vendor Products</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+<div class="row" id="all_commissions">
+    <h4>Commission</h4>
+    <div class="row" id="commissions">
+
+    </div>
+</div>
+
+[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[JAVASCRIPT]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+ionicons
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='/js/materialize.min.js') }}"></script>
+link to app.js for service worker
+<script src="../static/js/app.js"></script>
+<script>
+    //stop auto submit on reload
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+    }
+    //sidenav
+    $(document).ready(function () {
+        $('.sidenav').sidenav();
+    });
+</script>
+
+</body>
+</html>
+

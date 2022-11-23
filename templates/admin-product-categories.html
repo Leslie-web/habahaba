@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Categories</title>
+</head>
+<body>
+{% extends 'alan_code.html' %}
+{% block dashboard %}
+    <section class="content-header" style="width: 93%; margin-left: 5.6%; padding-left: 0; ">
+        <h2>Categories</h2>
+        <ol class="breadcrumb">
+            <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Categories</li>
+        </ol>
+    </section>
+{% endblock %}
+
+{% block content %}
+    <div class="section1">
+        <form action="{{ url_for('admin_product_categories') }}" method="post"
+              style="margin-top: 5em; padding: 1em; display: grid; justify-content: center; transition: 500ms ease;
+    ">
+            <div class="flash" style="text-align: center;">
+                {% include 'includes/flashmsg_bootstrap.html' %}
+            </div>
+            <div class="heading">
+                <center><h3>Set up product Categories</h3></center>
+            </div>
+            <div class="details_container">
+                {#            `Category Name#}
+                <div class="row">
+                    <div class="input-field col s12">
+                        <div class="col-md-s12">
+                            <label for="category_name"></label>
+                            <div class="input-group">
+                                <div class="input-group-addon" style="width: 12em;">Category:</div>
+                                <input type="text" name="category_name" id="category_name" class="form-control"
+                                       style="width: 40vw" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {#            syb category#}
+                <div class="row">
+                    <div class="input-field col s12">
+                        <div class="col-md-s12">
+                            <label for="sub_category"></label>
+                            <div class="input-group">
+                                <div class="input-group-addon" style="width: 12em;">Sub-Category:</div>
+                                <input type="text" name="sub_category" id="sub_category" class="form-control"
+                                       style="width: 40vw" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="submit_button" style="display: grid; place-items: center;">
+                <button type="submit" class="btn btn-outline-success" style="width: 10em; outline: 1px solid green;
+                 margin-top: 1em">
+                    Submit
+                </button>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+</body>
+</html>

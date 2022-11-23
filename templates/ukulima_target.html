@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Target</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/materialize.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/ukulima_target.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/m_icons.css') }}">
+    <link rel="manifest" href="../static/js/manifest.json">
+
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/jquery-3.6.1.min.js') }}"></script>
+
+    <!--IOS support-->
+    <link rel="apple-touch-icon" href="../static/images/pngwing.com.png">
+    <meta name="apple-web-app-status-bar" content="#00b0ff">
+</head>
+<body>
+{#navbar#}
+<nav class="nav-wrapper blue lighten-3 hide-on-med-and-down hide-on-small-and-down">
+    <a href="#" class="sidenav-trigger" data-target="mobile_links">
+        <i class="material-icons">menu</i>
+    </a>
+    <a href="{{ url_for('user_homepage') }}" class="brand-logo">Habahaba Ukulima</a>
+    <ul class="right hide-on-med-and-down">
+        <li><a href="{{ url_for('ukulima') }}">Ukulima Wallet</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Services</a></li>
+        <li><a href="{{ url_for('user_logout') }}">Logout</a></li>
+    </ul>
+</nav>
+{#<a href="#" class="sidenav-trigger btn transparent hide-on-med-and-up hide" data-target="mobile_links">#}
+{#    <i class="material-icons">menu</i>#}
+{#</a>#}
+<ul class="sidenav" id="mobile_links">
+    <div class="nav_container"
+         style="height: 100vw; display: flex; flex-direction: column; justify-content: space-between">
+        <ul class="top">
+            <li><a href="{{ url_for('ukulima') }}">Ukulima wallet</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="#">About</a></li>
+        </ul>
+        <ul class="logout">
+            <li><a href="{{ url_for('user_logout') }}">Logout</a></li>
+        </ul>
+    </div>
+</ul>
+<a href="{{ url_for('ukulima') }}" class="btn-floating waves-effect waves-light blue lighten-3 hide-on-large-only"
+   id="back_button">
+    <ion-icon name="arrow-back-outline" class="back_icon"></ion-icon>
+</a>
+<div class="section1">
+    <div class="row" style="display: flex; justify-content: center; align-items: center;">
+        {#        PROGRESS BAR#}
+        <div id="save">
+            <div class="progress_bar black-text" id="progress_bar">
+                <div class="circular_progress">
+                    <span class="progress_value">0%</span>
+                </div>
+                <span class="texts" id="texts">Saved x out of y</span>
+
+            </div>
+        </div>
+        {#        PROGRESS BAR#}
+    </div>
+</div>
+{{ results }}
+
+<div class="section2 black-text" style="height: max-content">
+    <div class="row" id="target_row">
+        <h4 style="text-align: center;"><u>Set target</u></h4>
+        <div class="row" style="width: 80%;">
+            <div class="input-field">
+                <form action="{{ url_for('ukulima_target') }}" method="post">
+                    <select name="partner" id="partner">
+                        <option value="" selected disabled>Please select a partner</option>
+                        {% for vendors in partners %}
+                            <option value="{{ vendors['vendor_id'] }}">{{ vendors['vendor_name'] }}</option>
+                        {% endfor %}
+                    </select>
+                    <label for="partner">Select partner</label>
+
+                    <div id="crop_container"></div>
+
+                    {#                    <a href="#vendor_modal" type="button" id="confirm" disabled#}
+                    {#                       class="btn waves-effect waves-light modal-trigger">Confirm Partner#}
+                    {#                    </a>#}
+                    <div class="modal" id="vendor_modal">
+                        <div class="modal-content">
+                            <input type="hidden" id="price">
+                            <h4>Vendor</h4>
+                            <div class="row">
+                                <div class="input-field col s12">
+                                    <input type="number" name="land_size" id="land_size" class="validate">
+                                    <label for="land_size">Please enter the amount of land</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="input-field col s12">
+                                    <input type="number" name="total_cost" id="total_cost" class="validate"
+                                           value="0">
+                                    <label for="total_cost">Cost</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+        {% for goods in partner_goods %}
+            {{ goods }}
+        {% endfor %}
+    </div>
+</div>
+{#[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[JAVASCRIPT]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]#}
+{#ionicons#}
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='/js/materialize.min.js') }}"></script>
+{#link to app.js for service worker#}
+<script src="../static/js/app.js"></script>
+<script>
+    //stop auto submit on reload
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+    }
+
+    function update_price(price) {
+        $('#price').val(price);
+    }
+
+    //regular inputs
+    $(document).ready(function () {
+        M.updateTextFields();
+    });
+    //sidenav
+    $(document).ready(function () {
+        $('.sidenav').sidenav();
+
+        {#$('#partner').change(function () {#}
+        {#    let profile = this.value;#}
+        {#    console.log(profile);#}
+        {##}
+        {#    $.ajax({#}
+        {#        'url': '/my-profile',#}
+        {#        'method': 'post',#}
+        {#        'data': {profile: profile},#}
+        {#        success: function (data) {#}
+        {#            console.log(data)#}
+        {##}
+        {#            let mycrops = "<h3>My Crops</h3>";#}
+        {#            data.crops.map(item => mycrops += `<h4>${item}<h4>`);#}
+        {#            $('#crop_container').html(mycrops);#}
+        {##}
+        {#            $('#confirm').removeAttr('disabled');#}
+        {#        }#}
+        //})
+        // });
+
+        $('#partner').change(function () {
+            let profile = this.value;
+            let this_var = $('#partner :selected').text();
+            let price = 0;
+            {#alert(this_var)#}
+
+            $.ajax({
+                'url': '/testing/',
+                'method': 'post',
+                'data': {profile: profile},
+                'success': function (data) {
+                    data = JSON.parse(data);
+                    console.log(data);
+                    $('#confirm').removeAttr('disabled');
+
+                    let mycrops = `<h4>${profile}Crops</h4>`;
+                    data.map(item => {
+                        if (item.vendor_name === this_var) {
+                            mycrops += `<a href="#vendor_modal" onclick="update_price(${item.price})" class="btn modal-trigger waves-light" id="crop_type">
+${item.crop_type}</a> <hr>`;
+                        }
+                    })
+                    $('#crop_container').html(mycrops);
+                }
+            });
+        });
+    });
+
+    $('#land_size').change(function () {
+        size = this.value;
+        $('#total_cost').val($('#price').val() * size)
+    });
+
+    //progress bar
+    let circular_progress = document.querySelector('.circular_progress'),
+        progress_value = document.querySelector('.progress_value')
+
+    let progressStartValue = 0,
+        progress_end_value = 20,
+        speed = 100;
+
+    let progress = setInterval(() => {
+        progressStartValue++;
+        progress_value.textContent = progressStartValue + "%"
+
+        circular_progress.style.background = `conic-gradient(#0d6efd ${progressStartValue * 3.6}deg, white 0deg)`
+        if (progressStartValue === progress_end_value) {
+            clearInterval(progress)
+        }
+        console.log(progressStartValue);
+    }, speed);
+    //progress bar
+
+    //Dropdown
+    $(document).ready(function () {
+        $('select').formSelect()
+    });
+
+    //collapsible
+    document.addEventListener('DOMContentLoaded', function () {
+        let elems = document.querySelectorAll('.collapsible');
+        let instances = M.Collapsible.init(elems, {
+            inDuration: 300
+        });
+    });
+
+    //Modal
+    document.addEventListener('DOMContentLoaded', function () {
+        let elems = document.querySelectorAll('.modal')
+        let instances = M.Modal.init(elems, {
+            opacity: 0.5
+        })
+    })
+</script>
+
+</body>
+</html>

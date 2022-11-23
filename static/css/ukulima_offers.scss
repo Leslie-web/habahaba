@@ -1,0 +1,172 @@
+body {
+  background-image: url("../images/plant.jpg");
+  background-position: center;
+  background-color: rgb(0 0 0/ 0.5);
+  background-blend-mode: multiply;
+  background-attachment: fixed;
+  color: white;
+
+}
+
+#back_button {
+  display: grid;
+  place-items: center;
+
+  .back_icon {
+    font-size: 2em;
+  }
+}
+
+#offers_icon {
+  font-size: 92px;
+}
+
+.section1 {
+  background-color: rgb(255 255 255 / 0.8);
+  width: 90vw;
+  margin: auto;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  row-gap: 2em;
+  padding: 2em 0 2em;
+  border-radius: 35px;
+}
+
+.offer_card {
+  width: 80vw;
+  border: 1px solid black;
+  padding: 0.5em;
+  border-radius: 35px;
+  transition: 300ms ease-out;
+  font-family: "MV Boli", sans-serif;
+
+  &:hover {
+    cursor: pointer;
+    background-color: rgb(0 0 0 / 0.8);
+    color: white;
+
+    .offers_header {
+      border-bottom: 1px solid white;
+    }
+
+    .offers_body {
+      border-bottom: 1px solid white;
+    }
+  }
+
+  .offers_header {
+    justify-content: center;
+    font-size: 20px;
+    text-align: center;
+    border-bottom: 1px solid black;
+  }
+
+  .offers_body {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 30px;
+    padding: 1em;
+    border-bottom: 1px solid black;
+  }
+
+  .offers_footer {
+    display: flex;
+    justify-content: flex-end;
+    padding-right: 1em;
+  }
+}
+
+.section2 {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  background-color: rgb(255 255 255 / 0.5);
+  height: auto;
+  width: 80vw;
+  border-radius: 10px;
+  margin: 4em auto;
+  padding: 5em;
+
+  .offers_card {
+    background-image: url("../images/bg5.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-color: rgb(255 255 255 / 0.5);
+    //border: 1px solid black;
+    border-radius: 20px;
+    height: 30vh;
+    width: 60vw;
+    padding: 1em;
+    margin-bottom: 2em;
+    transition: 300ms ease-out;
+
+    .offers_content {
+      padding: 0.2em 0.5em 0.2em 0.5em;
+      background-color: rgb(255 255 255 / 0.5);
+      height: 100%;
+      transition: 300ms ease-out;
+    }
+
+    .view_btn {
+      display: flex;
+      justify-content: center;
+      margin-top: 1em;
+    }
+
+    &:hover {
+      cursor: pointer;
+      color: white;
+      background-color: rgb(0 0 0 / 0.3);
+      background-image: url("../images/bg5.jpg");
+      background-blend-mode: darken;
+
+      .offers_content {
+        background-color: rgb(0 0 0/ 0.5);
+        border-radius: 20px;
+      }
+    }
+  }
+}
+
+.offer_details {
+  display: grid;
+  grid-template-columns: 2em 1fr;
+  align-items: baseline;
+}
+
+.offer_date {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+//[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[MEDIA QUERIES]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+@media all and (max-width: 425px) {
+  .offer_card {
+    border: none;
+    box-shadow: 0 0 20px -5px black;
+  }
+  .offers_header {
+    font-family: "MV Boli", sans-serif;
+  }
+  .offers_body {
+    display: flex;
+    flex-direction: column;
+    font-family: "MV Boli", sans-serif;
+
+    .offer_item {
+      font-family: "MV Boli", sans-serif;
+    }
+  }
+  .offers_footer {
+    font-family: "MV Boli", sans-serif;
+  }
+}
+
+@media all and (min-width: 740px) {
+  .offer_card {
+    width: 60vw;
+  }
+}

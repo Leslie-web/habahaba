@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Offers</title>
+    {#    <link rel="stylesheet" href="{{ url_for('static', filename='/css/materialize.min.css') }}">#}
+    {#    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css' ) }}">#}
+    {#    <link href="/static/_public/css/bootstrap.min.css" rel='stylesheet' type='text/css'/>#}
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/m_icons.css') }}">
+    {#    datatables#}
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/jquery.dataTables.min.css') }}">
+    <link rel="manifest" href="../static/js/manifest.json">
+
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/jquery-3.6.1.min.js') }}"></script>
+    {#    <script type="text/javascript" src="{{ url_for('static', filename='/js/jquery-3.6.1.min.js') }}"></script>#}
+
+    <!--IOS support-->
+    <link rel="apple-touch-icon" href="../static/images/pngwing.com.png">
+    <meta name="apple-web-app-status-bar" content="#00b0ff">
+</head>
+<body style="transition: 300ms ease;">
+{% extends 'vendor_home.html' %}
+{% block content %}
+    <br>
+    <div class="content-top-1 box box-success">
+        <div class="box-body">
+            <br>
+            {#            <div class="offers_form">#}
+
+            {#        <br>#}
+            {#        <div class="content-top-1 box box-success">#}
+            {#            <div class="box-body">#}
+            {#                <br>#}
+            <form action="{{ url_for('vendors_offer_list') }}" method="post" style="display: grid">
+                <div class="flash" style="text-align: center; padding: 5em;">
+                    {% include 'includes/flashmsg_bootstrap.html' %}
+                </div>
+                {#            <div class="row">#}
+                <input type="text" name="vendor_name" id="defaults"
+                       readonly hidden value="{{ session['f_name'] }} {{ session['l_name'] }}">
+                <input type="text" name="vendor_email" id="defaults" readonly hidden
+                       value="{{ session['email'] }}">
+                <input type="text" name="org_name" id="defaults" readonly hidden
+                       value="{{ session['org_name'] }}">
+                <input type="number" name="material_id" id="material_id" readonly hidden>
+                <label for="defaults"></label>
+
+                <div class="row">
+                    {#                <div class="input-field col s5">#}
+                    {#                    <input type="text" name="offer_name" id="offer_name" class="validate">#}
+                    {#                    <label for="offer_name">Offer:</label>#}
+                    {#                </div>#}
+                    <div class="input-field col s12">
+                        <div class="rows" style="display: flex;">
+                            <label for="offer_name" class="col-sm-1" style="width: 9em; padding: 0">Product on
+                                offer:</label>
+                            <div class="col-sm-5">
+                                <select name="offer_name" id="offer_name" class="form-control" required>
+                                    <option value="" selected disabled>Please select a product</option>
+                                    {% for product in products %}
+                                        {% if product.material_status == 'accepted' %}
+                                            <option value="{{ product['crop_name'] }}">{{ product['crop_name'] }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                </div>
+                <div class="row">
+                    <div class="input-field col s5">
+                        <div class="form-group row">
+                            <label for="percentage_off" class="col-sm-1 col-form-label">Percentage Off:</label>
+                            <div class="col-sm-5">
+                                <input type="text" class="form-control" id="percentage_off" name="percentage_off"
+                                       required {#style="width: 50vw"#}>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="input-field col s5">
+                        <div class="form-group row">
+                            <label for="valid_until" class="col-sm-1 col-form-label">Valid Until:</label>
+                            <div class="col-sm-5">
+                                <input type="date" class="form-control" id="valid_until" name="valid_until"
+                                       required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <fieldset class="col-sm-6">
+                    <legend>Regions where offers will be available</legend>
+                    <div class="col-md-6">
+                        {#                        <div style="width: 50%; display: grid; grid-template-columns: 5em 2em;">#}
+                        {#                            <label for="Nairobi">Nairobi</label>#}
+                        {#                            <input type="checkbox" name="region_available" id="Nairobi" value="Nairobi">#}
+                        {#                        </div>#}
+                        {#                        <div style="width: 50%; display: grid; grid-template-columns: 5em 2em;">#}
+                        {#                            <label for="Eldoret">Eldoret</label>#}
+                        {#                            <input type="checkbox" name="region_available" id="Eldoret" value="Eldoret">#}
+                        {#                        </div>#}
+                        {#                        <div style="width: 50%; display: grid; grid-template-columns: 5em 2em;">#}
+                        {#                            <label for="Mombasa">Mombasa</label>#}
+                        {#                            <input type="checkbox" name="region_available" id="Mombasa" value="Mombasa">#}
+                        {#                        </div>#}
+                        <div style="
+                        width: 50%; display: grid; grid-template-columns: 8em 2em;"
+                             class="checker">
+                            {#                            <label for="Kisumu">Kisumu</label>#}
+                            {#                            <input type="checkbox" name="region_available" id="Kisumu" value="Kisumu">#}
+
+                        </div>
+                    </div>
+                </fieldset>
+                <br>
+                <div class="rows" class="col-sm-6" style="display: flex;">
+                    {#                <button type="submit" class="btn waves-effect waves-light green lighten-2">Submit</button>#}
+                    <button type="submit" class="btn btn-outline-success"
+                            style="outline: 1px solid green; margin-left: 20vw"
+                            id="submit_btn">
+                        Submit
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    {#    </div>#}
+    <hr>
+
+    {#    <div class="heading">#}
+    {#        <h3>Partnered Users</h3>#}
+    {#    </div>#}
+    {#    <div class="section1" style="padding: 5em;">#}
+    {#        <table class="display black-text" id="example" style="width: 70vw; margin-left: 15vw;">#}
+    {#            <caption align="top">Partnered Users</caption>#}
+    {#            <thead>#}
+    {#            <tr>#}
+    {#                <th>#</th>#}
+    {#                <th>Item name</th>#}
+    {#                <th>Percentage Off</th>#}
+    {#                <th>Valid until</th>#}
+    {#                <th>Actions</th>#}
+    {#            </tr>#}
+    {#            </thead>#}
+    {##}
+    {#            <tbody>#}
+    {#            {% for offer in offers %}#}
+    {#                <tr>#}
+    {#                    <td>{{ loop.index }}</td>#}
+    {#                    <td>{{ offer['offer_name'] }}</td>#}
+    {#                    <td>{{ offer['percentage_off'] }}</td>#}
+    {#                    <td>{{ offer['valid_until'] }}</td>#}
+    {##}
+    {#                </tr>#}
+    {#            {% endfor %}#}
+    {#            </tbody>#}
+    {#        </table>#}
+    {#    </div>#}
+
+    {#        </div>#}
+    {#    </div>#}
+    {#        [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[JAVASCRIPT]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]#}
+    {#        ionicons#}
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    {#    <script type="text/javascript" src="{{ url_for('static', filename='/js/materialize.min.js') }}"></script>#}
+    {#        link to app.js for service worker#}
+    <script src="../static/js/app.js"></script>
+    {#        datatables#}
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/jquery.dataTables.min.js') }}"></script>
+    <script>
+        //making sure a checkbox is checked and prevent form submission
+        $(document).ready(function () {
+            $('#submit_btn').click(function () {
+                if ($('#Nairobi').prop('checked') === false && $('#Mombasa').prop('checked') === false &&
+                    $('#Kisumu').prop('checked') === false && $('#Eldoret').prop('checked') === false) {
+                    alert('Please check a checkbox')
+
+                    //prevent form submission
+                    $('form').click(function (event) {
+                        event.preventDefault()
+                    });
+                }
+            });
+        });
+    </script>
+    <script>
+        //stop auto submit on reload
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+        }
+        //dropdown options
+        $(document).ready(function () {
+            $('#offer_name').change(function () {
+                let materials = this.value
+                console.log(materials);
+                $.ajax({
+                    url: '/products-json/',
+                    method: 'post',
+                    date: {materials: materials},
+                    success: function (data) {
+                        data = JSON.parse(data)
+                        {#console.log(data)#}
+
+                        data.map(
+                            item => {
+                                if (materials === item.crop_name) {
+                                    $('#material_id').val(item.material_id)
+                                }
+                            }
+                        )
+                    }
+                });
+            });
+        });
+        //sidenav
+        $(document).ready(function () {
+            $.ajax({
+                url: '/counties-json/',
+                method: 'get',
+                success: function (data) {
+                    data = JSON.parse(data)
+                    {#console.log(data)#}
+                    boxes = ``
+
+                    data.map(
+                        item => {
+                            console.log(item)
+                            boxes += `
+                            <label for="check">${item.county_number}: ${item.county_name}</label>
+                            <input type="checkbox" name="region_available" value="${item.county_name}">
+                            `
+                        }
+                    )
+                    $('.checker').html(boxes)
+                }
+            });
+        });
+
+        //datatables
+        $(document).ready(function () {
+            $('#example').DataTable();
+        });
+    </script>
+{% endblock %}
+</body>
+</html>

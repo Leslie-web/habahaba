@@ -1,0 +1,28 @@
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.form_container {
+  display: block;
+  padding: 2em;
+  width: 85vw;
+  margin: auto;
+  border-radius: 54px;
+  background: #ffffff;
+  box-shadow: 28px 28px 56px #c4c4c4, -28px -28px 56px #ffffff;
+}
+.form_container h3 {
+  text-decoration: solid underline;
+  text-align: center;
+}
+
+#submit_btn {
+  display: block;
+  width: 10em;
+  margin: auto;
+}
+
+/*# sourceMappingURL=admin_registration.css.map */

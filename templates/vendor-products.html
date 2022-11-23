@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    {#    <link rel="stylesheet" href="{{ url_for('static', filename='/css/materialize.min.css') }}">#}
+    {#    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css' ) }}">#}
+    <link href="/static/_public/css/bootstrap.min.css" rel='stylesheet' type='text/css'/>
+
+    {#    <link rel="stylesheet" href="{{ url_for('static', filename='/css/admin_offer_validation.css') }}">#}
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/m_icons.css') }}">
+    {#    datatables#}
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/jquery.dataTables.min.css') }}">
+    <link rel="manifest" href="../static/js/manifest.json">
+
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/jquery-3.6.1.min.js') }}"></script>
+
+    <!--IOS support-->
+    <link rel="apple-touch-icon" href="../static/images/pngwing.com.png">
+    <meta name="apple-web-app-status-bar" content="#00b0ff">
+</head>
+<body>
+{% extends 'vendor_home.html' %}
+{% block dashboard %}
+    <section class="content-header" style="width: 93%; margin-left: 5.6%; padding-left: 0; ">
+        <h2> Products</h2>
+        <ol class="breadcrumb">
+            <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Products</li>
+        </ol>
+    </section>
+{% endblock %}
+{% block content %}
+    <br>
+    <div class="content-top-1 box box-success">
+        <div class="box-body">
+            <br>
+            <div class="section1">
+                <table class="ui celled table " width="100%" id="example">
+                    <caption align="top">Products</caption>
+                    <thead>
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Quantity per Acre (in Kgs)</th>
+                        <th>Price per Kg</th>
+                    </tr>
+                    </thead>
+
+                    {#                    <tbody>#}
+                    {#                    {% for product in products %}#}
+                    {#                        <tr>#}
+                    {#                            <td>{{ loop.index }}</td>#}
+                    {#                            <td>{{ product['crop_name'] }}</td>#}
+                    {#                            <td>{{ product['quantity_per_acre'] }}</td>#}
+                    {#                            <td>{{ product['price_per_kg'] }}</td>#}
+                    {#                        </tr>#}
+                    {#                    {% endfor %}#}
+                    {#                    </tbody>#}
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    {#        [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[JAVASCRIPT]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]#}
+    {#        ionicons#}
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/materialize.min.js') }}"></script>
+    {#        link to app.js for service worker#}
+    <script src="../static/js/app.js"></script>
+    {#        datatables#}
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/jquery.dataTables.min.js') }}"></script>
+    <script>
+        //stop auto submit on reload
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+        }
+        //sidenav
+        $(document).ready(function () {
+            $('.sidenav').sidenav();
+        });
+
+        //Dropdown
+        $(document).ready(function () {
+            $('select').formSelect()
+        });
+
+        //collapsible
+        document.addEventListener('DOMContentLoaded', function () {
+            let elems = document.querySelectorAll('.collapsible');
+            let instances = M.Collapsible.init(elems, {
+                inDuration: 300
+            });
+        });
+
+        //datatables
+        $(document).ready(function () {
+            {#$('#example').DataTable();#}
+            var table = $('#example').DataTable({
+                destroy: true,
+                responsive: false,
+                "ajax": {
+                    url: '/vendor-products-json/',
+                    type: 'get'
+                },
+                {#"order": [[2, "desc"]],#}
+                select: {
+                    style: 'none',
+                    selector: 'td:first-child'
+                },
+                scrollY: "800px",
+                scrollX: true,
+                scrollCollapse: true,
+                paging: true,
+                fixedColumns: true,
+                lengthChange: true,
+                "rowCallback": function (nRow, aData) {
+                    {#$('td', nRow).eq(2).html('<label class="label label-default">'+ aData[2] +'</label>'); #}
+                    {#if(aData[3]>0)#}
+                    {# $('td', nRow).eq(3).html('<label class="label label-success">OK</label>');#}
+                    {#else#}
+                    {#$('td', nRow).eq(3).html('<label class="label label-danger">FAIL</label>'); #}
+                },
+                columnDefs: [{
+                    targets: 0
+                }]
+            });
+
+            let buttons = new $.fn.dataTable.Buttons(table, {
+                buttons: ['excelHtml5', 'pdfHtml5', 'colvis']
+            });
+            buttons.container().appendTo($('div.right.aligned.eight.column:eq(0)', table.table().container()));
+            
+        });
+
+        //modal
+        $(document).ready(function () {
+            $('.modal').modal();
+        });
+    </script>
+{% endblock %}
+</body>
+</html>

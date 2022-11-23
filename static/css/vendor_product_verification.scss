@@ -1,0 +1,38 @@
+//.section1 {
+//  position: relative;
+//  width: 60vw;
+//  margin: 7em auto;
+//  height: max-content;
+//  padding: 2em;
+//  border-radius: 50px;
+//  background: #e8e8e8;
+//  box-shadow: 20px 20px 60px #c5c5c5,
+//  -20px -20px 60px #ffffff;
+//}
+
+//#item_name {
+//  width: 50vw;
+//}
+//
+//#quantity_per_acre {
+//  width: 43.3vw;
+//}
+//
+//#price_per_kg {
+//  width: 50vw;
+//}
+
+@media all and (max-width: 1500px) {
+  #item_name {
+    width: 40.5vw;
+  }
+
+  #quantity_per_acre {
+    width: 26.2vw;
+  }
+
+  #price_per_kg {
+    width: 40.5vw;
+  }
+
+}

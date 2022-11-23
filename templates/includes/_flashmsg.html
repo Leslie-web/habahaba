@@ -1,0 +1,23 @@
+{#{% with messages = get_flashed_messages(with_categories=true) %}#}
+{#    <!-- Categories: success (green), info (blue), warning (yellow), danger (red) -->#}
+{#    {% if messages %}#}
+{#        {% for category, message in messages %}#}
+{#            <div class="alert alert-{{ category }} alert-dismissible my-4" role="alert">#}
+{#                {{ message }}#}
+{#            </div>#}
+{#        {% endfor %}#}
+{#    {% endif %}#}
+{#{% endwith %}#}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    <!-- Categories: success (green), info (blue), warning (yellow), danger (red) -->
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert card {{ category }}" role="alert" style="display: grid; place-items: center;
+             width: 60vw; margin: auto; padding: 1em;
+text-align: center; font-size: large">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}

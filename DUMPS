@@ -1,0 +1,496 @@
+$.ajax({
+                'url': '/partner-options/',
+                'method': 'post',
+                'data': {my_data: my_data},
+                'success': function (data) {
+                    data = JSON.parse(data);
+                    console.log(data);
+
+                    $('#viable_partners').removeAttr('style');
+
+                    let partners = `<h5>${my_data} Vendors</h5>`
+
+                    data.map(
+                        item => {
+                            if (my_data === item.crop_name && item.material_status === 'accepted') {
+                                partners += `
+                                    <ul style="display: flex; justify-content: space-between">
+                                    <li>
+
+                                         ${item.vendor_name} ${item.vendor_email} ${item.phone_no}
+                                          <a href="#modal1" class="btn waves-effect waves-light modal-trigger"
+                                            style="border-radius: 60px; width: 2em; height: 2em;
+                                            display: inline-flex; justify-content: center; align-items: center;
+                                            font-weight: bold">+</a>
+                                    </li>
+                                    </ul>
+
+                                        <div class="modal black-text" id="modal1">
+                                                <div class="modal-content">
+                                                    <h4>Partners</h4>
+                                                    <div class="mydata">
+
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+                                                </div>
+                                            </div>
+                                `;
+                            }
+                        })
+                    $('#viable_partners').html(partners)
+                }
+            })
+
+
+
+[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[SECOND <TR>]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+<tr>
+                        <td>
+                            <p>Quantity per Acre in KGs</p>
+
+                            <input type="text" name="quantity_per_acre" id="quantity_per_acre"
+                                   class="validate" value="{{ vendor_details['quantity_per_acre'] }}"
+                                   readonly required>
+                            <label for="quantity_per_acre" hidden>Quantity per acre in KGs</label>
+                        </td>
+
+                        <td>
+                            <p>Price Per Kg</p>
+
+                            <input type="number" name="price_per_kg" id="price_per_kg" class="validate"
+                                   value="{{ vendor_details['price_per_kg'] }}"
+                                   readonly required>
+                            <label for="price_per_kg" hidden>Price per KG</label>
+                        </td>
+
+                        <td>
+                            <p>Enter the size of land in acres</p>
+
+                            <input type="number" name="size_of_land" id="size_of_land"
+                                   class="validate" value="0" required>
+                            <label for="size_of_land" hidden>Enter the size of land in acres</label>
+
+                        </td>
+
+                        <td>
+                            <p>Payment required</p>
+
+                            <input type="number" name="payment_required" id="payment_required"
+                                   class="validate" value="0" readonly>
+                            <label for="payment_required" hidden>Payment required</label>
+                        </td>
+
+                    </tr>
+
+
+<div class="black-text">
+                                <h5>Select as partner</h5>
+                                <input type="text" name="vendor_id" id="defaults"
+                                       value="{{ vendor_details['vendor_id'] }}" readonly hidden>
+                                <input type="text" name="vendor_name" id="defaults"
+                                       value="{{ vendor_details['vendor_name'] }}" readonly hidden>
+                                <input type="text" name="vendor_email" id="defaults"
+                                       value="{{ vendor_details['vendor_email'] }}" readonly hidden>
+                                <input type="text" name="vendor_phone" id="defaults"
+                                       value="{{ vendor_details['phone_no'] }}" readonly hidden>
+                                <input type="text" name="crop_name" id="defaults"
+                                       value="{{ vendor_details['crop_name'] }}" readonly hidden>
+                                <input type="text" name="location" id="defaults"
+                                       value="{{ vendor_details['location'] }}" readonly hidden>
+                                <input type="text" name="payment_method" id="defaults"
+                                       value="{{ vendor_details['payment_method'] }}" readonly hidden>
+                                <input type="text" name="acc_number" id="defaults"
+                                       value="{{ vendor_details['acc_number'] }}" readonly hidden>
+                                <input type="text" name="vendor_org" id="defaults"
+                                       value="{{ vendor_details['org_name'] }}" readonly hidden>
+
+
+                                <input type="text" name="client_id" id="defaults"
+                                       value="{{ session['user_id'] }}" readonly hidden>
+                                <input type="text" name="client_name" id="defaults"
+                                       value="{{ session['f_name'] }} {{ session['l_name'] }}" readonly hidden>
+                                <input type="text" name="client_phone" id="defaults"
+                                       value="{{ session['phone_no'] }}" readonly hidden>
+                                <input type="text" name="client_id_no" id="defaults" value="{{ session['id_no'] }}"
+                                       readonly hidden>
+                                <input type="text" name="client_email" id="defaults"
+                                       value="{{ session['email'] }}" readonly hidden>
+                                <label for="defaults"></label>
+
+                                <select name="v_name" id="v_name">
+                                    <option value="{{ vendor_details['vendor_name'] }}"
+                                            selected>{{ vendor_details['vendor_name'] }}</option>
+                                </select>
+                                <div class="row">
+                                    <div class="input-field col s12 white-text">
+                                        <input type="text" name="quantity_per_acre" id="quantity_per_acre"
+                                               class="validate white-text quantity_per_acre"
+                                               value="{{ vendor_details['quantity_per_acre'] }}"
+                                               readonly required>
+                                        <label class="white-text" for="quantity_per_acre">Quantity per acre in
+                                            KGs</label>
+                                    </div>
+                                    <div class="input-field col s12 white-text">
+                                        <input type="number" name="price_per_kg" id="price_per_kg"
+                                               class="validate white-text price_per_kg"
+                                               value="{{ vendor_details['price_per_kg'] }}"
+                                               readonly required>
+                                        <label class="white-text" for="price_per_kg">Price per KG</label>
+                                    </div>
+                                    <div class="row">
+                                        <div class="input-field col s12 white-text">
+                                            <input type="number" name="size_of_land" id="size_of_land"
+                                                   class="validate white-text size_of_land" value="0" required>
+                                            <label class="white-text" for="size_of_land">Enter the size of land in
+                                                acres</label>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="input-field col s12 white-text">
+                                            <input type="number" name="payment_required" id="payment_required"
+                                                   class="validate white-text payment_required" value="0" readonly>
+                                            <label class="white-text" for="payment_required">Payment required</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row" style="display: flex;justify-content: center">
+                                    <input type="submit" class="btn waves-effect waves-light">
+                                </div>
+                                {#                                <div class="modal-footer">#}
+                                {#                                    <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>#}
+                                {#                                </div>#}
+                            </div>
+
+[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[SECTION3 UKULIMA TARGETS]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+
+<div class="section3">
+    <div class="row black-text center">
+        <h4>Choose a partner</h4>
+    </div>
+
+    <div class="row" id="table_container">
+        <table class="display black-text" id="myTable">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Vendor Name</th>
+                <th>Vendor Phone No.</th>
+                <th>Vendor Organization</th>
+                <th>Payment Method</th>
+                <th>Account Number</th>
+                <th>Crop</th>
+                <th>Location</th>
+                <th>View more</th>
+                <th></th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {% for vendor_details in all_members %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ vendor_details['vendor_name'] }}</td>
+                    <td>{{ vendor_details['phone_no'] }}</td>
+                    <td>{{ vendor_details['org_name'] }}</td>
+                    <td>{{ vendor_details['payment_method'] }}</td>
+                    <td>{{ vendor_details['acc_number'] }}</td>
+                    <td>{{ vendor_details['crop_name'] }}</td>
+                    <td>{{ vendor_details['location'] }}</td>
+                    <td>
+                        <input type="number" name="num1" id="num1" value="{{ vendor_details['material_id'] }}"
+                               readonly>
+                    </td>
+
+                    <td>
+                        <a onclick="buildmodal(`{{ vendor_details }}`)"
+                           href="#details_modal{{ vendor_details['material_id'] }}"
+                           class="btn waves-light waves-effect modal-trigger modal_btn"
+                           id="/ukulima-targets/{{ vendor_details['material_id'] }}">View More
+                        </a>
+                        <div class="modal" id="details_modal{{ vendor_details['material_id'] }}">
+                            <form action="{{ url_for('targets') }}" method="post">
+                                <div class="modal-content">
+                                    <h5>Select as partner</h5>
+                                    <input type="text" name="vendor_id" id="defaults"
+                                           value="{{ vendor_details['vendor_id'] }}" readonly>
+                                    <input type="text" name="vendor_name" id="defaults"
+                                           value="{{ vendor_details['vendor_name'] }}" readonly>
+                                    <input type="text" name="vendor_email" id="defaults"
+                                           value="{{ vendor_details['vendor_email'] }}" readonly>
+                                    <input type="text" name="vendor_phone" id="defaults"
+                                           value="{{ vendor_details['phone_no'] }}" readonly>
+                                    <input type="text" name="crop_name" id="defaults"
+                                           value="{{ vendor_details['crop_name'] }}" readonly>
+                                    <input type="text" name="location" id="defaults"
+                                           value="{{ vendor_details['location'] }}" readonly>
+                                    <input type="text" name="payment_method" id="defaults"
+                                           value="{{ vendor_details['payment_method'] }}" readonly>
+                                    <input type="text" name="acc_number" id="defaults"
+                                           value="{{ vendor_details['acc_number'] }}" readonly>
+                                    <input type="text" name="vendor_org" id="defaults"
+                                           value="{{ vendor_details['org_name'] }}" readonly>
+
+
+                                    <input type="text" name="client_id" id="defaults"
+                                           value="{{ session['user_id'] }}" readonly>
+                                    <input type="text" name="client_name" id="defaults"
+                                           value="{{ session['f_name'] }} {{ session['l_name'] }}" readonly>
+                                    <input type="text" name="client_phone" id="defaults"
+                                           value="{{ session['phone_no'] }}" readonly>
+                                    <input type="text" name="client_id_no" id="defaults" value="{{ session['id_no'] }}"
+                                           readonly>
+                                    <input type="text" name="client_email" id="defaults"
+                                           value="{{ session['email'] }}" readonly>
+                                    <label for="defaults"></label>
+
+                                    <select name="v_name" id="v_name">
+                                        <option value="{{ vendor_details['vendor_name'] }}"
+                                                selected>{{ vendor_details['vendor_name'] }}</option>
+                                    </select>
+                                    <div class="row">
+                                        <div class="input-field col s12">
+                                            <input type="text" name="quantity_per_acre" id="quantity_per_acre"
+                                                   class="validate" value="{{ vendor_details['quantity_per_acre'] }}"
+                                                   readonly required>
+                                            <label for="quantity_per_acre">Quantity per acre in KGs</label>
+                                        </div>
+                                        <div class="input-field col s12">
+                                            <input type="number" name="price_per_kg" id="price_per_kg" class="validate"
+                                                   value="{{ vendor_details['price_per_kg'] }}"
+                                                   readonly required>
+                                            <label for="price_per_kg">Price per KG</label>
+                                        </div>
+                                        <div class="row">
+                                            <div class="input-field col s12">
+                                                <input type="number" name="size_of_land" id="size_of_land"
+                                                       class="validate" value="0" required>
+                                                <label for="size_of_land">Enter the size of land in acres</label>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="input-field col s12">
+                                                <input type="number" name="payment_required" id="payment_required"
+                                                       class="validate" value="0" readonly>
+                                                <label for="payment_required">Payment required</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row" style="display: flex;justify-content: center">
+                                        <input type="submit" class="btn waves-effect waves-light">
+                                    </div>
+                                    <div class="modal-footer">
+                                        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </td>
+                    <td>
+                        {% if vendor_details['vendor_id'] in vendor_details['client_vendor_crop'] %}
+
+                        {% endif %}
+                        <ion-icon name="checkmark-circle-outline" class="check_icon"></ion-icon>
+                    </td>
+                </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[FROM ADMIN ONBOARD VENDOR]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+{#navbar#}
+{#<nav class="nav-wrapper green lighten-2 {#hide-on-med-and-down#} hide-on-small-and-down">#}
+{#    <a href="#" class="sidenav-trigger" data-target="mobile_links">#}
+{#        <i class="material-icons">menu</i>#}
+{#    </a>#}
+{#    <a href="{{ url_for('admin_homepage') }}" class="brand-logo">Admin</a>#}
+{#    <ul class="right hide-on-med-and-down">#}
+{#        <li><a href="{{ url_for('admin_homepage') }}">Home</a></li>#}
+{#        <li><a href="#">About</a></li>#}
+{#        <li><a href="#">Services</a></li>#}
+{#        <li><a href="{{ url_for('admin_logout') }}">Logout</a></li>#}
+{#    </ul>#}
+{#</nav>#}
+{#<a href="#" class="sidenav-trigger btn transparent hide-on-med-and-up" data-target="mobile_links">#}
+{#    <i class="material-icons">menu</i>#}
+{#</a>#}
+{#<ul class="sidenav" id="mobile_links">#}
+{#    <div class="nav_container"#}
+{#         style="height: 100vw; display: flex; flex-direction: column; justify-content: space-between">#}
+{#        <ul class="top">#}
+{#            <li><a href="{{ url_for('admin_homepage') }}">Home</a></li>#}
+{#            <li><a href="#">Services</a></li>#}
+{#            <li><a href="#">About</a></li>#}
+{#        </ul>#}
+{#        <ul class="logout">#}
+{#            <li><a href="{{ url_for('admin_logout') }}">Logout</a></li>#}
+{#        </ul>#}
+{#    </div>#}
+{#</ul>#}
+{##}
+{#<form action="{{ url_for('vendor_onboarding') }}" method="post">#}
+{#    <div class="row">#}
+{#        {% include 'includes/_flashmsg.html' %}#}
+{#    </div>#}
+{#    <div class="details_container">#}
+{#        <div class="row">#}
+{#            <h3 style="text-align: center;">Vendor Registration</h3>#}
+{#        </div>#}
+{#        <div class="row">#}
+{#        first name#}
+{#            <div class="input-field col s6">#}
+{#                <input type="text" name="f_name" id="f_name" class="validate" required>#}
+{#                <label for="f_name">First Name:</label>#}
+{#            </div>#}
+{##}
+{#        last name#}
+{#            <div class="input-field col s6">#}
+{#                <input type="text" name="l_name" id="l_name" class="validate" required>#}
+{#                <label for="l_name">Last Name:</label>#}
+{#            </div>#}
+{##}
+{##}
+{#        </div>#}
+{#        <div class="row">#}
+{#            gender#}
+{#            <div class="input-field col s12">#}
+{#                <select name="gender" id="gender" required>#}
+{#                    <option value="" disabled selected>Choose Gender</option>#}
+{#                    <option value="Male">Male</option>#}
+{#                    <option value="Female">Female</option>#}
+{#                </select>#}
+{#                <label for="gender">Gender:</label>#}
+{#            </div>#}
+{#        </div>#}
+{##}
+{#        date of birth#}
+{#        <div class="row">#}
+{#            <div class="input-field col s4">#}
+{#                <input type="date" name="dob" id="dob" class="validate" required>#}
+{#                <label for="dob">Date of Birth:</label>#}
+{#            </div>#}
+{##}
+{#            ID Number#}
+{#            <div class="input-field col s4">#}
+{#                <input type="number" name="id_no" id="id_no" class="validate" required>#}
+{#                <label for="id_no">ID Number:</label>#}
+{#            </div>#}
+{##}
+{#            Phone number#}
+{#            <div class="input-field col s4">#}
+{#                <input type="number" name="phone_no" id="phone_no" class="validate" data-length="10" required>#}
+{#                <label for="phone_no">Phone Number:</label>#}
+{#            </div>#}
+{#        </div>#}
+{##}
+{#    Phone number#}
+{#        <div class="row">#}
+{#            <div class="input-field col s12">#}
+{#                <input type="number" name="phone_no" id="phone_no" class="validate" data-length="10" required>#}
+{#                <label for="phone_no">Phone Number:</label>#}
+{#            </div>#}
+{#        </div>#}
+{##}
+{#    Organization name#}
+{#        <div class="row">#}
+{#            <div class="input-field col s12">#}
+{#                <input type="text" name="org_name" id="org_name" class="validate" required>#}
+{#                <label for="org_name">Organization Name:</label>#}
+{#            </div>#}
+{#        </div>#}
+{##}
+{#        location#}
+{#        <div class="row">#}
+{#            <div class="input-field col s12">#}
+{#                <input type="text" name="location" id="location" class="validate">#}
+{#                <label for="location">Location</label>#}
+{#            </div>#}
+{#        </div>#}
+{#        payment method#}
+{#        <div class="row">#}
+{#            <div class="input-field col s6">#}
+{#                <select name="payment_method" id="payment_method" required>#}
+{#                    <option value="">Choose Payment Method</option>#}
+{#                    <option value="Paybill">Paybill</option>#}
+{#                    <option value="Till Number">Till Number</option>#}
+{#                </select>#}
+{#                <label for="payment_method">Payment method</label>#}
+{#            </div>#}
+{#            <div class="input-field col s6">#}
+{#                <input type="number" name="acc_number" id="acc_number" class="validate" required>#}
+{#                <label for="acc_number">Payment Number</label>#}
+{#            </div>#}
+{#        </div>#}
+{#    Email address#}
+{#        <div class="row">#}
+{#            <div class="input-field col s12">#}
+{#                <input type="text" name="email" id="email" class="validate" required>#}
+{#                <label for="email">Email:</label>#}
+{#            </div>#}
+{#        </div>#}
+{##}
+{#    Password#}
+{#        <div class="row">#}
+{#            <div class="input-field col s12">#}
+{#                <input type="password" name="password" id="password" class="validate" required>#}
+{#                <label for="password">Password:</label>#}
+{#            </div>#}
+{#        </div>#}
+{#        <div class="row" style="display: flex; justify-content: center">#}
+{#            <button class="btn waves-effect waves-light" type="submit" id="submit_button">Submit#}
+{#                <i class="material-icons right">send</i>#}
+{#            </button>#}
+{#        </div>#}
+{#    </div>#}
+{##}
+{#</form>#}
+{##}
+{##}
+{#<script type="text/javascript" src="{{ url_for('static', filename='/js/materialize.min.js') }}"></script>#}
+{#<script>#}
+{#    //regular inputs#}
+{#    $(document).ready(function () {#}
+{#        M.updateTextFields();#}
+{#    });#}
+{##}
+{#    //sidenav#}
+{#    $(document).ready(function () {#}
+{#        $('.sidenav').sidenav();#}
+{#    });#}
+{##}
+{#    //date input#}
+{#    document.addEventListener('DOMContentLoaded', function () {#}
+{#        let elems = document.querySelectorAll('.datepicker')#}
+{#        let instances = M.Datepicker.init(elems, {#}
+{#            autoClose: true,#}
+{#            format: 'mm-dd-yyyy'#}
+{#        });#}
+{#    });#}
+{##}
+{#    //data length#}
+{#    $(document).ready(function () {#}
+{#        $('input#phone_no').characterCounter();#}
+{#    });#}
+{##}
+{#    //select options#}
+{#    document.addEventListener('DOMContentLoaded', function () {#}
+{#        let elems = document.querySelectorAll('select');#}
+{#        let instances = M.FormSelect.init(elems, {#}
+{#            classes: ''#}
+{#        })#}
+{#    })#}
+{##}
+{#    //sop auto submit on reload#}
+{#    if (window.history.replaceState) {#}
+{#        window.history.replaceState(null, null, window.location.href);#}
+{#    }#}
+{#</script>#}
+{#</body>#}
+{#</html>#}

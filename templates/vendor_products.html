@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Products</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/materialize.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/vendor_homepage.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/m_icons.css') }}">
+    <link rel="stylesheet" href="../static/js/manifest.json">
+
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/jquery-3.6.1.min.js') }}"></script>
+    <link rel="manifest" href="../static/js/manifest.json">
+    {#    datatables#}
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/jquery.dataTables.min.css') }}">
+
+    <!--IOS support-->
+    <link rel="apple-touch-icon" href="../static/images/pngwing.com.png">
+    <meta name="apple-web-app-status-bar" content="#00b0ff">
+</head>
+<body>
+{% extends 'vendor_home.html' %}
+{% block content %}
+    <div class="section1">
+        <div class="part1" style="margin-left: 15vw; margin-top: 7vh;">
+            <h2 style="text-align: center;"><u>Add Product</u></h2>
+            <form action="{{ url_for('vendor_homepage') }}" method="post">
+                <input type="text" name="vendor_id" id="defaults" value="{{ session['vendor_id'] }}" readonly hidden>
+                <input type="text" name="payment_method" id="defaults" value="{{ session['payment_method'] }}" readonly
+                       hidden>
+                <input type="text" name="acc_number" id="defaults" value="{{ session['acc_number'] }}" readonly hidden>
+                <input type="text" name="location" id="defaults" value="{{ session['location'] }}" readonly hidden>
+                <input type="text" name="org_name" id="defaults" value="{{ session['org_name'] }}" readonly hidden>
+                <input type="text" name="phone_no" id="defaults" value="{{ session['phone_no'] }}" readonly hidden>
+                <label for="defaults"></label>
+                <input type="text" name="vendor_name" id="defaults"
+                       value="{{ session['f_name'] }} {{ session['l_name'] }}" readonly hidden>
+                <input type="text" name="vendor_email" id="defaults" value="{{ session['email'] }}" readonly hidden>
+                <div class="row" style="padding-right: 3.5em; padding-left: 3.5em">
+                    <div class="input-field col s12">
+                        <input type="text" name="crop_type" id="goods_type" class="validate">
+                        <label for="goods_type">Name of crop</label>
+                    </div>
+                </div>
+                <div class="row" id="acres_row" style="padding-right: 3.5em; padding-left: 3.5em">
+                    <div class="input-field col s12">
+                        <input type="number" name="land_size" id="land" class="validate" required>
+                        <label for="land">Quantity needed per 1 acre (in KGs)</label>
+                    </div>
+                </div>
+                <div class="row" style="padding-right: 3.5em; padding-left: 3.5em">
+                    <div class="input-field col s12">
+                        <input type="number" name="price" id="price" class="validate" required>
+                        <label for="price">Price per KG</label>
+                    </div>
+                </div>
+
+
+                <div class="row" style="display: flex; justify-content: center">
+                    <button class="btn waves-light" type="submit" id="submit_button"
+                            style="height: fit-content; box-shadow: 0 0 5px -1px black; display: flex; align-items: center">
+                        Submit
+                        <i class="material-icons right">send</i>
+                    </button>
+                    {#                    <input type="submit" class="btn waves-light waves-effect">#}
+                </div>
+
+            </form>
+        </div>
+        <hr>
+        <div class="part2" style="padding: 5em">
+            <h4>Products</h4>
+            <table class="display black-text" id="example" style="width: 70vw; margin-left: 16vw;">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Organization Name</th>
+                    <th>Vendor Name</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                {% for product in products %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ product['org_name'] }}</td>
+                        <td>{{ product['crop_name'] }}</td>
+                        <td>
+                            <a href="/delete-product/{{ product['material_id'] }}" class="btn btn-danger"
+                               onclick="return confirm('Are you sure you want to delete this crop?')"
+                               style="height: fit-content; display: flex; align-items: center; justify-content: center;">Delete</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+
+    {#    [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[JAVASCRIPT]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]#}
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/materialize.min.js') }}"></script>
+
+    {#    datatables#}
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/jquery.dataTables.min.js') }}"></script>
+    {#link to app.js for service worker#}
+    <script src="../static/js/app.js"></script>
+    <script>
+        //stop auto reload on submit
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+        }
+        //datatables
+        $(document).ready(function () {
+            $('#example').dataTable();
+        });
+        //sidenav
+        $(document).ready(function () {
+            $('.sidenav').sidenav();
+        });
+        //tabs
+        $(document).ready(function () {
+            $('.tabs').tabs();
+        })
+        //select
+        document.addEventListener('DOMContentLoaded', function () {
+            let elems = document.querySelectorAll('select');
+            let instances = M.FormSelect.init(elems, {
+                classes: ''
+            })
+        })
+
+        //modal
+        document.addEventListener('DOMContentLoaded', function () {
+            let elems = document.querySelectorAll('.modal')
+            let instances = M.Modal.init(elems, {
+                opacity: 0.6
+            })
+        })
+
+        {#function downloadPDFWithBrowserPrint() {#}
+        {#    window.print()#}
+        //}
+
+        document.querySelector('#example').addEventListener('click', downloadPDFWithBrowserPrint)
+    </script>
+
+{% endblock %}
+</body>
+</html>

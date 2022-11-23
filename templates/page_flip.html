@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Page flip</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <!--Jquery CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
+    <!--Jquery Easing CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.js"
+            integrity="sha512-xq+0+dRhI6SZOh+lDnMJEju2p2YPINflJLcYrRAsIMaXnJi6/V3lppCMCYsB2MLeF2E93r+fVo0MioY90pNzpw=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!--Jquery CDN -->
+    <script src="../static/js/jquery.booklet.1.1.0.js"></script>
+    <link rel="manifest" href="../static/js/manifest.json">
+    <link rel="manifest" href="../manifest.json">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #0f9d58;
+        }
+
+        .booklet {
+            width: 900px;
+            height: 507px;
+            margin: 0 auto;
+            position: relative;
+            box-shadow: 0 0 10px -5px white;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="book_wrapper">
+    <a href="" id="next_page_button"></a>
+    <a href="" id="previous_page_button"></a>
+    <div>
+        <div id="my_book" style="display: none;">
+            <div>
+                <img src="../static/images/pexels-mnm-zameer-3308588.jpg" alt="">
+                <h1>SLIDER GALLERY</h1>
+                <p>Slide 1Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab fuga, iste molestiae numquam
+                    perspiciatis
+                    quod
+                    repellat temporibus! A, eum, labore.</p>
+                <a href="" class="article">Article</a>
+                <a href="" class="demo">Demo</a>
+            </div>
+
+
+            <div>
+                <img src="../static/images/pexels-mo-eid-9454915.jpg" alt="">
+                <h1>Animated gallery</h1>
+                <p>Slide 2 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid consequuntur cumque esse
+                    explicabo
+                    incidunt
+                    ipsam iste laborum magni, molestiae nulla optio quae reiciendis voluptatem. Aliquam assumenda
+                    dolorem
+                    illum
+                    ipsa quaerat quia rem soluta tempora vero!</p>
+            </div>
+
+            <div>
+                <img src="../static/images/pexels-adrien-olichon-3137064.jpg" alt="">
+                <h1>Animated gallery</h1>
+                <p>Slide 3 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid consequuntur cumque esse
+                    explicabo
+                    incidunt
+                    ipsam iste laborum magni, molestiae nulla optio quae reiciendis voluptatem. Aliquam assumenda
+                    dolorem
+                    illum
+                    ipsa quaerat quia rem soluta tempora vero!</p>
+            </div>
+
+            <div>
+                <img src="../static/images/pexels-sohail-nachiti-807598.jpg" alt="">
+                <h1>Animated gallery</h1>
+                <p>Slide 4 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid consequuntur cumque esse
+                    explicabo
+                    incidunt
+                    ipsam iste laborum magni, molestiae nulla optio quae reiciendis voluptatem. Aliquam assumenda
+                    dolorem
+                    illum
+                    ipsa quaerat quia rem soluta tempora vero!</p>
+            </div>
+
+            <div>
+                <img src="../static/images/pexels-mnm-zameer-3308588.jpg" alt="">
+                <h1>SLIDER GALLERY</h1>
+                <p>Slide 5 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab fuga, iste molestiae numquam
+                    perspiciatis
+                    quod
+                    repellat temporibus! A, eum, labore.</p>
+            </div>
+
+
+            <div>
+                <img src="../static/images/pexels-mo-eid-9454915.jpg" alt="">
+                <h1>Animated gallery</h1>
+                <p>Slide 6 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid consequuntur cumque esse
+                    explicabo
+                    incidunt
+                    ipsam iste laborum magni, molestiae nulla optio quae reiciendis voluptatem. Aliquam assumenda
+                    dolorem
+                    illum
+                    ipsa quaerat quia rem soluta tempora vero!</p>
+            </div>
+
+            <div>
+                <img src="../static/images/pexels-adrien-olichon-3137064.jpg" alt="">
+                <h1>Animated gallery</h1>
+                <p>Slide 7 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid consequuntur cumque esse
+                    explicabo
+                    incidunt
+                    ipsam iste laborum magni, molestiae nulla optio quae reiciendis voluptatem. Aliquam assumenda
+                    dolorem
+                    illum
+                    ipsa quaerat quia rem soluta tempora vero!</p>
+            </div>
+
+            <div>
+                <img src="../static/images/pexels-sohail-nachiti-807598.jpg" alt="">
+                <h1>Animated gallery</h1>
+                <p>Slide 8 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid consequuntur cumque esse
+                    explicabo
+                    incidunt
+                    ipsam iste laborum magni, molestiae nulla optio quae reiciendis voluptatem. Aliquam assumenda
+                    dolorem
+                    illum
+                    ipsa quaerat quia rem soluta tempora vero!</p>
+            </div>
+
+            <div>
+                <img src="../static/images/pexels-mnm-zameer-3308588.jpg" alt="">
+                <h1>SLIDER GALLERY</h1>
+                <p>Slide 9 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab fuga, iste molestiae numquam
+                    perspiciatis
+                    quod
+                    repellat temporibus! A, eum, labore.</p>
+            </div>
+
+
+            <div>
+                <img src="../static/images/pexels-mo-eid-9454915.jpg" alt="">
+                <h1>Animated gallery</h1>
+                <p>Slide 10 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid consequuntur cumque esse
+                    explicabo
+                    incidunt
+                    ipsam iste laborum magni, molestiae nulla optio quae reiciendis voluptatem. Aliquam assumenda
+                    dolorem
+                    illum
+                    ipsa quaerat quia rem soluta tempora vero!</p>
+            </div>
+
+            <div>
+                <img src="../static/images/pexels-adrien-olichon-3137064.jpg" alt="">
+                <h1>Animated gallery</h1>
+                <p>Slide 11 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid consequuntur cumque esse
+                    explicabo
+                    incidunt
+                    ipsam iste laborum magni, molestiae nulla optio quae reiciendis voluptatem. Aliquam assumenda
+                    dolorem
+                    illum
+                    ipsa quaerat quia rem soluta tempora vero!</p>
+            </div>
+
+            <div>
+                <img src="../static/images/pexels-sohail-nachiti-807598.jpg" alt="">
+                <h1>Animated gallery</h1>
+                <p>Slide 12 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid consequuntur cumque esse
+                    explicabo
+                    incidunt
+                    ipsam iste laborum magni, molestiae nulla optio quae reiciendis voluptatem. Aliquam assumenda
+                    dolorem
+                    illum
+                    ipsa quaerat quia rem soluta tempora vero!</p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

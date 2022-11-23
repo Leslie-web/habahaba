@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/materialize.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/ukulima_targets.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/m_icons.css') }}">
+    <link rel="manifest" href="../static/js/manifest.json">
+
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/jquery-3.6.1.min.js') }}"></script>
+
+    <!--IOS support-->
+    <link rel="apple-touch-icon" href="../static/images/pngwing.com.png">
+    <meta name="apple-web-app-status-bar" content="#00b0ff">
+
+    {#    datatables#}
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/jquery.dataTables.min.css') }}">
+</head>
+<body>
+{#navbar#}
+<nav class="nav-wrapper green lighten-2 hide-on-med-and-down hide-on-small-and-down">
+    <a href="#" class="sidenav-trigger" data-target="mobile_links">
+        <i class="material-icons">menu</i>
+    </a>
+    <a href="{{ url_for('user_homepage') }}" class="brand-logo">Habahaba Ukulima</a>
+    <ul class="right hide-on-med-and-down">
+        <li><a href="{{ url_for('ukulima') }}">Ukulima Wallet</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Services</a></li>
+        <li><a href="{{ url_for('user_logout') }}">Logout</a></li>
+    </ul>
+</nav>
+{#<a href="#" class="sidenav-trigger btn transparent hide-on-med-and-up hide" data-target="mobile_links">#}
+{#    <i class="material-icons">menu</i>#}
+{#</a>#}
+<ul class="sidenav" id="mobile_links">
+    <div class="nav_container"
+         style="height: 100vw; display: flex; flex-direction: column; justify-content: space-between">
+        <ul class="top">
+            <li><a href="{{ url_for('ukulima') }}">Ukulima wallet</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="#">About</a></li>
+        </ul>
+        <ul class="logout">
+            <li><a href="{{ url_for('user_logout') }}">Logout</a></li>
+        </ul>
+    </div>
+</ul>
+<a href="{{ url_for('ukulima') }}" class="btn-floating waves-effect waves-light {#blue lighten-3#} hide-on-large-only"
+   id="back_button" style="background-color: transparent">
+    <ion-icon name="arrow-back-outline" class="back_icon"></ion-icon>
+</a>
+
+{#[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[FLOATING BUTTON]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]#}
+<div class="fixed-action-btn">
+    <a class="btn-floating btn-large red">
+        <i class="large material-icons">mode_edit</i>
+    </a>
+    <ul>
+        <li><a class="btn-floating red"><i class="material-icons">insert_chart</i></a></li>
+        <li><a class="btn-floating yellow darken-1"><i class="material-icons">format_quote</i></a></li>
+        <li><a class="btn-floating green"><i class="material-icons">publish</i></a></li>
+        <li><a class="btn-floating blue"><i class="material-icons">attach_file</i></a></li>
+    </ul>
+</div>
+{#[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[FLOATING BUTTON]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]#}
+
+
+<div class="section1">
+    {% include 'includes/_flashmsg.html' %}
+</div>
+<div class="section2">
+    <div class="row black-text">
+        <h4>Current Status</h4>
+    </div>
+    {#    collection#}
+    <ul class="collection collapsible black-text white big_container">
+
+        {% for partner in partners %}
+            {% if partner['amount_sent'] == partner['saving_target'] %}
+                <li class="collection-item avatar black-text white">
+                    <ion-icon name="people-outline" class="circle" style="color: green"></ion-icon>
+                    <span class="title"><b>{{ partner['vendor_name'] }}</b></span>
+                    <p>{{ partner['org_name'] }}
+                        <br>
+                        {{ partner['payment_for'] }}
+                        <br>
+                        <b>Tartget: ksh {{ partner['saving_target'] }}</b>
+                        ( {{ partner['saving_target'] / partner['price_per_kg'] }} KGs )
+                        <br>
+                        <b>Progress: Ksh {{ partner['amount_sent'] }}
+                            ({{ "%.2f"|format ( partner['amount_sent'] / partner['price_per_kg'] ) }}
+                            KGs)
+                            of Ksh {{ partner['saving_target'] }}
+                            ({{ partner['saving_target'] / partner['price_per_kg'] }}
+                            KGs) </b>
+
+                    </p>
+                    <div class="collapsible-header">
+                        <a href="#!" class="secondary-content black-text">
+                            {#                            <ion-icon name="checkmark-circle-outline" style="color: greenyellow"></ion-icon>#}
+                            <i class="material-icons" style="color: #80ff00; font-size: 34px;">check</i>
+                        </a>
+                    </div>
+
+                    <div class="collapsible-body black-text ">
+                        <form action="{{ url_for('redemption_orders') }}" method="post">
+                            {#                            client details#}
+                            <label for="defaults"></label>
+                            <input type="number" name="client_id" id="defaults" value="{{ partner['sender_id'] }}"
+                                   readonly hidden>
+                            <input type="text" name="client_name" id="defaults" value="{{ partner['sender_name'] }}"
+                                   readonly hidden>
+                            <input type="text" name="client_email" id="defaults" value="{{ partner['sender_email'] }}"
+                                   readonly hidden>
+                            <input type="number" name="client_phone" id="defaults" value="{{ partner['sender_phone'] }}"
+                                   readonly hidden>
+                            {#                            vendor details#}
+                            <input type="number" name="vendor_id" id="defaults" value="{{ partner['vendor_id'] }}"
+                                   readonly hidden>
+                            <input type="text" name="vendor_name" id="defaults" value="{{ partner['vendor_name'] }}"
+                                   readonly hidden>
+                            <input type="text" name="vendor_org" id="defaults" value="{{ partner['org_name'] }}"
+                                   readonly hidden>
+                            {#                            payment details#}
+                            <input type="text" name="payment_for" id="defaults" value="{{ partner['payment_for'] }}"
+                                   readonly hidden>
+                            <input type="number" name="amount_paid" id="defaults" value="{{ partner['amount_sent'] }}"
+                                   readonly hidden>
+                            <input type="number" name="payment_id" id="defaults" value="{{ partner['payment_id'] }}"
+                                   readonly hidden>
+
+                            <div class="redeem_btn" style="display: flex; justify-content: center;">
+                                <div class="black-text">
+                                    {% for value in joint_values %}
+                                        {% if partner['payment_for'] == value['vendor_crop'] %}
+                                            {#                                            Green#}
+                                            <input type="number" name="partnership_id" id="defaults"
+                                                   value="{{ value['partnership_id'] }}" readonly hidden>
+                                        {% endif %}
+
+                                    {% endfor %}
+                                    {#        {{ joint_values }}#}
+                                </div>
+                                <button type="submit" class="btn green waves-effect"
+                                        style="border-radius: 30px; width: 8em;">
+                                    Redeem
+                                </button>
+                            </div>
+
+                        </form>
+                    </div>
+                </li>
+            {% elif partner['amount_sent'] < partner['saving_target'] %}
+                <li class="collection-item avatar black-text white">
+                    <ion-icon name="people-outline" class="circle" style="color: green"></ion-icon>
+                    <span class="title"><b>{{ partner['vendor_name'] }}</b></span>
+                    <p>{{ partner['org_name'] }}
+                        <br>
+                        {{ partner['payment_for'] }}
+                        <br>
+                        <b>Target: ksh {{ partner['saving_target'] }}</b>
+                        ( {{ partner['saving_target'] / partner['price_per_kg'] }} KGs )
+                        <br>
+                        <b>Progress: Ksh {{ partner['amount_sent'] }}
+                            ({{ "%.2f"|format ( partner['amount_sent'] / partner['price_per_kg'] ) }}
+                            KGs)
+                            of Ksh {{ partner['saving_target'] }}
+                            ({{ partner['saving_target'] / partner['price_per_kg'] }}
+                            KGs) </b>
+                    </p>
+                    <div class="collapsible-header">
+                        <a href="#!" class="secondary-content black-text"><i class="material-icons">more_horiz</i></a>
+                    </div>
+
+                    <div class="collapsible-body black-text ">
+                        <div class="progress">
+                            <div class="determinate black"
+                                 style="width: {{ ((partner['amount_sent'] / partner['saving_target']) * 100)|int }}%;"></div>
+                        </div>
+                        <div class="row" style="display: flex; justify-content: space-between;">
+                            <div class="start" style="width: 100%;">ksh 0.00</div>
+                            <div class="finish right-align" style="width: 100%;">
+                                ksh {{ partner['saving_target'] }}</div>
+                        </div>
+                        <div class="row">
+                            You have saved ksh <b>{{ partner['amount_sent'] }}</b> out of
+                            ksh<b>{{ partner['saving_target'] }}</b>
+                        </div>
+                    </div>
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+</div>
+
+{#[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[JAVASCRIPT]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]#}
+{#ionicons#}
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='/js/materialize.min.js') }}"></script>
+{#datatables#}
+<script type="text/javascript" src="{{ url_for('static', filename='/js/datatables.min.js') }}"></script>
+{#<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.12.1/datatables.min.js"></script>#}
+
+{#link to app.js for service worker#}
+<script src="../static/js/app.js"></script>
+<script>
+    //stop auto submit on reload
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+    }
+
+    function update_price(price) {
+        $('#price').val(price);
+    }
+
+    //floating action button
+    document.addEventListener('DOMContentLoaded', function () {
+        let elems = document.querySelectorAll('.fixed-action-btn');
+        let instances = M.FloatingActionButton.init(elems, {
+            direction: 'left'
+        });
+    });
+
+    function buildmodal(obj) {
+        console.log(obj);
+        console.log(JSON.parse(obj))
+
+        $('#vendor_name').val(obj.vendor_name);
+        $('.modal').modal();
+    }
+
+    //=============================================================
+
+    $(document).ready(function () {
+        {#MATERIAL CALCULATOR#}
+        {#        {% for vendor_details in all_members %}#}
+        {#            $('#/ukulima-targets/{{ vendor_details['material_id'] }}').click(function () {#}
+        {#                console.log('Leslie')#}
+        {#                $('#size_of_land').on('input ', function () {#}
+        {#                    let this_var = document.getElementById('payment_required').value#}
+        {#                    console.log(this_var)#}
+        {#                    $('#payment_required').val(#}
+        {#                        ($('#quantity_per_acre').val() * $('#size_of_land').val()) * $('#price_per_kg').val()#}
+        {#                    )#}
+        {#                });#}
+        {#            })#}
+        {#        {% endfor %}#}
+
+
+        $('.modal_btn').click(function () {
+            $('#size_of_land').on('input ', function () {
+                let this_var = document.getElementById('payment_required').value
+                console.log(this_var)
+                $('#payment_required').val(
+                    ($('#quantity_per_acre').val() * $('#size_of_land').val()) * $('#price_per_kg').val()
+                )
+            });
+        })
+
+
+        //____________________________________________________________________
+
+
+    });
+    //Collapsible
+    $(document).ready(function () {
+        $('.collapsible').collapsible();
+
+    });
+
+    //Dropdown
+    $(document).ready(function () {
+        $('select').formSelect()
+
+        //data tables
+        $('#myTable').dataTable({
+            searchable: true,
+        })
+
+        //dataTables
+        $('#partner_list').dataTable({
+            searchable: true
+        })
+
+        //partnership_id
+        {#$('#partnership_id').hide()#}
+
+    });
+
+    //regular inputs
+    $(document).ready(function () {
+        M.updateTextFields();
+    });
+
+    //modal
+    //    $(document).ready(function () {
+    //        $('.modal').modal();
+    //    });
+
+    //sidenav
+    $(document).ready(function () {
+        $('.sidenav').sidenav();
+
+        //dropdown
+        $('#crop_type').change(function () {
+            let my_data = this.value;
+            {#alert(my_data)#}
+            let price = 0;
+
+            {#$.ajax({#}
+            {#    'url': '/partner-options/',#}
+            {#    'method': 'post',#}
+            {#    'data': {my_data: my_data},#}
+            {#    'success': function (data) {#}
+            {#        data = JSON.parse(data);#}
+            {#        console.log(data);#}
+            {##}
+            {#        $('#viable_partners').removeAttr('style');#}
+            {##}
+            {#        let partners = `<h5>${my_data} Vendors</h5>`#}
+            {##}
+            {#        data.map(#}
+            {#            item => {#}
+            {#                if (my_data === item.crop_name && item.material_status === 'accepted') {#}
+            {#                    partners += `#}
+            {#                        <ul style="display: flex; justify-content: space-between">#}
+            {#                        <li>#}
+            {##}
+            {#                             ${item.vendor_name} ${item.vendor_email} ${item.phone_no}#}
+            {#                              <a href="#modal1" class="btn waves-effect waves-light modal-trigger"#}
+            {#                                style="border-radius: 60px; width: 2em; height: 2em;#}
+            {#                                display: inline-flex; justify-content: center; align-items: center;#}
+            {#                                font-weight: bold">+</a>#}
+            {#                        </li>#}
+            {#                        </ul>#}
+            {##}
+            {#                            <div class="modal black-text" id="modal1">#}
+            {#                                    <div class="modal-content">#}
+            {#                                        <h4>Partners</h4>#}
+            {#                                        <div class="mydata">#}
+            {##}
+            {#                                        </div>#}
+            {#                                    </div>#}
+            {#                                    <div class="modal-footer">#}
+            {#                                        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>#}
+            {#                                    </div>#}
+            {#                                </div>#}
+            {#                    `;#}
+            {#                }#}
+            {#            })#}
+            {#        $('#viable_partners').html(partners)#}
+            {#    }#}
+            // })
+
+        });
+    });
+
+
+</script>
+
+</body>
+</html>

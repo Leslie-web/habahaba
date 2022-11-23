@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Admin Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/materialize.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/admin_registration.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/m_icons.css') }}">
+
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/jquery-3.6.1.min.js') }}"></script>
+
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/materialize.min.js') }}"></script>
+    <link rel="manifest" href="../static/js/manifest.json">
+
+    <!--IOS support-->
+    <link rel="apple-touch-icon" href="../static/images/pngwing.com.png">
+    <meta name="apple-web-app-status-bar" content="#00b0ff">
+</head>
+<body>
+<div class="form_container">
+    <form action="{{ url_for('admin_registration') }}" method="post">
+        <div class="row">
+            {% include 'includes/_flashmsg.html' %}
+        </div>
+        <div class="row">
+            <h3>Registration Form</h3>
+        </div>
+        <div class="row">
+            <div class="input-field col s6">
+                <input type="text" name="f_name" id="f_name" class="validate" required>
+                <label for="f_name">First Name:</label>
+            </div>
+
+            <div class="input-field col s6">
+                <input type="text" name="l_name" id="l_name" class="validate" required>
+                <label for="l_name">Last Name:</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s12">
+                <input type="text" name="email" id="email" class="validate" required>
+                <label for="email">Email:</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s6">
+                <input type="date" name="dob" id="dob" class="validate" required>
+                <label for="dob">Date of Birth:</label>
+            </div>
+
+            <div class="input-field col s6">
+                <input type="number" name="phone_no" id="phone_no" class="validate" required>
+                <label for="phone_no">Phone Number:</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s12">
+                <input type="text" name="residence" id="residence" class="validate" required>
+                <label for="residence">Residence:</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s12">
+                <input type="password" name="password" id="password" class="validate" required>
+                <label for="password">Password:</label>
+            </div>
+        </div>
+        <div class="row">
+            <div id="submit_btn">
+                {#                <input type="submit" class="btn waves-light waves-effect green lighten-2">#}
+                <button type="submit" class="btn waves-light waves-effect green lighten-2 black-text">Submit</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+{#[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[JAVASCRIPT]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]#}
+{#link to app.js for service worker#}
+<script src="../static/js/app.js"></script>
+<script>
+    //stop auto reload on submit
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+    }
+    //regular inputs
+    $(document).ready(function () {
+        M.updateTextFields();
+    });
+</script>
+
+</body>
+</html>

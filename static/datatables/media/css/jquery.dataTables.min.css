@@ -1,0 +1,15 @@
+table.dataTable.table thead th.sorting:after, table.dataTable.table thead th.sorting_asc:after, table.dataTable.table thead th.sorting_desc:after,
+table.dataTable.table thead td.sorting:after,
+table.dataTable.table thead td.sorting_asc:after,
+table.dataTable.table thead td.sorting_desc:after {
+  position: absolute;
+  top: 12px;
+  right: 8px;
+  display: block;
+  color: #f59000 !important;
+  font-family: FontAwesome !important;
+}
+
+.selected{
+  background: #A6CBDC !important;
+}

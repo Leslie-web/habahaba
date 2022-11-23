@@ -1,0 +1,22 @@
+body {
+  display: grid;
+  place-items: center;
+  height: 100vh;
+}
+
+.details_container {
+  display: block;
+  //width: 70vw;
+  margin: auto;
+  padding: 1em;
+  //border-right: 1px solid black;
+  //border-left: 1px solid black;
+  border-radius: 50px;
+  background: #ffffff;
+  //border: 1px solid black;
+}
+
+#submit_button {
+  padding-left: 10em;
+  padding-right: 10em;
+}

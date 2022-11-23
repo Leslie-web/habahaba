@@ -1,0 +1,114 @@
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-image: url("../images/plant.jpg");
+  background-position: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  background-blend-mode: multiply;
+  background-attachment: fixed;
+  color: white;
+}
+
+.section1 {
+  margin-top: 2em;
+}
+
+#back_button {
+  display: grid;
+  place-items: center;
+  background: transparent;
+}
+#back_button .back_icon {
+  font-size: 2em;
+}
+
+.main_icon {
+  display: flex;
+  justify-content: center;
+  font-size: 100px;
+}
+
+.detail_buttons {
+  display: flex;
+  width: 70%;
+  margin: auto;
+  justify-content: space-between;
+  column-gap: 1em;
+}
+.detail_buttons .spent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 15em;
+  border: 1px solid white;
+  border-radius: 25px;
+  transition: 300ms ease-out;
+}
+.detail_buttons .spent h5 {
+  font-weight: 700;
+}
+.detail_buttons .spent:hover {
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0.5);
+  border: none;
+  box-shadow: 0 0 15px -1px white;
+}
+.detail_buttons .deposited {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 15em;
+  border: 1px solid white;
+  border-radius: 25px;
+  transition: 300ms ease-out;
+}
+.detail_buttons .deposited h5 {
+  font-weight: 700;
+}
+.detail_buttons .deposited:hover {
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0.5);
+  border: none;
+  box-shadow: 0 0 15px -1px white;
+}
+.detail_buttons .balance {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 15em;
+  border: 1px solid white;
+  border-radius: 25px;
+  transition: 300ms ease-out;
+}
+.detail_buttons .balance h5 {
+  font-weight: 700;
+}
+.detail_buttons .balance:hover {
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0.5);
+  border: none;
+  box-shadow: 0 0 15px -1px white;
+}
+
+.section2 {
+  display: block;
+  width: 95vw;
+  padding: 1em;
+  margin: 1em auto auto;
+  background-color: rgb(255, 255, 255);
+}
+
+.section3 {
+  display: block;
+  width: 95vw;
+  padding: 1em;
+  margin: 2em auto auto;
+  background-color: rgb(255, 255, 255);
+}
+
+/*# sourceMappingURL=ukulima_transactions.css.map */

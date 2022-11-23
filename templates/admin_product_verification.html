@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Product Validation</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/materialize.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/admin_product_validation.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/m_icons.css') }}">
+    {#    datatables#}
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/jquery.dataTables.min.css') }}">
+    <link rel="manifest" href="../static/js/manifest.json">
+
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/jquery-3.6.1.min.js') }}"></script>
+
+    <!--IOS support-->
+    <link rel="apple-touch-icon" href="../static/images/pngwing.com.png">
+    <meta name="apple-web-app-status-bar" content="#00b0ff">
+</head>
+<body>
+{#navbar#}
+<nav class="nav-wrapper green lighten-2 {#hide-on-med-and-down#} hide-on-small-and-down">
+    <a href="#" class="sidenav-trigger" data-target="mobile_links">
+        <i class="material-icons">menu</i>
+    </a>
+    <a href="{{ url_for('admin_homepage') }}" class="brand-logo">Admin</a>
+    <ul class="right hide-on-med-and-down">
+        <li><a href="{{ url_for('admin_homepage') }}">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Services</a></li>
+        <li><a href="{{ url_for('admin_logout') }}">Logout</a></li>
+    </ul>
+</nav>
+<a href="#" class="sidenav-trigger btn transparent hide-on-med-and-up" data-target="mobile_links">
+    <i class="material-icons">menu</i>
+</a>
+<ul class="sidenav" id="mobile_links">
+    <div class="nav_container"
+         style="height: 100vw; display: flex; flex-direction: column; justify-content: space-between">
+        <ul class="top">
+            <li><a href="{{ url_for('admin_homepage') }}">Home</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="#">About</a></li>
+        </ul>
+        <ul class="logout">
+            <li><a href="{{ url_for('admin_logout') }}">Logout</a></li>
+        </ul>
+    </div>
+</ul>
+
+<div class="section1 white-text">
+    {% include 'includes/_flashmsg.html' %}
+</div>
+<div class="section2" id="table_container">
+    <table class="display black-text" id="myTable">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Vendor Name</th>
+            <th>Vendor Email</th>
+            <th>Organization</th>
+            <th>Location</th>
+            <th>Phone Number</th>
+            <th>Quantity per Acre</th>
+            <th>Price per KG</th>
+            <th>Actions</th>
+            <th>Status</th>
+        </tr>
+        </thead>
+
+        {% for products in vendor_products %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ products['vendor_name'] }}</td>
+                <td>{{ products['vendor_email'] }}</td>
+                <td>{{ products['org_name'] }}</td>
+                <td>{{ products['location'] }}</td>
+                <td>{{ products['phone_no'] }}</td>
+                <td>{{ products['quantity_per_acre'] }}</td>
+                <td>{{ products['price_per_kg'] }}</td>
+                <td>
+                    <a href="#status_modal{{ products['material_id'] }}"
+                       class="btn waves-light waves-effect modal-trigger"
+                       id="/validate-products/{{ products['material_id'] }}">Actions
+                        offer</a>
+                    <div class="modal" id="status_modal{{ products['material_id'] }}">
+                        <div class="modal-content">
+                            <h5>Actions</h5>
+                            <form action="{{ url_for('admin_product_verification') }}" method="post">
+                                <input type="number" name="ids" id="action_selected"
+                                       value="{{ products['material_id'] }}"
+                                       readonly hidden>
+                                <div class="input-field col s12">
+                                    <select name="action_selected" id="action_selected">
+                                        <option value="" disabled selected>Please pick a course of action</option>
+                                        <option value="accepted">Accept offer</option>
+                                        <option value="declined">Reject offer</option>
+                                    </select>
+                                    <label for="action_selected"></label>
+                                </div>
+                                <div class="row" style="display: flex;justify-content: center">
+                                    <input type="submit" class="btn waves-effect waves-light">
+                                </div>
+                            </form>
+                            <div class="modal-footer">
+                                <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    {% if products['material_status'] == 'accepted' %}
+                        Accepted
+                    {% elif products['material_status'] == 'declined' %}
+                        Rejected
+                    {% else %}
+                        Pending...
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+
+        <tbody>
+        </tbody>
+    </table>
+</div>
+
+
+{#[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[JAVASCRIPT]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]#}
+{#ionicons#}
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='/js/materialize.min.js') }}"></script>
+{#link to app.js for service worker#}
+<script src="../static/js/app.js"></script>
+{#datatables#}
+<script type="text/javascript" src="{{ url_for('static', filename='/js/jquery.dataTables.min.js') }}"></script>
+<script>
+    //stop auto submit on reload
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+    }
+    //sidenav
+    $(document).ready(function () {
+        $('.sidenav').sidenav();
+    });
+
+    //Dropdown
+    $(document).ready(function () {
+        $('select').formSelect()
+    });
+
+    //collapsible
+    document.addEventListener('DOMContentLoaded', function () {
+        let elems = document.querySelectorAll('.collapsible');
+        let instances = M.Collapsible.init(elems, {
+            inDuration: 300
+        });
+    });
+
+    //datatables
+    $(document).ready(function () {
+        $('#myTable').DataTable({
+            orderable: true
+        });
+    });
+
+    //modal
+    $(document).ready(function () {
+        $('.modal').modal();
+    });
+</script>
+
+</body>
+</html>

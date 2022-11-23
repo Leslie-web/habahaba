@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Transactions</title>
+    {#    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css' ) }}">#}
+    <link href="/static/_public/css/bootstrap.min.css" rel='stylesheet' type='text/css'/>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/m_icons.css') }}">
+    {#    datatables#}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/jquery.dataTables.min.css') }}">
+    <link rel="manifest" href="../static/js/manifest.json">
+
+    {#    <script type="text/javascript" src="{{ url_for('static', filename='/js/jquery-3.6.1.min.js') }}"></script>#}
+    <script src="/static/_public/js/jquery.min.js"></script>
+
+    <!--IOS support-->
+    <link rel="apple-touch-icon" href="../static/images/pngwing.com.png">
+    <meta name="apple-web-app-status-bar" content="#00b0ff">
+</head>
+<body>
+{% extends 'alan_code.html' %}
+{% block dashboard %}
+    <script>
+        //datatables
+        $(document).ready(function () {
+            {#$('#transactionTable').dataTable();#}
+
+            //datatables
+            $(document).ready(function () {
+                {#$('#myTable').DataTable();#}
+                var table = $('#transactionTable').DataTable({
+                    destroy: true,
+                    responsive: false,
+                    "ajax": {
+                        url: '/admin-transactions-json/',
+                        type: 'get'
+                    },
+                    "order": [[2, "desc"]],
+                    select: {
+                        style: 'none',
+                        selector: 'td:first-child'
+                    },
+                    scrollY: "800px",
+                    scrollX: true,
+                    scrollCollapse: true,
+                    paging: true,
+                    fixedColumns: true,
+                    lengthChange: true,
+                    "rowCallback": function (nRow, aData) {
+                        {#$('td', nRow).eq(2).html('<label class="label label-default">'+ aData[2] +'</label>'); #}
+                        {#if(aData[3]>0)#}
+                        {# $('td', nRow).eq(3).html('<label class="label label-success">OK</label>');#}
+                        {#else#}
+                        {#$('td', nRow).eq(3).html('<label class="label label-danger">FAIL</label>'); #}
+                    },
+                    columnDefs: [{
+                        targets: 0
+                    }]
+                });
+
+                let buttons = new $.fn.dataTable.Buttons(table, {
+                    buttons: ['excelHtml5', 'pdfHtml5', 'colvis']
+                });
+                buttons.container().appendTo($('div.right.aligned.eight.column:eq(0)', table.table().container()));
+            });
+            {#$.ajax({#}
+            {#    url: '/transactions-json/',#}
+            {#    method: 'get',#}
+            {#    success: function (data) {#}
+            {#console.log(data)#}
+            {#        data.map(#}
+            {#            item => {#}
+            {#                console.log(item[1])#}
+            {#            }#}
+            {#        )#}
+            {#    }#}
+            {#TRIAL});#}
+        });
+    </script>
+    <section class="content-header" style="width: 93%; margin-left: 5.6%; padding-left: 0; ">
+        <h2>Transactions</h2>
+        <ol class="breadcrumb">
+            <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Transactions</li>
+        </ol>
+    </section>
+{% endblock %}
+
+{% block content %}
+    <br>
+    <div class="content-top-1 box box-success">
+        <div class="box-body">
+            <br>
+            <div class="transactions_table_container">
+                <table class="ui celled table " width="100%" id="transactionTable">
+                    <thead>
+                    {#                    <th>#</th>#}
+                    <th>Client Name</th>
+                    <th>Client Email</th>
+                    <th>Client Phone</th>
+                    <th>Sent To</th>
+                    <th>Amount Sent</th>
+                    <th>Date Sent</th>
+                    {#                    <th>Time Sent</th>#}
+                    </thead>
+
+                    {#                    <tbody>#}
+                    {#                    {% for transaction in transactions %}#}
+                    {#                        <tr>#}
+                    {#                            <td>{{ loop.index }}</td>#}
+                    {#                            <td>{{ transaction.sender_name }}</td>#}
+                    {#                            <td>{{ transaction.sender_email }}</td>#}
+                    {#                            <td>{{ transaction.sender_phone }}</td>#}
+                    {#                            <td>{{ transaction.org_name }}</td>#}
+                    {#                            <td>{{ transaction.amount_sent }}</td>#}
+                    {#                            <td>{{ transaction.date_sent }}</td>#}
+                    {#                            <td>{{ transaction.time_sent }}</td>#}
+                    {#                        </tr>#}
+                    {#                    {% endfor %}#}
+                    {#                    </tbody>#}
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+
+{#        [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[JAVASCRIPT]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]#}
+{#        ionicons#}
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+{#    <script type="text/javascript" src="{{ url_for('static', filename='/js/materialize.min.js') }}"></script>#}
+{#        link to app.js for service worker#}
+<script src="../static/js/app.js"></script>
+{#        datatables#}
+<script type="text/javascript" src="{{ url_for('static', filename='/js/jquery.dataTables.min.js') }}"></script>
+<script>
+    //stop auto submit on reload
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+    }
+
+</script>
+</body>
+</html>

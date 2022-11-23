@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Validate Products</title>
+    {#    <link rel="stylesheet" href="{{ url_for('static', filename='/css/materialize.min.css') }}">#}
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/admin_product_validation.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/m_icons.css') }}">
+    {#    datatables#}
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/jquery.dataTables.min.css') }}">
+
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/jquery-3.6.1.min.js') }}"></script>
+    <!--IOS support-->
+    <link rel="apple-touch-icon" href="../static/images/pngwing.com.png">
+    <meta name="apple-web-app-status-bar" content="#00b0ff">
+</head>
+<body>
+
+{% extends 'alan_code.html' %}
+{% block dashboard %}
+    <section class="content-header" style="width: 93%; margin-left: 5.6%; padding-left: 0; ">
+        <h2>Vendor Products</h2>
+        <ol class="breadcrumb">
+            <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Vendor Products</li>
+        </ol>
+    </section>
+{% endblock %}
+{% block content %}
+    {#    <div class="heading" style="position: relative; left: 50vw; top: 10vh;">#}
+    {#        <h3 style="text-decoration: underline;">View Products</h3>#}
+    {#    </div>#}
+    <br>
+    <div class="content-top-1 box box-success">
+        <div class="box-body">
+            <br>
+            <div class="section1">
+                <table {#class="display black-text"#} class="ui celled table " width="100%" id="myTable">
+                    <thead>
+                    <tr>
+                        {#                        <th>#</th>#}
+                        <th>Vendor Name</th>
+                        <th>Vendor Email</th>
+                        <th>Organization</th>
+                        <th>Product</th>
+                        <th>Quantity per Acre(in KGs)</th>
+                        <th>Price per KG</th>
+                        {#                        <th>Payment Method</th>#}
+                        {#                        <th>Account Number</th>#}
+                        <th>Region</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+
+                    {#                    {% for product in products %}#}
+                    {#                        <tr>#}
+                    {#                            <td>{{ loop.index }}</td>#}
+                    {#                            <td>{{ product['vendor_name'] }}</td>#}
+                    {#                    <td>{{ product['vendor_email'] }}</td>#}
+                    {#                            <td>{{ product['vendor_email'] }}</td>#}
+                    {#                            <td>{{ product['org_name'] }}</td>#}
+                    {#                            <td>{{ product['crop_name'] }}</td>#}
+                    {#                            <td>{{ product['quantity_per_acre'] }}</td>#}
+                    {#                            <td>{{ product['price_per_kg'] }}</td>#}
+                    {#                            <td>{{ product['payment_method'] }}</td>#}
+                    {#                            <td>{{ product['acc_number'] }}</td>#}
+                    {#                            <td>{{ product['location'] }}</td>#}
+                    {#                    <td>{{ user['quantity_per_acre'] }}</td>#}
+                    {#                    <td>{{ user['price_per_kg'] }}</td>#}
+                    {##}
+                    {#                        </tr>#}
+                    {#                    {% endfor %}#}
+
+                    {#                    <tbody>#}
+                    {#                    </tbody>#}
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <br>
+    <div class="content-top-1 box box-success">
+        <div class="box-body">
+            <br>
+            <br>
+            <table id="example" class="display" style="width: 100%">
+                <thead>
+                <tr>
+                    {#                        <th>#</th>#}
+                    <th>Vendor Name</th>
+                    <th>Vendor Email</th>
+                    <th>Organization</th>
+                    <th>Product</th>
+                    <th>Quantity per Acre(in KGs)</th>
+                    <th>Price per KG</th>
+                    {#                        <th>Payment Method</th>#}
+                    {#                        <th>Account Number</th>#}
+                    <th>Region</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+
+            </table>
+        </div>
+    </div>
+    {#[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[JAVASCRIPT]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]#}
+    {#ionicons#}
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    {#    <script type="text/javascript" src="{{ url_for('static', filename='/js/materialize.min.js') }}"></script>#}
+    {#link to app.js for service worker#}
+    <script src="../static/js/app.js"></script>
+    {#datatables#}
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/jquery.dataTables.min.js') }}"></script>
+    <script>
+        //stop auto submit on reload
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+        }
+
+        //datatables
+        $(document).ready(function () {
+            {#$('#myTable').dataTable();#}
+            //datatables
+            $(document).ready(function () {
+                {#$('#myTable').DataTable();#}
+                var table = $('#myTable').DataTable({
+                    destroy: true,
+                    responsive: false,
+                    "ajax": {
+                        url: '/admin-view-products-json/',
+                        type: 'get'
+                    },
+                    "order": [[2, "desc"]],
+                    select: {
+                        style: 'none',
+                        selector: 'td:first-child'
+                    },
+                    scrollY: "800px",
+                    scrollX: true,
+                    scrollCollapse: true,
+                    paging: true,
+                    fixedColumns: true,
+                    lengthChange: true,
+                    "rowCallback": function (nRow, aData) {
+                        {#$('td', nRow).eq(2).html('<label class="label label-default">'+ aData[2] +'</label>'); #}
+                        {#if(aData[3]>0)#}
+                        {# $('td', nRow).eq(3).html('<label class="label label-success">OK</label>');#}
+                        {#else#}
+                        {#$('td', nRow).eq(3).html('<label class="label label-danger">FAIL</label>'); #}
+                    },
+                    columnDefs: [{
+                        targets: 0
+                    }]
+                });
+
+                let buttons = new $.fn.dataTable.Buttons(table, {
+                    buttons: ['excelHtml5', 'pdfHtml5', 'colvis']
+                });
+                buttons.container().appendTo($('div.right.aligned.eight.column:eq(0)', table.table().container()));
+            });
+        });
+    </script>
+{% endblock %}
+</body>
+</html>

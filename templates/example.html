@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/materialize.min.css') }}">
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/jquery-3.6.1.min.js') }}"></script>
+</head>
+<body>
+<div class="container" style="padding: 2em">
+    <label for="f_name">First name</label>
+    <input type="text" name="" id="f_name" class="validate">
+    <input type="text" placeholder="Last name" name="" id="l_name" hidden>
+    <input type="number" placeholder="number" name="" id="number">
+</div>
+<div id="myDiv">
+
+</div>
+<script type="text/javascript" src="{{ url_for('static', filename='/js/materialize.min.js') }}"></script>
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            url: '/partner-options/',
+            method: 'post',
+            success: function (data) {
+                data = JSON.parse(data)
+                console.log(data)
+                let joses = `<p></p>`
+                data.map(
+                    item => {
+                        joses += `${item.acc_number} <br>`
+                    }
+                )
+                $('#myDiv').html(joses)
+            }
+        })
+    })
+</script>
+</body>
+</html>

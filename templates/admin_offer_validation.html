@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Offer Validation</title>
+    {#    <link rel="stylesheet" href="{{ url_for('static', filename='/css/materialize.min.css') }}">#}
+    {#    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css' ) }}">#}
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/admin_offer_validation.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/m_icons.css') }}">
+    {#    datatables#}
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/jquery.dataTables.min.css') }}">
+    <link rel="manifest" href="../static/js/manifest.json">
+
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/jquery-3.6.1.min.js') }}"></script>
+
+    <!--IOS support-->
+    <link rel="apple-touch-icon" href="../static/images/pngwing.com.png">
+    <meta name="apple-web-app-status-bar" content="#00b0ff">
+
+    <!-- Bootstrap -->
+    <script src="{{ url_for('static', filename='/js/bootstrap.bundle.min.js') }}"></script>
+</head>
+<body>
+{% extends 'alan_code.html' %}
+{% block dashboard %}
+    <section class="content-header" style="width: 93%; margin-left: 5.6%; padding-left: 0; ">
+        <h2>Offer Validation</h2>
+        <ol class="breadcrumb">
+            <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Offer Validation</li>
+        </ol>
+    </section>
+{% endblock %}
+{% block content %}
+    <br>
+    <div class="content-top-1 box box-success">
+        <div class="box-body">
+            <br>
+            <table class="ui celled table " width="100%" id="myTable">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Vendor Name</th>
+                    <th>Vendor Email</th>
+                    <th>Organization</th>
+                    <th>Offer Name</th>
+                    <th>Percentage off</th>
+                    <th>Valid until</th>
+                    <th>Actions</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                {% for offers in all_offers %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ offers['vendor_name'] }}</td>
+                        <td>{{ offers['vendor_email'] }}</td>
+                        <td>{{ offers['org_name'] }}</td>
+                        <td>{{ offers['offer_name'] }}</td>
+                        <td>{{ offers['percentage_off'] }} %</td>
+                        <td>{{ offers['valid_until'] }}</td>
+                        <td style="display: flex; column-gap: 5px">
+                            <label for="defaults"></label>
+                            <form action="{{ url_for('validate_offers') }}" method="post">
+                                <input type="number" name="offer_id" id="defaults" value="{{ offers.offer_id }}"
+                                       readonly hidden>
+                                {#                                <button type="submit" class="btn btn-success">Edit</button>#}
+                                {#                                <a href="/update/{{ offers.offer_id }}" class="btn btn-primary"#}
+                                {#                                   data-bs-toggle="modal"#}
+                                {#                                   data-bs-target="#edit{{ offers.offer_id }}" role="dialog"#}
+                                {#                                   data-toggle="modal" data-target="#edit_modal{{ offers.offer_id }}">#}
+                                {#                                    Update#}
+                                {#                                </a>#}
+                                {##}
+                                {#                                <!-- Modal -->#}
+                                {#                                <div class="modal fade" id="edit{{ offers.offer_id }}" data-bs-backdrop="static"#}
+                                {#                                     data-bs-keyboard="false" tabindex="-1" aria-labelledby="editLabel"#}
+                                {#                                     aria-hidden="true">#}
+                                {#                                    <div class="modal-dialog">#}
+                                {#                                        <div class="modal-content">#}
+                                {#                                            <div class="modal-header">#}
+                                {#                                                <h5 class="modal-title" id="editLabel">Modal title</h5>#}
+                                {#                                                <button type="button" class="btn-close" data-bs-dismiss="modal"#}
+                                {#                                                        aria-label="Close"></button>#}
+                                {#                                            </div>#}
+                                {#                                            <div class="modal-body">#}
+                                {#                                            </div>#}
+                                {#                                        </div>#}
+                                {#                                    </div>#}
+                                {#                                </div>#}
+                                <!-- Button trigger modal -->
+                                <a type="button" class="btn btn-success" data-toggle="modal"
+                                   data-target="#edit_modal{{ offers.offer_id }}">
+                                    Actions
+                                </a>
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="edit_modal{{ offers.offer_id }}" tabindex="-1" role="dialog"
+                                     aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title"
+                                                    id="exampleModalLabel">{{ offers.vendor_name }}</h5>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                        aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            {#                                            body#}
+                                            <div class="modal-body">
+                                                <form action="{{ url_for('validate_offers') }}" method="post">
+                                                    <label for="defaults"></label>
+                                                    <input type="text" name="offer_id" id="defaults"
+                                                           value="{{ offers.offer_id }}" readonly hidden>
+                                                    <label for="offer_status"></label>
+                                                    <select name="offer_status" id="offer_status" class="form-control"
+                                                            required style="width: 90%">
+                                                        <option value="" selected disabled>Please Select an action
+                                                        </option>
+                                                        <option value="accepted">Accept</option>
+                                                        <option value="declined">Reject</option>
+                                                    </select>
+                                                    <div class="row"
+                                                         style="display: flex; justify-content: center; margin-top: 1em;">
+                                                        <button type="submit" class="btn btn-success">Save Changes
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                                    Close
+                                                </button>
+                                                {#                                                <button type="button" class="btn btn-primary">Save changes</button>#}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            {#                            <button class="btn btn-danger">Delete</button>#}
+                        </td>
+                        <td>
+                            {% if offers['offer_status']|string == 'declined' %}
+                                Declined
+                            {% elif offers['offer_status']|string == 'accepted' %}
+                                Accepted
+                            {% else %}
+                                Pending...
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {#                    <tr>#}
+                    {#                        <td colspan="9" class="td_details" id=""></td>#}
+                    {#                    </tr>#}
+                {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+
+        {#        <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#flipFlop">#}
+        {#            Click Me#}
+        {#        </button>#}
+        {##}
+        {#        <!-- The modal -->#}
+        {#        <div class="modal fade" id="flipFlop" tabindex="-1" role="dialog" aria-labelledby="modalLabel"#}
+        {#             aria-hidden="true">#}
+        {#            <div class="modal-dialog" role="document">#}
+        {#                <div class="modal-content">#}
+        {#                    <div class="modal-header">#}
+        {#                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">#}
+        {#                            <span aria-hidden="true">&times;</span>#}
+        {#                        </button>#}
+        {#                        <h4 class="modal-title" id="modalLabel">Modal Title</h4>#}
+        {#                    </div>#}
+        {#                    <div class="modal-body">#}
+        {#                        Modal content...#}
+        {#                    </div>#}
+        {#                    <div class="modal-footer">#}
+        {#                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>#}
+        {#                    </div>#}
+        {#                </div>#}
+        {#            </div>#}
+        {#        </div>#}
+
+        {#        [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[JAVASCRIPT]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]#}
+        {#    bootstrap#}
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+                integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
+                crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.min.js"
+                integrity="sha384-IDwe1+LCz02ROU9k972gdyvl+AESN10+x7tBKgc9I5HFtuNz0wWnPclzo6p9vxnk"
+                crossorigin="anonymous"></script>
+
+        {#        ionicons#}
+        <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+        <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+        {#        <script type="text/javascript" src="{{ url_for('static', filename='/js/materialize.min.js') }}"></script>#}
+        {#        link to app.js for service worker#}
+        <script src="../static/js/app.js"></script>
+        {#        datatables#}
+        <script type="text/javascript" src="{{ url_for('static', filename='/js/jquery.dataTables.min.js') }}"></script>
+        {#bootstrap#}
+        {#        <script type="text/javascript" src="{{ url_for('static', filename='/js/bootstrap.bundle.min.js') }}"></script>#}
+        <script>
+            //stop auto submit on reload
+            if (window.history.replaceState) {
+                window.history.replaceState(null, null, window.location.href);
+            }
+
+            //datatables
+            $(document).ready(function () {
+                $('#myTable').DataTable();
+                {#var table = $('#myTable').DataTable({#}
+                {#    destroy: true,#}
+                {#    responsive: false,#}
+                {#    "ajax": {#}
+                {#        url: '/get_offers',#}
+                {#        type: 'get'#}
+                {#    },#}
+                {#    "order": [[2, "desc"]],#}
+                {#    select: {#}
+                {#        style: 'none',#}
+                {#        selector: 'td:first-child'#}
+                {#    },#}
+                {#    scrollY: "800px",#}
+                {#    scrollX: true,#}
+                {#    scrollCollapse: true,#}
+                {#    paging: true,#}
+                {#    fixedColumns: true,#}
+                {#    lengthChange: true,#}
+                {#    "rowCallback": function (nRow, aData) {#}
+                {#$('td', nRow).eq(2).html('<label class="label label-default">'+ aData[2] +'</label>'); #}
+                {#if(aData[3]>0)#}
+                {# $('td', nRow).eq(3).html('<label class="label label-success">OK</label>');#}
+                {#else#}
+                {#$('td', nRow).eq(3).html('<label class="label label-danger">FAIL</label>'); #}
+                {#    },#}
+                {#    columnDefs: [{#}
+                {#        targets: 0#}
+                {#    }]#}
+                {#11 });#}
+
+                let buttons = new $.fn.dataTable.Buttons(table, {
+                    buttons: ['excelHtml5', 'pdfHtml5', 'colvis']
+                });
+                buttons.container().appendTo($('div.right.aligned.eight.column:eq(0)', table.table().container()));
+            });
+        </script>
+    </div>
+{% endblock %}
+</body>
+</html>

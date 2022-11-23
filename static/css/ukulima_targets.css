@@ -1,0 +1,74 @@
+html {
+  scroll-behavior: smooth;
+  transition: 300ms;
+}
+
+body {
+  background-image: url("../images/plant.jpg");
+  background-position: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  background-blend-mode: multiply;
+  background-attachment: fixed;
+  color: white;
+}
+
+#funds {
+  display: flex;
+  justify-content: center;
+  column-gap: 1em;
+}
+
+.section1 {
+  margin-bottom: 5em;
+}
+
+.section2 {
+  background-color: white;
+  padding: 1em;
+  display: block;
+  width: 95vw;
+  margin: auto auto 5em;
+  border-radius: 15px;
+}
+.section2 h4 {
+  text-align: center;
+  text-decoration: underline;
+}
+.section2 #partner_lists {
+  margin: 1em;
+}
+
+#back_button {
+  display: grid;
+  place-items: center;
+}
+#back_button .back_icon {
+  font-size: 2em;
+}
+
+.section3 {
+  display: block;
+  margin: auto;
+  width: 95vw;
+  background-color: rgb(255, 255, 255);
+  border-radius: 15px;
+  padding: 1em;
+}
+.section3 h4 {
+  text-decoration: underline;
+}
+.section3 .check_icon {
+  color: green;
+}
+
+#table_container {
+  margin: auto;
+  height: auto;
+  padding: 1em;
+}
+
+.section2:focus {
+  background-color: white !important;
+}
+
+/*# sourceMappingURL=ukulima_targets.css.map */

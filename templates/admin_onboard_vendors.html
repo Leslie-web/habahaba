@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    {#    <link rel="stylesheet" href="{{ url_for('static', filename='/css/materialize.min.css') }}">#}
+    {#    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css' ) }}">#}
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/admin_onboard_vendors.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/m_icons.css') }}">
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/jquery-3.6.1.min.js') }}"></script>
+</head>
+<body style="width: 100vw; ">
+{% extends 'alan_code.html' %}
+{% block dashboard %}
+    <section class="content-header" style="width: 93%; margin-left: 5.6%; padding-left: 0; ">
+        <h2>Vendor Onboarding</h2>
+        <ol class="breadcrumb">
+            <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Vendor Onboarding</li>
+        </ol>
+    </section>
+{% endblock %}
+{% block content %}
+    <br>
+    <div class="content-top-1 box box-success">
+        <div class="box-body">
+            <br>
+            <div class="section1" id="section1">
+                <div class="flash" style="text-align: center">
+                    {% include 'includes/flashmsg_bootstrap.html' %}
+                </div>
+                <form action="{{ url_for('vendor_onboarding') }}" method="post" style="display: grid">
+                    {#                    GENERAL INDUSTRY#}
+                    <div class="form-group row">
+                        <label for="general_industry" class="col-sm-2 col-form-label">General Industry:</label>
+                        <div class="col-md-5">
+                            <input type="text" class="form-control" id="general_industry" name="general_industry"
+                                   required>
+                        </div>
+                    </div>
+                    {#                    ORG NAME#}
+                    <div class="form-group row">
+                        <label for="org_name" class="col-sm-2 col-form-label">Organization Name:</label>
+                        <div class="col-md-5">
+                            <input type="text" class="form-control" id="org_name" name="org_name"
+                                   required>
+                        </div>
+                    </div>
+                    {#                    EMAIL#}
+                    <div class="form-group row">
+                        <label for="email" class="col-sm-2 col-form-label">Email:</label>
+                        <div class="col-md-5">
+                            <input type="email" class="form-control" id="email" name="email"
+                                   required>
+                        </div>
+                    </div>
+                    {#                    PASSWORD#}
+                    <div class="form-group row">
+                        <label for="password" class="col-sm-2 col-form-label">Password:</label>
+                        <div class="col-md-5">
+                            <input type="password" class="form-control" id="password" name="password"
+                                   required>
+                        </div>
+                    </div>
+                    <div class="row" style="display: flex; margin-top: 1em">
+                        <button type="submit" class="btn btn-success"
+                                style="outline: 1px solid green; width: 10vw; margin-left: 18vw;">
+                            Submit
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {#        <script type="text/javascript" src="{{ url_for('static', filename='/js/materialize.min.js') }}"></script>#}
+    <script>
+        //regular inputs
+        $(document).ready(function () {
+            M.updateTextFields();
+        });
+
+        //sidenav
+        $(document).ready(function () {
+            $('.sidenav').sidenav();
+        });
+
+        //date input
+        document.addEventListener('DOMContentLoaded', function () {
+            let elems = document.querySelectorAll('.datepicker')
+            let instances = M.Datepicker.init(elems, {
+                autoClose: true,
+                format: 'mm-dd-yyyy'
+            });
+        });
+
+        //data length
+        $(document).ready(function () {
+            $('input#phone_no').characterCounter();
+        });
+
+        //select options
+        document.addEventListener('DOMContentLoaded', function () {
+            let elems = document.querySelectorAll('select');
+            let instances = M.FormSelect.init(elems, {
+                classes: ''
+            })
+        })
+
+        //sop auto submit on reload
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+        }
+    </script>
+
+{% endblock %}
+</body>
+</html>

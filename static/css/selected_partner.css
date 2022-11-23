@@ -1,0 +1,63 @@
+body {
+  background-image: url("../images/plant.jpg");
+  background-position: center;
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  background-blend-mode: multiply;
+  background-attachment: fixed;
+  color: white;
+  width: 100vw;
+}
+
+.section2 {
+  height: auto;
+  width: 90vw;
+  display: block;
+  margin: auto;
+  padding: 2em;
+  background-color: rgba(255, 255, 255, 0.8);
+  color: black;
+}
+.section2 h4 {
+  text-align: center;
+  text-decoration: underline;
+}
+
+#size_of_land {
+  text-align: center;
+}
+
+.details_container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 1em;
+  box-shadow: 0 0 10px -1px black;
+  border-radius: 20px;
+}
+.details_container .quantity_needed {
+  border-right: 1px solid black;
+  padding: 1em;
+  display: flex;
+  align-items: center;
+}
+.details_container .quantity_needed input {
+  margin-left: 20px;
+}
+.details_container .price_per_kilo {
+  padding: 1em;
+  display: flex;
+  align-items: center;
+}
+.details_container .price_per_kilo input {
+  margin-left: 20px;
+}
+
+.payment {
+  border-top: 2px solid black;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/*# sourceMappingURL=selected_partner.css.map */

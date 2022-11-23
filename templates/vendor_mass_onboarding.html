@@ -1,0 +1,40 @@
+{% extends 'vendor_home.html' %}
+
+{% block dashboard %}
+    <section class="content-header"
+             style="width: 93%; margin-left: 5.6%; padding-left: 0;">
+        <h2> Mass Onboarding</h2>
+        <ol class="breadcrumb">
+            <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Mass Onboarding</li>
+        </ol>
+    </section>
+{% endblock %}
+
+{% block content %}
+    {#    <script>#}
+    {#        function fileValidation() {#}
+    {#            let fileInput = document.getElementById('csv_file');#}
+    {#            let filePath = fileInput.value;#}
+    {#            let allowedExtensions = /(\.csv)$/i;#}
+    {#            if (!allowedExtensions.exec(filePath)) {#}
+    {#                alert('Please upload a file with .csv extension')#}
+    {#                fileInput.value = '';#}
+    {#                return false;#}
+    {#            }#}
+    {#        }#}
+    {#    </script>#}
+    <br>
+    <div class="content-top-1 box box-success">
+        <div class="box-body">
+            <br>
+            <form action="{{ url_for('vendor_mass_onboarding') }}" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="csv_file">CSV file</label>
+                    <input type="file" name="csv_file" id="csv_file" accept=".csv" required>
+                </div>
+                <button type="submit">Upload</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

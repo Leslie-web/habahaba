@@ -1,0 +1,115 @@
+{% extends 'vendor_home.html' %}
+
+{% block dashboard %}
+    <section class="content-header"
+             style="width: 93%; margin-left: 5.6%; padding-left: 0;">
+        <h2> Add Account</h2>
+        <ol class="breadcrumb">
+            <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Add Account</li>
+        </ol>
+    </section>
+{% endblock %}
+
+{% block content %}
+    <br>
+    <div class="content-top-1 box box-success">
+        <div class="box-body">
+            <br>
+            <div class="flash" style="text-align: center">
+                {% include 'includes/flashmsg_bootstrap.html' %}
+            </div>
+            <form action="{{ url_for('vendor_add_account') }}" method="post">
+                {#                FIRST NAME#}
+                <div class="form-group row">
+                    <label for="f_name" class="col-sm-1 col-form-label">First Name:</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control" id="f_name" name="f_name" required>
+                    </div>
+                </div>
+
+                {#                LAST NAME#}
+                <div class="form-group row">
+                    <label for="l_name" class="col-sm-1 col-form-label">Last Name:</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control" id="l_name" name="l_name" required>
+                    </div>
+                </div>
+
+                {#                GENDER#}
+                <div class="form-group row">
+                    <label for="gender" class="col-sm-1">Gender</label>
+                    <div class="col-sm-5">
+                        <select name="gender" id="gender" class="form-control" required>
+                            <option value="" selected disabled>Please choose a gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </div>
+                </div>
+                {#                PHONE NUMBER#}
+                <div class="form-group row">
+                    <label for="phone_no" class="col-sm-1 col-form-label">Phone Number:</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control" id="phone_no" name="phone_no" required>
+                    </div>
+                </div>
+
+                {#                ID NUMBER#}
+                <div class="form-group row">
+                    <label for="id_no" class="col-sm-1 col-form-label">ID Number:</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control" id="id_no" name="id_no" required>
+                    </div>
+                </div>
+
+                {#                LOCATION#}
+                <div class="form-group row">
+                    <label for="location" class="col-sm-1 col-form-label">Location:</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control" id="location" name="location" required>
+                    </div>
+                </div>
+
+                {#                DATE REGISTERED#}
+                <div class="form-group row">
+                    <label for="registered_on" class="col-sm-1 col-form-label">Date Registered:</label>
+                    <div class="col-sm-5">
+                        <input type="date" class="form-control" id="registered_on" name="registered_on" required>
+                    </div>
+                </div>
+                {#                ACCOUNT TYPE#}
+                <div class="form-group row">
+                    <label for="account_type" class="col-sm-1 col-form-label">Account Type:</label>
+                    <div class="col-sm-5">
+                        <select name="account_type" id="account_type" class="form-control" required>
+                            <option value="" selected disabled>Please choose an account type</option>
+                            <option value="0">Super Admin</option>
+                            <option value="1">Regular Admin</option>
+                        </select>
+                    </div>
+                </div>
+
+                {#                EMAIL#}
+                <div class="form-group row">
+                    <label for="email" class="col-sm-1 col-form-label">Email:</label>
+                    <div class="col-sm-5">
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                </div>
+
+                {#                PASSWORD#}
+                <div class="form-group row">
+                    <label for="password" class="col-sm-1 col-form-label">Password:</label>
+                    <div class="col-sm-5">
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                </div>
+                <div class="submit_button">
+                    <button type="submit" class="btn btn-success" style="margin-left: 20vw">Submit</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Onboard Client</title>
+    {#    <link rel="stylesheet" href="{{ url_for('static', filename='/css/materialize.min.css') }}">#}
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/vendor_homepage.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/m_icons.css') }}">
+    <link rel="stylesheet" href="../static/js/manifest.json">
+
+    {#    bootstrap#}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css' ) }}">
+
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/jquery-3.6.1.min.js') }}"></script>
+    <link rel="manifest" href="../static/js/manifest.json">
+
+    <!--IOS support-->
+    <link rel="apple-touch-icon" href="../static/images/pngwing.com.png">
+    <meta name="apple-web-app-status-bar" content="#00b0ff">
+</head>
+<body>
+{% extends 'vendor_home.html' %}
+{% block content %}
+    <div class="section1"
+         style=" padding: 5em; margin-left: 15vw;">
+        <form action="{{ url_for('client_onboarding') }}" method="post">
+            <div class="row" style="text-align: center">
+                {% include 'includes/flashmsg_bootstrap.html' %}
+            </div>
+            <div class="details_containers"
+                 style="width: 50vw; border: 1px solid black; padding: 1em; margin-top: 5em; margin-left: 15em;">
+                <div class="row" style="display: flex; justify-content: center; text-decoration: underline">
+                    <h3 style="text-align: center;">User Registration</h3>
+                </div>
+                <div class="row">
+                    {#        first name#}
+
+                    <div class="col-md-6">
+                        <label for="f_name" class="visually-hidden"></label>
+                        <div class="input-group">
+                            <div class="input-group-text">First Name:</div>
+                            <input type="text" name="f_name" id="f_name" class="form-control" required>
+                        </div>
+                    </div>
+                    {#                last name#}
+                    <div class="col-md-6">
+                        <label for="l_name" class="visually-hidden"></label>
+                        <div class="input-group">
+                            <div class="input-group-text">Last Name:</div>
+                            <input type="text" name="l_name" id="l_name" class="form-control" required>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    {#            gender#}
+                    <div class="col-md-12">
+                        <select name="gender" id="gender" class="form-select" required>
+                            <option value="" disabled selected>Choose Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                        <label for="gender" class="visually-hidden">Gender:</label>
+                    </div>
+                </div>
+                {#        date of birth#}
+                <div class="row">
+                    <div class="col-md-12">
+                        <label for="dob"></label>
+                        <div class="input-group">
+                            <div class="input-group-text" style="width: 10em;">Date of Birth:</div>
+                            <input type="date" name="dob" id="dob" class="form-control" required>
+                        </div>
+                    </div>
+                </div>
+
+                {#    Phone number#}
+                <div class="row">
+                    <div class="input-field col s12">
+                        <div class="col-md-12">
+                            <label for="phone_no"></label>
+                            <div class="input-group">
+                                <div class="input-group-text" style="width: 10em;">Phone Number:</div>
+                                <input type="number" name="phone_no" id="phone_no" class="form-control" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {#    ID number#}
+                <div class="row">
+                    <div class="input-field col s12">
+                        <div class="col-md-12">
+                            <label for="id_no"></label>
+                            <div class="input-group">
+                                <div class="input-group-text" style="width: 10em;">ID Number:</div>
+                                <input type="number" name="id_no" id="id_no" class="form-control" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {#    Email address#}
+                <div class="row">
+                    <div class="input-field col s12">
+                        <div class="col-md-12">
+                            <label for="email"></label>
+                            <div class="input-group">
+                                <div class="input-group-text" style="width: 10em;">Email:</div>
+                                <input type="email" name="email" id="email" class="form-control" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {#    Password#}
+                <div class="row">
+                    <div class="input-field col s12">
+                        <div class="col-md-12">
+                            <label for="password"></label>
+                            <div class="input-group">
+                                <div class="input-group-text" style="width: 10em;">Password:</div>
+                                <input type="password" name="password" id="password" class="form-control" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="" style="display: flex; justify-content: center;">
+                    <button type="submit" class="btn btn-outline-success"
+                            style="outline: 1px solid green; display: flex; justify-content: center; align-items: center; margin-top: 1em;">
+                        Submit
+                        <i class="material-icons right">send</i>
+                    </button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    {#    </div>#}
+    {#    [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[JAVASCRIPT]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]#}
+    {#    <script type="text/javascript" src="{{ url_for('static', filename='/js/materialize.min.js') }}"></script>#}
+
+    {#link to app.js for service worker#}
+    <script src="../static/js/app.js"></script>
+    <script>
+        //stop auto reload on submit
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+        }
+        //sidenav
+        $(document).ready(function () {
+            $('.sidenav').sidenav();
+        });
+        //tabs
+        $(document).ready(function () {
+            $('.tabs').tabs();
+        })
+        //select
+        document.addEventListener('DOMContentLoaded', function () {
+            let elems = document.querySelectorAll('select');
+            let instances = M.FormSelect.init(elems, {
+                classes: ''
+            })
+        })
+
+        //modal
+        document.addEventListener('DOMContentLoaded', function () {
+            let elems = document.querySelectorAll('.modal')
+            let instances = M.Modal.init(elems, {
+                opacity: 0.6
+            })
+        })
+
+        function downloadPDFWithBrowserPrint() {
+            window.print()
+        }
+
+        document.querySelector('#example').addEventListener('click', downloadPDFWithBrowserPrint)
+    </script>
+
+{% endblock %}
+</body>
+</html>

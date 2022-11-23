@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Home</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/materialize.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/vendor_homepage.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/m_icons.css') }}">
+    <link rel="stylesheet" href="../static/js/manifest.json">
+
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/jquery-3.6.1.min.js') }}"></script>
+    <link rel="manifest" href="../static/js/manifest.json">
+
+    <!--IOS support-->
+    <link rel="apple-touch-icon" href="../static/images/pngwing.com.png">
+    <meta name="apple-web-app-status-bar" content="#00b0ff">
+</head>
+<body>
+navigation bar
+<nav class="nav-wrapper green lighten-3 hide-on-med-and-down">
+    <a href="#" class="sidenav-trigger" data-target="mobile_links">
+        <i class="material-icons">menu</i>
+    </a>
+    <a href="#" class="brand-logo">Welcome {{ session['f_name'] }}</a>
+    <ul class="right hide-on-med-and-down">
+        <li><a href="#">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Services</a></li>
+        <li><a href="#">Logout</a></li>
+    </ul>
+</nav>
+<nav class="nav-wrapper">
+    <a href="#" class="sidenav-trigger" data-target="mobile_links">
+        <i class="material-icons">menu</i>
+    </a>
+</nav>
+<ul class="sidenav" id="mobile_links">
+    <div class="nav_container"
+         style="height: 100vw; display: flex; flex-direction: column; justify-content: space-between">
+        <ul class="top">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="#">About</a></li>
+        </ul>
+        <ul class="logout">
+            <li><a href="{{ url_for('vendor_logout') }}">Logout</a></li>
+        </ul>
+    </div>
+</ul>
+navigation bar
+<section id="section1">
+    <h3 style="text-align: center">Welcome {{ session['f_name'] }}</h3>
+    <h5 style="text-align: center">Your balance is: ksh <b>0.00</b></h5>
+    <h6 style="text-align: center">Date: {{ current_date }}</h6>
+    <div class="row">
+        <center>
+            {% include 'includes/_flashmsg.html' %}
+        </center>
+    </div>
+</section>
+
+<section id="section2">
+    <ul class="tabs">
+        <li class="tab col s3 active"><a class="active" href="#transactions">Transactions</a></li>
+        <li class="tab col s3"><a href="#orders">Orders</a></li>
+        <li class="tab col s3"><a href="#add_users">Users</a></li>
+        <li class="tab col s3"><a href="#goods">Goods</a></li>
+        <li class="tab col s3"><a href="#offers">Offers</a></li>
+        <li class="tab col s4"><a href="#add_goods">Add goods</a></li>
+    </ul>
+    <div id="transactions">
+
+        <table class="table" id="example">
+            <thead class="thead-dark">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">First</th>
+                <th scope="col">Last</th>
+                <th scope="col">Handle</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <th scope="row">1</th>
+                <td>Mark</td>
+                <td>Otto</td>
+                <td>@mdo</td>
+            </tr>
+            <tr>
+                <th scope="row">2</th>
+                <td>Jacob</td>
+                <td>Thornton</td>
+                <td>@fat</td>
+            </tr>
+            <tr>
+                <th scope="row">3</th>
+                <td>Larry</td>
+                <td>the Bird</td>
+                <td>@<a href="https://www.jqueryscript.net/tags.php?/twitter/">twitter</a></td>
+            </tr>
+            </tbody>
+        </table>
+        <button onclick="downloadPDFWithBrowserPrint()">Click Here</button>
+    </div>
+    <div id="orders">
+        456456
+    </div>
+    <div id="add_users">
+        456
+    </div>
+    <div id="goods">
+        <h3 style="text-align: center;"><u>Add Crop</u></h3>
+        <div class="goods_details">
+
+            <form action="{{ url_for('vendor_homepage') }}" method="post">
+                <input type="text" name="vendor_id" id="defaults" value="{{ session['vendor_id'] }}" readonly hidden>
+                <input type="text" name="payment_method" id="defaults" value="{{ session['payment_method'] }}" readonly
+                       hidden>
+                <input type="text" name="acc_number" id="defaults" value="{{ session['acc_number'] }}" readonly hidden>
+                <input type="text" name="location" id="defaults" value="{{ session['location'] }}" readonly hidden>
+                <input type="text" name="org_name" id="defaults" value="{{ session['org_name'] }}" readonly hidden>
+                <input type="text" name="phone_no" id="defaults" value="{{ session['phone_no'] }}" readonly hidden>
+                <label for="defaults"></label>
+                <input type="text" name="vendor_name" id="defaults"
+                       value="{{ session['f_name'] }} {{ session['l_name'] }}" readonly hidden>
+                <input type="text" name="vendor_email" id="defaults" value="{{ session['email'] }}" readonly hidden>
+                <div class="row" style="padding-right: 3.5em; padding-left: 3.5em">
+                    <div class="input-field col s12">
+                        <input type="text" name="crop_type" id="goods_type" class="validate">
+                        <label for="goods_type">Name of crop</label>
+                    </div>
+                </div>
+                <div class="row" id="acres_row" style="padding-right: 3.5em; padding-left: 3.5em">
+                    <div class="input-field col s12">
+                        <input type="number" name="land_size" id="land" class="validate" required>
+                        <label for="land">Quantity needed per 1 acre (in KGs)</label>
+                    </div>
+                </div>
+                <div class="row" style="padding-right: 3.5em; padding-left: 3.5em">
+                    <div class="input-field col s12">
+                        <input type="number" name="price" id="price" class="validate" required>
+                        <label for="price">Price per KG</label>
+                    </div>
+                </div>
+
+
+                <div class="row" style="display: flex; justify-content: center">
+                    <button class="btn waves-light" type="submit" id="submit_button">Submit
+                        <i class="material-icons right">send</i>
+                    </button>
+                    <input type="submit" class="btn waves-light waves-effect">
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <div id="offers">
+        <div class="row">
+            <h3 style="text-align: center;">Offers</h3>
+        </div>
+        <div class="row" style="display:grid; place-items: center;">
+            <!-- Modal Trigger -->
+            <a class="waves-effect waves-light btn modal-trigger" href="#offers_modal">Add Offers</a>
+            <div class="modal" id="offers_modal">
+                <div class="modal-content">
+                    <h4>Add Offers</h4>
+
+                    <form action="{{ url_for('vendor_offers') }}" method="post">
+                        <div class="row">
+                            <input type="text" name="vendor_name" id="defaults"
+                                   readonly hidden value="{{ session['f_name'] }} {{ session['l_name'] }}">
+                            <input type="text" name="vendor_email" id="defaults" readonly hidden
+                                   value="{{ session['email'] }}">
+                            <input type="text" name="org_name" id="defaults" readonly hidden
+                                   value="{{ session['org_name'] }}">
+
+
+                            <div class="input-field col s12">
+                                <input type="text" name="offer_name" id="offer_name" class="validate">
+                                <label for="offer_name">Offer:</label>
+                            </div>
+                            <div class="input-field col s12">
+                                <input type="number" name="percentage_off" id="percentage_off" class="validate"
+                                       max="100">
+                                <label for="percentage_off">Percentage Off:</label>
+                            </div>
+                            <div class="input-field col s12">
+                                <input type="date" name="valid_until" id="valid_until" class="validate">
+                                <label for="valid_until">Valid Until:</label>
+                            </div>
+                        </div>
+                        <div class="row" style="display: flex; justify-content: center;">
+                            <button type="submit" class="btn waves-effect waves-light green lighten-2">Submit</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="row" id="offers_list">
+            {% for offers in available_offers %}
+                <div class="offer_card">
+                    <div class="offers_header">
+                        {{ offers['org_name'] }}
+                    </div>
+                    <div class="offers_body">
+                        <div class="offer_item">
+                            Item: {{ offers['offer_name'] }}
+                        </div>
+                        <div class="percentage_off">
+                            {{ offers['percentage_off'] }}% off
+                        </div>
+                        <div class="actions">
+                            <a href="/delete-offer/{{ offers['offer_id'] }}"
+                               class="btn waves-light waves-effect red lighten-1"
+                               onclick="return confirm('Are you sure you want to remove this offer?')">Remove Deal</a>
+                        </div>
+                    </div>
+                    <div class="offers_footer">
+                        <div class="valid_until">
+                            Valid Until: {{ offers['valid_until'] }}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+
+[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[JAVASCRIPT]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+<script type="text/javascript" src="{{ url_for('static', filename='/js/materialize.min.js') }}"></script>
+
+{#link to app.js for service worker#}
+<script src="../static/js/app.js"></script>
+<script>
+    //stop auto reload on submit
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+    }
+    //sidenav
+    $(document).ready(function () {
+        $('.sidenav').sidenav();
+    });
+    //tabs
+    $(document).ready(function () {
+        $('.tabs').tabs();
+    })
+    //select
+    document.addEventListener('DOMContentLoaded', function () {
+        let elems = document.querySelectorAll('select');
+        let instances = M.FormSelect.init(elems, {
+            classes: ''
+        })
+    })
+
+    //modal
+    document.addEventListener('DOMContentLoaded', function () {
+        let elems = document.querySelectorAll('.modal')
+        let instances = M.Modal.init(elems, {
+            opacity: 0.6
+        })
+    })
+
+    function downloadPDFWithBrowserPrint() {
+        window.print()
+    }
+
+    document.querySelector('#example').addEventListener('click', downloadPDFWithBrowserPrint)
+</script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+#onboarding h4 {
+  text-align: center;
+  text-decoration: underline;
+}
+
+#onboarding_parties {
+  display: flex;
+  justify-content: center;
+  column-gap: 2em;
+  margin-top: 2em;
+}
+#onboarding_parties .onboard_users {
+  text-align: center;
+  border: 1px solid black;
+  padding: 1em;
+  width: 20em;
+  height: auto;
+  border-radius: 15px;
+  box-shadow: 0 0 20px -5px black;
+}
+#onboarding_parties .onboard_users .person {
+  font-size: 60px;
+}
+#onboarding_parties .onboard_partners {
+  text-align: center;
+  border: 1px solid black;
+  padding: 1em;
+  width: 20em;
+  height: auto;
+  border-radius: 15px;
+  box-shadow: 0 0 20px -5px black;
+}
+#onboarding_parties .onboard_partners .people {
+  font-size: 60px;
+}
+
+#vendor_promotions h4 {
+  text-align: center;
+  text-decoration: underline;
+}
+#vendor_promotions #promotions {
+  display: flex;
+  justify-content: center;
+}
+#vendor_promotions #promotions #offers {
+  padding: 2em;
+  border-radius: 15px;
+  width: 20em;
+  height: auto;
+  border: 1px solid black;
+  box-shadow: 0 0 20px -5px black;
+  display: grid;
+  place-items: center;
+}
+#vendor_promotions #promotions .promo {
+  font-size: 60px;
+}
+
+.vendor_products h4 {
+  text-align: center;
+  text-decoration: underline;
+}
+.vendor_products #products_items {
+  display: flex;
+  justify-content: center;
+  height: auto;
+}
+.vendor_products #products_items #products {
+  padding: 2em;
+  border-radius: 15px;
+  width: 20em;
+  height: auto;
+  border: 1px solid black;
+  box-shadow: 0 0 20px -5px black;
+  display: grid;
+  place-items: center;
+}
+.vendor_products #products_items .product_icon {
+  font-size: 60px;
+}
+
+/*# sourceMappingURL=admin_homepage.css.map */

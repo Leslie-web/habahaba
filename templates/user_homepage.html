@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Home</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/materialize.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/user_homepage.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/m_icons.css') }}">
+    <link rel="stylesheet" href="../static/js/manifest.json">
+
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/jquery-3.6.1.min.js') }}"></script>
+    <link rel="manifest" href="../static/js/manifest.json">
+
+    <!--IOS support-->
+    <link rel="apple-touch-icon" href="../static/images/pngwing.com.png">
+    <meta name="apple-web-app-status-bar" content="#00b0ff">
+
+    {#    GSAP#}
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/gsap.min.js') }}" defer></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/user_home_animations.js') }}" defer></script>
+</head>
+<body>
+{#<div id="preloader">#}
+{##}
+{#</div>#}
+
+{#navbar#}
+<nav class="nav-wrapper blue lighten-3">
+    <a href="#" class="sidenav-trigger" data-target="mobile_links">
+        <i class="material-icons">menu</i>
+    </a>
+    <a href="#" class="brand-logo">Welcome {{ session['f_name'] }}</a>
+    <ul class="right hide-on-med-and-down">
+        <li><a href="#">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Services</a></li>
+        <li><a href="{{ url_for('user_logout') }}">Logout</a></li>
+    </ul>
+</nav>
+
+<ul class="sidenav" id="mobile_links">
+    <div class="nav_container"
+         style="height: 100vw; display: flex; flex-direction: column; justify-content: space-between">
+        <ul class="top">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="#">About</a></li>
+        </ul>
+        <ul class="logout">
+            <li><a href="{{ url_for('user_logout') }}">Logout</a></li>
+        </ul>
+    </div>
+</ul>
+
+{#cards#}
+<div class="card_container">
+    {#    habahaba soma#}
+    <div class="soma z-depth-5">
+        <div class="header_row">
+            <p class="card_title">Habahaba Soma</p>
+            <p class="balance_top">Ksh. 0.00</p>
+        </div>
+        <div class="soma_content">
+            <h3>Ksh. 0.00</h3>
+        </div>
+        <div class="footer_button">
+            <a href="#" class="btn blue lighten-3 waves-effect ">Activate Wallet</a>
+        </div>
+    </div>
+
+    {#    habahaba ukulima#}
+    <div class="ukulima z-depth-5">
+        <div class="header_row">
+            <p class="card_title">Habahaba Ukulima</p>
+            <p class="balance_top">Ksh. 0.00</p>
+        </div>
+        <div class="soma_content">
+            <h3>Ksh. 0.00</h3>
+        </div>
+        {#        {% for personnel in holder %}#}
+        {#            {% if session['email'] in personnel['holder_email'] %}#}
+        <div class="footer_button">
+            <a href="{{ url_for('ukulima') }}" class="waves-effect waves-ripple green lighten-2 btn">View
+                wallet</a>
+        </div>
+        {#            {% else %}#}
+        <div class="footer_button">
+            {#            <a href="{{ url_for('habahaba_ukulima') }}" class="btn blue lighten-3 waves-effect ">Activate Wallet</a>#}
+            <!--Modal Trigger -->
+            <a href="#modal1" class="waves-effect waves-light btn modal-trigger">Activate wallet</a>
+
+            <!-- Modal Structure -->
+            <div class="modal" id="modal1">
+                <div class="modal-content black-text">
+                    <h4>Activate Wallet</h4>
+                    <form action="{{ url_for('user_homepage') }}" method="post">
+                        {#                        default values#}
+                        <input type="number" name="balance" id="defaults" value="0" hidden>
+                        <input type="number" name="spent" id="defaults" value="0" hidden>
+                        <input type="number" name="deposited" id="defaults" value="0" hidden>
+                        <label for="defaults"></label>
+                        {#                        default values#}
+
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <input type="text" name="wallet_holder" id="wallet_holder" class="validate"
+                                       value="{{ session['f_name'] }} {{ session['l_name'] }}">
+                                <label for="wallet_holder" class="active">Wallet Holder:</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <input type="text" name="holder_email" id="email" value="{{ session['email'] }}"
+                                       readonly>
+                                <label for="email" class="active">Email</label>
+                            </div>
+                        </div>
+                        <div class="row" style="display: flex; justify-content: center;">
+                            <button type="submit" class="waves-effect waves-light green lighten-1 btn">Submit
+                            </button>
+                        </div>
+                    </form>
+                    <div class="modal-footer">
+                        <a href="#!" class="waves-light waves-effect waves-green btn-flat"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {#            {% endif %}#}
+        {#        {% endfor %}#}
+    </div>
+
+
+    {#    habahaba household#}
+    <div class="household z-depth-5">
+        <div class="header_row">
+            <p class="card_title">Goal</p>
+            <p class="balance_top">Ksh. 0.00</p>
+        </div>
+        <div class="soma_content">
+            <h3>Ksh. 0.00</h3>
+        </div>
+        <div class="footer_button">
+            <a href="#" class="btn blue lighten-3 waves-effect ">Activate Wallet</a>
+        </div>
+    </div>
+
+    {#    habahaba medical#}
+    <div class="medical z-depth-5">
+        <div class="header_row">
+            <p class="card_title">Maisha Poa</p>
+            <p class="balance_top">Ksh. 0.00</p>
+        </div>
+        <div class="soma_content">
+            <h3>Ksh. 0.00</h3>
+        </div>
+        <div class="footer_button">
+            <a href="#" class="btn blue lighten-3 waves-effect ">Activate Wallet</a>
+        </div>
+    </div>
+</div>
+
+{#<div class="youtube" style="display: none">#}
+{#    <iframe width="560" height="315" src="https://www.youtube.com/embed/3cloc1ARDVA" title="YouTube video player"#}
+{#            frameborder="0"#}
+{#            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"#}
+{#            allowfullscreen></iframe>#}
+{#    <iframe width="560" height="315" src="https://www.youtube.com/embed/3cloc1ARDVA" title="YouTube video player"#}
+{#            frameborder="0"#}
+{#            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"#}
+{#            allowfullscreen></iframe>#}
+{#    <iframe width="560" height="315" src="https://www.youtube.com/embed/3cloc1ARDVA" title="YouTube video player"#}
+{#            frameborder="0"#}
+{#            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"#}
+{#            allowfullscreen></iframe>#}
+{#    <iframe width="560" height="315" src="https://www.youtube.com/embed/3cloc1ARDVA" title="YouTube video player"#}
+{#            frameborder="0"#}
+{#            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"#}
+{#            allowfullscreen></iframe>#}
+{#    <iframe width="560" height="315" src="https://www.youtube.com/embed/3cloc1ARDVA" title="YouTube video player"#}
+{#            frameborder="0"#}
+{#            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"#}
+{#            allowfullscreen></iframe>#}
+{#    <iframe width="560" height="315" src="https://www.youtube.com/embed/3cloc1ARDVA" title="YouTube video player"#}
+{#            frameborder="0"#}
+{#            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"#}
+{#            allowfullscreen></iframe>#}
+{#    <iframe width="560" height="315" src="https://www.youtube.com/embed/3cloc1ARDVA" title="YouTube video player"#}
+{#            frameborder="0"#}
+{#            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"#}
+{#            allowfullscreen></iframe>#}
+{#    <iframe width="560" height="315" src="https://www.youtube.com/embed/3cloc1ARDVA" title="YouTube video player"#}
+{#            frameborder="0"#}
+{#            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"#}
+{#            allowfullscreen></iframe>#}
+{#    <iframe width="560" height="315" src="https://www.youtube.com/embed/3cloc1ARDVA" title="YouTube video player"#}
+{#            frameborder="0"#}
+{#            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"#}
+{#            allowfullscreen></iframe>#}
+{#    <iframe width="560" height="315" src="https://www.youtube.com/embed/3cloc1ARDVA" title="YouTube video player"#}
+{#            frameborder="0"#}
+{#            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"#}
+{#            allowfullscreen></iframe>#}
+{#    <iframe width="560" height="315" src="https://www.youtube.com/embed/3cloc1ARDVA" title="YouTube video player"#}
+{#            frameborder="0"#}
+{#            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"#}
+{#            allowfullscreen></iframe>#}
+</div>
+{#[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[JAVASCRIPT]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]#}
+<script type="text/javascript" src="{{ url_for('static', filename='/js/materialize.min.js') }}"></script>
+{#link to app.js for service worker#}
+<script src="../static/js/app.js"></script>
+<script>
+    //stop auto submit on reload
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+    }
+
+    //preloader
+    let preloader = document.getElementById('preloader')
+    window.addEventListener('load', function () {
+        preloader.style.display = "none"
+    })
+
+    //sidenav
+    $(document).ready(function () {
+        $('.sidenav').sidenav();
+    });
+
+    //modal
+    document.addEventListener('DOMContentLoaded', function () {
+        let elems = document.querySelectorAll('.modal');
+        let instances = M.Modal.init(elems, {
+            opacity: 0.8
+        });
+    });
+
+    //input
+    $(document).ready(function () {
+        M.updateTextFields();
+    })
+</script>
+</body>
+</html>

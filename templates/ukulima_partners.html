@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Partners</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/materialize.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/ukulima_partners.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/m_icons.css') }}">
+    <link rel="manifest" href="../static/js/manifest.json">
+
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/jquery-3.6.1.min.js') }}"></script>
+
+    <!--IOS support-->
+    <link rel="apple-touch-icon" href="../static/images/pngwing.com.png">
+    <meta name="apple-web-app-status-bar" content="#00b0ff">
+</head>
+<body>
+{#navbar#}
+<nav class="nav-wrapper green lighten-2 {#hide-on-med-and-down#} hide-on-med-and-down">
+    <a href="#" class="sidenav-trigger" data-target="mobile_links">
+        <i class="material-icons">menu</i>
+    </a>
+    <a href="{{ url_for('user_homepage') }}" class="brand-logo">Habahaba Ukulima</a>
+    <ul class="right hide-on-med-and-down">
+        <li><a href="{{ url_for('ukulima') }}">Ukulima Wallet</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Services</a></li>
+        <li><a href="{{ url_for('user_logout') }}">Logout</a></li>
+    </ul>
+</nav>
+{#<a href="#" class="sidenav-trigger btn transparent hide-on-med-and-up" data-target="mobile_links">#}
+{#    <i class="material-icons">menu</i>#}
+{#</a>#}
+<ul class="sidenav" id="mobile_links">
+    <div class="nav_container"
+         style="height: 100vw; display: flex; flex-direction: column; justify-content: space-between">
+        <ul class="top">
+            <li><a href="{{ url_for('ukulima') }}">Ukulima Wallet</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="#">About</a></li>
+        </ul>
+        <ul class="logout">
+            <li><a href="{{ url_for('user_logout') }}">Logout</a></li>
+        </ul>
+    </div>
+</ul>
+
+
+<a href="{{ url_for('ukulima') }}" class="btn-floating waves-effect waves-light {#blue lighten-3#} hide-on-large-only"
+   id="back_button" style="background-color: transparent">
+    <ion-icon name="arrow-back-outline" class="back_icon"></ion-icon>
+</a>
+{% block content %}
+    <div class="section1">
+        <div class="row" style="text-align: center">
+            <h3>Partners</h3>
+        </div>
+        <div class="row" id="icon_container">
+            <ion-icon name="people-outline" class="target_icon"></ion-icon>
+        </div>
+        <center>
+            {% include 'includes/_flashmsg.html' %}
+        </center>
+    </div>
+    {% block navs %}
+        <div class="section2 black-text white">
+            <div class="row center-align black-text">
+                <h4>Selected Partners</h4>
+            </div>
+            <ul class="collection">
+                {% for partners in partnered_vendors %}
+                    <li class="collection-item avatar">
+                        <ion-icon name="people-outline" class="circle" style="color: green"></ion-icon>
+                        <span class="title"><b>{{ partners['vendor_name'] }}</b></span>
+                        <p>{{ partners['vendor_org'] }} <br>
+                            {{ partners['vendor_crop'] }}
+                        </p>
+                        {#                    <a href="#!" class="secondary-content"><i class="material-icons">grade</i></a>#}
+                        <div class="secondary-content">
+                            <a href="{{ url_for('targets') }}" class="btn waves-effect waves-light green lighten-1"
+                               style="border-radius: 20px">See target</a>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="section3 white">
+            <div class="row center-align black-text">
+                <h4>Available Vendors</h4>
+            </div>
+            {#    {{ vendor_materials }}#}
+            <div class="row" id="available_partners">
+                <ul class="collection collapsible black-text">
+
+                    {% for vendor_details in vendor_materials %}
+                        <li class="collection-item avatar">
+                            <ion-icon name="people-outline" class="circle"></ion-icon>
+                            <span class="title"><b>{{ vendor_details['org_name'] }}</b></span>
+                            <p></p>
+                            <br>
+                            <p id="available_offers">
+                                {#                                something was here#}
+                            </p>
+                            <form action="{{ url_for('ukulima_partners') }}" method="post">
+                                <div class="submit_icon secondary-content">
+                                    <label for="defaults" hidden></label>
+                                    {#                                    <input type="number" name="material_id" id="defaults"#}
+                                    {#                                           value="{{ vendor_details['material_id'] }}" readonly hidden>#}
+                                    <input type="text" name="client_name" id="defaults"
+                                           value="{{ session['f_name'] }} {{ session['l_name'] }}" readonly hidden>
+                                    <input type="text" name="client_id" id="defaults"
+                                           value="{{ session['user_id'] }}" readonly hidden>
+                                    <input type="text" name="vendor_org" id="defaults"
+                                           value="{{ vendor_details['org_name'] }}" readonly hidden>
+                                    <button type="submit"
+                                            style="background-color: transparent; border: none; cursor:pointer;">
+                                        <i class="material-icons">send</i>
+                                    </button>
+                                </div>
+                            </form>
+
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    {% endblock %}
+{% endblock %}
+{% block itemsDiv %}
+    {#    <div class="itemsDiv white black-text">#}
+    {##}
+    {#    </div>#}
+{% endblock %}
+{#    {{ vendor_materials }}#}
+{#        <div class="row" id="available_partners">#}
+{#            <ul class="collection collapsible black-text">#}
+{##}
+{#                {% for vendor_details in vendor_materials %}#}
+{#                    <li class="collection-item avatar">#}
+{#                    <div class="collapsible-header"></div>#}
+{#                <img src="images/yuna.jpg" alt="" class="circle">#}
+{#                        <ion-icon name="people-outline" class="circle"></ion-icon>#}
+{#                        <span class="title"><b>{{ vendor_details['org_name'] }}</b></span>#}
+{#                        <p>{{ vendor_details['org_name'] }} <br>#}
+{#                            {{ vendor_details['crop_name'] }}#}
+{#                        </p>#}
+{#                        <form action="{{ url_for('ukulima_partners') }}" method="post">#}
+{#                            <div class="submit_icon secondary-content">#}
+{#                                <input type="number" name="material_id" id="defaults"#}
+{#                                       value="{{ vendor_details['material_id'] }}" readonly hidden>#}
+{#                                <input type="text" name="client_name" id="defaults"#}
+{#                                       value="{{ session['f_name'] }} {{ session['l_name'] }}" readonly hidden>#}
+{#                                <input type="text" name="client_id" id="defaults"#}
+{#                                       value="{{ session['user_id'] }}" readonly hidden>#}
+{#                                <button type="submit"#}
+{#                                        style="background-color: transparent; border: none; cursor:pointer;">#}
+{#                                    <i class="material-icons">send</i>#}
+{#                                </button>#}
+{#                            </div>#}
+{#                        </form>#}
+{##}
+{#                    </li>#}
+{#                {% endfor %}#}
+{#            </ul>#}
+{#        </div>#}
+
+{#[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[JAVASCRIPT]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]#}
+{#ionicons#}
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='/js/materialize.min.js') }}"></script>
+{#link to app.js for service worker#}
+<script src="../static/js/app.js"></script>
+<script>
+    //stop auto submit on reload
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+    }
+    //sidenav
+    $(document).ready(function () {
+        $('.sidenav').sidenav();
+    });
+
+    //Dropdown
+    $(document).ready(function () {
+        $('select').formSelect()
+
+        //collapsible
+        $('.collapsible').collapsible()
+
+        //MATERIAL CALCULATOR
+        $('#size_of_land').on('input ', function () {
+            let this_var = document.getElementById('payment_required').value
+            console.log(this_var)
+            $('.payment_required').val(
+                ($('.quantity_per_acre').val() * $('.size_of_land').val()) * $('.price_per_kg').val()
+            )
+        });
+    });
+
+    $(document).ready(function () {
+
+        {#________________________________#}
+        $.ajax({
+            'url': '/offers-json/',
+            'method': 'post',
+            'success': function (data) {
+                data = JSON.parse(data)
+                {#console.log(data)#}
+                let display = `<h3> </h3>`
+                data.map(
+                    item => {
+                        {#if (item.offer_status === 'accepted') {#}
+                        {#    display += `#}
+                        {#    <ion-icon name="pricetags-outline" style="font-size: 20px"></ion-icon>#}
+                        {#    `#}
+                        {#1}#}
+                        display += `${item} <br>`
+                        console.log(item)
+                    });
+                {#$('#available_offers').html(display)#}
+                $('.itemsDiv').html(display)
+            }
+
+        })
+    });
+    {#_____________________________#}
+    {#.. });#}
+    //collapsible
+    {#document.addEventListener('DOMContentLoaded', function () {#}
+    {#    let elems = document.querySelectorAll('.collapsible');#}
+    {#    let instances = M.Collapsible.init(elems, {#}
+    {#        inDuration: 300#}
+    {#    });#}
+    {#1});#}
+</script>
+
+</body>
+</html>
