@@ -3,9 +3,6 @@ html{
   transition: 300ms;
 }
 body {
-  //background-image: url("../images/pexels-andre-moura-4021523.jpg");
-  //background-color: rgb(0 0 0/ 0.5);
-  //background-blend-mode: multiply;
   background-image: url("../images/plant.jpg");
   background-position: center;
   background-color: rgb(0 0 0/ 0.5);
@@ -71,4 +68,13 @@ body {
 }
 .section2:focus{
   background-color: white !important;
+}
+
+//[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[MEDIA QUERIES]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+@media all and (min-width: 1000px) {
+  .section2{
+    width: 70vw;
+    display: block;
+    margin: auto;
+  }
 }

@@ -67,24 +67,20 @@
 
                         <div class="rows" style="display: flex">
                             <label for="category" style="text-align: left; margin-left: -1em">Category:</label>
-                            <select name="category" id="category" class="form-control" required
-                                    style="width: 50vw; margin-left: 15.2em; ">
+                            <select name="category" id="category" class="form-control"
+                                    style="width: 50vw; margin-left: 15.2em;" required>
                                 <option value="" selected disabled>Please select a category</option>
-                                <option value="Crop">Crop</option>
-                                <option value="Fertilizer">Fertilizer</option>
+                                {% for category in categories %}
+                                    <option value="{{ category.category_name }}">{{ category.category_name }}</option>
+                                {% endfor %}
+
+                                {#                                <option value="Crop">Crop</option>#}
+                                {#                                <option value="Fertilizer">Fertilizer</option>#}
                             </select>
                         </div>
                         <label for="category" class="visually-hidden" hidden>Category</label>
                         <br>
                     </div>
-
-                    {#            <div class="col-md-12">#}
-                    {#                <label for="item_name"></label>#}
-                    {#                <div class="input-group">#}
-                    {#                    <div class="input-group-addon" style="width: 10vw">Item Name:</div>#}
-                    {#                    <input type="text" name="item_name" id="item_name" class="form-control" required>#}
-                    {#                </div>#}
-                    {#            </div>#}
 
                     {#            ITEM NAME#}
                     <div class="form-group row">
@@ -95,36 +91,22 @@
                         </div>
                     </div>
 
-                    {#            <div class="col-md-12">#}
-                    {#                <label for="quantity_per_acre"></label>#}
-                    {#                <div class="input-group">#}
-                    {#                    <div class="input-group-addon" style="width: 1vw">Quantity needed per acre (in KGs):</div>#}
-                    {#                    <input type="number" name="quantity_per_acre" id="quantity_per_acre" class="form-control" required>#}
-                    {#                </div>#}
-                    {#            </div>#}
-
                     {#            QUANTITY PER KG#}
                     <div class="form-group row">
-                        <label for="quantity_per_kg" class="col-sm-2 col-form-label">Quantity per acre (in KGs):</label>
+                        <label for="quantity_per_acre" class="col-sm-2 col-form-label">Quantity per acre (in
+                            KGs):</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="quantity_per_kg" name="quantity_per_kg" required
+                            <input type="number" class="form-control" id="quantity_per_acre" name="quantity_per_acre"
+                                   required
                                    style="width: 50vw">
                         </div>
                     </div>
 
-                    {#            PRICE PER KG#}
-                    {#            <div class="col-md-12" style="margin-bottom: 2em;">#}
-                    {#                <label for="price_per_kg"></label>#}
-                    {#                <div class="input-group">#}
-                    {#                    <div class="input-group-addon" style="width: 10vw">Price per KG:</div>#}
-                    {#                    <input type="number" name="price_per_kg" id="price_per_kg" class="form-control" required>#}
-                    {#                </div>#}
-                    {#            </div>#}
 
                     <div class="form-group row">
                         <label for="price_per_kg" class="col-sm-2 col-form-label">Price per KG:</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="price_per_kg" name="price_per_kg" required
+                            <input type="number" class="form-control" id="price_per_kg" name="price_per_kg" required
                                    style="width: 50vw">
                         </div>
                     </div>

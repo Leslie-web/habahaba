@@ -20,52 +20,222 @@
 {% endblock %}
 
 {% block content %}
-    <div class="section1">
-        <form action="{{ url_for('admin_product_categories') }}" method="post"
-              style="margin-top: 5em; padding: 1em; display: grid; justify-content: center; transition: 500ms ease;
+    <br>
+    <div class="content-top-1 box box-success">
+        <div class="box-body">
+            <br>
+            <div class="section1">
+                <form action="{{ url_for('admin_product_categories') }}" method="post"
+                      style="padding: 1em; display: grid; justify-content: center; transition: 500ms ease;
     ">
-            <div class="flash" style="text-align: center;">
-                {% include 'includes/flashmsg_bootstrap.html' %}
-            </div>
-            <div class="heading">
-                <center><h3>Set up product Categories</h3></center>
-            </div>
-            <div class="details_container">
-                {#            `Category Name#}
-                <div class="row">
-                    <div class="input-field col s12">
-                        <div class="col-md-s12">
-                            <label for="category_name"></label>
-                            <div class="input-group">
-                                <div class="input-group-addon" style="width: 12em;">Category:</div>
-                                <input type="text" name="category_name" id="category_name" class="form-control"
-                                       style="width: 40vw" required>
+                    <div class="flash" style="text-align: center;">
+                        {% include 'includes/flashmsg_bootstrap.html' %}
+                    </div>
+                    <div class="heading">
+                        <center><h3>Set up product Categories</h3></center>
+                    </div>
+                    <div class="details_container">
+                        {#            `Category Name#}
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <div class="col-md-s12">
+                                    <label for="category_name"></label>
+                                    <div class="input-group">
+                                        <div class="input-group-addon" style="width: 12em;">Category:</div>
+                                        <input type="text" name="category_name" id="category_name" class="form-control"
+                                               style="width: 40vw" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {#            syb category#}
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <div class="col-md-s12">
+                                    <label for="sub_category"></label>
+                                    <div class="input-group">
+                                        <div class="input-group-addon" style="width: 12em;">Sub-Category:</div>
+                                        <input type="text" name="sub_category" id="sub_category" class="form-control"
+                                               style="width: 40vw" required>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                {#            syb category#}
-                <div class="row">
-                    <div class="input-field col s12">
-                        <div class="col-md-s12">
-                            <label for="sub_category"></label>
-                            <div class="input-group">
-                                <div class="input-group-addon" style="width: 12em;">Sub-Category:</div>
-                                <input type="text" name="sub_category" id="sub_category" class="form-control"
-                                       style="width: 40vw" required>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="submit_button" style="display: grid; place-items: center;">
-                <button type="submit" class="btn btn-outline-success" style="width: 10em; outline: 1px solid green;
+                    <div class="submit_button" style="display: grid; place-items: center;">
+                        <button type="submit" class="btn btn-outline-success" style="width: 10em; outline: 1px solid green;
                  margin-top: 1em">
-                    Submit
+                            Submit
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <br>
+    <div class="content-top-1 box box-success">
+        <div class="box-body">
+            <br>
+            <div class="heading" style="text-align: center;">
+                <h3>Category List</h3>
+            </div>
+            <br>
+            <div class="{#box-tools pull-left#}"
+                 style="padding-right: 30px; margin-bottom: 5px; column-gap: 8px; display: flex; justify-content: flex-end">
+                <button class="btn btn-danger" id="deleteCategory">
+                    <i class="fa fa-trash"></i> Delete Category
+                </button>
+                <form action="{{ url_for('delete_category') }}" method="post" hidden>
+                    <input type="hidden" name="category_id" id="categoryId">
+                    <button type="submit" id="delButton">Delete</button>
+                </form>
+
+
+                {#            edit btn#}
+                <button type="button" id="editButton" class="btn btn-info btn-sm"
+                ><i class="fa fa-edit"></i> Change Status
                 </button>
             </div>
-        </form>
+            {#            edit modal#}
+            <a type="button" id="emodal" data-toggle="modal" data-target="#edit_modal"></a>
+            <div class="modal fade" id="edit_modal" tabindex="-1"
+                 role="dialog"
+                 aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <form action="{{ url_for('update_category') }}" method="post">
+                        <input type="hidden" id="id" name="vendor_id">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title"
+                                    id="exampleModalLabel"></h5>
+                                <button type="button" class="close" data-dismiss="modal"
+                                        aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            {#                            body#}
+                            <input type="hidden" name="category_id" id="category_id">
+                            <div class="modal-body">
+                                <div class="form-group row">
+                                    <label for="categoryName" class="col-sm-2 col-form-label">Category:</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" name="category" id="categoryName">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="subCategory" class="col-sm-2 col-form-label">Sub Category:</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" name="sub_category" id="subCategory">
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary"
+                                        data-dismiss="modal">
+                                    Close
+                                </button>
+                                <button type="submit" class="btn btn-primary">Save changes
+                                </button>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <table class="ui celled table " width="100%" id="categoriesTable">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>Category</th>
+                    <th>Sub Category</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
     </div>
+
+    {#    <br>#}
+    <div class="content-top-1 box box-success">
+        <div class="box-body">
+            <br>
+            <form action="{{ url_for('text_msg') }}" method="post">
+                <input type="number" name="phone" id="" value="254713562964">
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            var table = $('#categoriesTable').DataTable({
+                destroy: true,
+                responsive: false,
+                "ajax": {
+                    url: '/admin-categories-json/',
+                    type: 'get'
+                },
+                "order": [[0, "desc"]],
+                select: {
+                    style: 'single',
+                    selector: 'tr'
+                },
+                {#having a checkbox#}
+                columnDefs: [{
+                    orderable: false,
+                    className: 'select-checkbox',
+                    targets: 0
+                }],
+                scrollY: "800px",
+                scrollX: true,
+                scrollCollapse: true,
+                paging: true,
+                fixedColumns: true,
+                lengthChange: true,
+                "rowCallback": function (nRow, aData) {
+                    {#removing the values on a checkbox#}
+                    $('td', nRow).eq(0).html('');
+                },
+
+            });
+
+            let buttons = new $.fn.dataTable.Buttons(table, {
+                buttons: ['excelHtml5', 'pdfHtml5', 'colvis']
+            });
+            buttons.container().appendTo($('div.right.aligned.eight.column:eq(0)', table.table().container()));
+
+            {#edit#}
+            $('#editButton').click(function () {
+                if (table.rows('.selected').data().length > 0) {
+                    let row = table.rows('.selected').data()[0];
+                    $('#category_id').val(row[0])
+                    $('#categoryName').val(row[1])
+                    $('#subCategory').val(row[2])
+
+                    $('#emodal').click()
+                } else {
+                    alert("Please select an entry");
+                }
+            });
+
+            {#delete#}
+            $('#deleteCategory').click(function () {
+                if (table.rows('.selected').data().length > 0) {
+                    let row = table.rows('.selected').data()[0];
+                    $('#categoryId').val(row[0])
+
+                    confirm("Are you sure you want to delete this category?")
+                    $('#delButton').click()
+                } else {
+                    alert("Please select an entry");
+                }
+            });
+        });
+    </script>
 {% endblock %}
 </body>
 </html>

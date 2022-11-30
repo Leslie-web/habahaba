@@ -55,11 +55,33 @@ body {
   }
 }
 
-.section3 {
+.section2 {
+  width: 80vw;
+  display: block;
+  margin: auto;
+}
 
+.section3 {
+  width: 80vw;
+  display: block;
+  margin: auto;
 }
 
 //[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[MEDIA QUERIES]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+@media all and (max-width: 1000px) {
+  .section2 {
+  width: 100vw;
+  //display: block;
+  //margin: auto;
+}
+
+.section3 {
+  width: 100vw;
+  //display: block;
+  //margin: auto;
+}
+}
+
 @media all and (max-width: 425px) {
   //.section2 {
   //  width: 90vw;

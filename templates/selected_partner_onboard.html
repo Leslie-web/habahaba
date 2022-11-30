@@ -27,7 +27,7 @@
     <a href="#" class="sidenav-trigger" data-target="mobile_links">
         <i class="material-icons">menu</i>
     </a>
-    <a href="{{ url_for('user_homepage') }}" class="brand-logo">Habahaba Ukulima</a>
+    <a href="{{ url_for('user_homepage') }}" class="brand-logo" style="padding-left: 0.5em">Habahaba Ukulima</a>
     <ul class="right hide-on-med-and-down">
         <li><a href="{{ url_for('ukulima') }}">Ukulima Wallet</a></li>
         <li><a href="#">About</a></li>
@@ -58,6 +58,15 @@
    id="back_button" style="background-color: transparent;">
     <ion-icon name="arrow-back-outline" class="back_icon"></ion-icon>
 </a>
+<style>
+    @media all and (min-width: 1000px) {
+        .section2 {
+            width: 70vw;
+            display: block;
+            margin: auto;
+        }
+    }
+</style>
 
 <div class="section2" style="margin-top: 3em">
     <form action="{{ url_for('selected_partner') }}" method="post">
@@ -156,87 +165,6 @@ border-radius: 30px;
         </div>
     </form>
 </div>
-{#<div class="section1 white" style="padding: 1em;">#}
-{#    <form action="{{ url_for('selected_partner') }}" method="post">#}
-{#        <div class="black-text">#}
-{#            <input type="text" name="vendor_id" id="defaults"#}
-{#                   value="{{ vendor_details['vendor_id'] }}" readonly hidden>#}
-{#            <input type="text" name="vendor_name" id="defaults"#}
-{#                   value="{{ vendor_details['vendor_name'] }}" readonly hidden>#}
-{#            <input type="text" name="vendor_email" id="defaults"#}
-{#                   value="{{ vendor_details['vendor_email'] }}" readonly hidden>#}
-{#            <input type="text" name="vendor_phone" id="defaults"#}
-{#                   value="{{ vendor_details['phone_no'] }}" readonly hidden>#}
-{#            <input type="text" name="crop_name" id="defaults"#}
-{#                   value="{{ vendor_details['crop_name'] }}" readonly hidden>#}
-{#            <input type="text" name="location" id="defaults"#}
-{#                   value="{{ vendor_details['location'] }}" readonly hidden>#}
-{#            <input type="text" name="payment_method" id="defaults"#}
-{#                   value="{{ vendor_details['payment_method'] }}" readonly hidden>#}
-{#            <input type="text" name="acc_number" id="defaults"#}
-{#                   value="{{ vendor_details['acc_number'] }}" readonly hidden>#}
-{#            <input type="text" name="vendor_org" id="defaults"#}
-{#                   value="{{ vendor_details['org_name'] }}" readonly hidden>#}
-{##}
-{##}
-{#            <input type="text" name="client_id" id="defaults"#}
-{#                   value="{{ session['user_id'] }}" readonly hidden>#}
-{#            <input type="text" name="client_name" id="defaults"#}
-{#                   value="{{ session['f_name'] }} {{ session['l_name'] }}" readonly hidden>#}
-{#            <input type="text" name="client_phone" id="defaults"#}
-{#                   value="{{ session['phone_no'] }}" readonly hidden>#}
-{#            <input type="text" name="client_id_no" id="defaults" value="{{ session['id_no'] }}"#}
-{#                   readonly hidden>#}
-{#            <input type="text" name="client_email" id="defaults"#}
-{#                   value="{{ session['email'] }}" readonly hidden>#}
-{#            <label for="defaults"></label>#}
-{##}
-{#            <div class="row">#}
-{#                <div class="input-field col s12">#}
-{#                    <input type="text" name="quantity_per_acre" id="quantity_per_acre"#}
-{#                           class="validate" value="{{ vendor_details['quantity_per_acre'] }}"#}
-{#                           readonly required>#}
-{#                    <label for="quantity_per_acre">Quantity per acre in KGs</label>#}
-{#                </div>#}
-{#                <div class="input-field col s12">#}
-{#                    <input type="number" name="price_per_kg" id="price_per_kg" class="validate"#}
-{#                           value="{{ vendor_details['price_per_kg'] }}"#}
-{#                           readonly required>#}
-{#                    <label for="price_per_kg">Price per KG</label>#}
-{#                </div>#}
-{#                <div class="row">#}
-{#                    <div class="input-field col s12">#}
-{#                        <input type="number" name="size_of_land" id="size_of_land"#}
-{#                               class="validate" value="0" required>#}
-{#                        <label for="size_of_land">Enter the size of land in acres</label>#}
-{#                    </div>#}
-{#                </div>#}
-{#                <div class="row">#}
-{#                    <div class="input-field col s12">#}
-{#                        <input type="number" name="payment_required" id="payment_required"#}
-{#                               class="validate" value="0" readonly>#}
-{#                        <label for="payment_required">Payment required</label>#}
-{#                    </div>#}
-{#                </div>#}
-{##}
-{#                <div class="row">#}
-{#                    <div class="input-field col s12">#}
-{#                        <input type="date" name="save_until" id="save_until"#}
-{#                               class="validate" value="" required>#}
-{#                        <label for="payment_required">Saving duration</label>#}
-{#                    </div>#}
-{#                </div>#}
-{#            </div>#}
-{##}
-{#            <div class="row" style="display: flex;justify-content: center">#}
-{#                <input type="submit" class="btn waves-effect waves-light">#}
-{#            </div>#}
-{#            <div class="modal-footer">#}
-{#                <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>#}
-{#            </div>#}
-{#        </div>#}
-{#    </form>#}
-{#</div>#}
 
 {#[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[JAVASCRIPT]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]#}
 {#ionicons#}
@@ -279,22 +207,12 @@ border-radius: 30px;
             }
         });
 
-    });
-
-    //Dropdown
-    $(document).ready(function () {
+        //Dropdown
         $('select').formSelect()
 
         //collapsible
         $('.collapsible').collapsible()
 
-        //MATERIAL CALCULATOR
-        {#$('#size_of_land').on('input ', function () {#}
-        {#let this_var = document.getElementById('payment_required').value#}
-        {#console.log(this_var)#}
-        {#$('.payment_required').val(#}
-        {#    ($('.quantity_per_acre').val() * $('.size_of_land').val()) * $('.price_per_kg').val()#}
-        {#)#}
 
         //collapsible
         document.addEventListener('DOMContentLoaded', function () {
@@ -321,33 +239,7 @@ border-radius: 30px;
             }
         });
 
-        {#$('#size_of_land').blur(function () {#}
-        {#    $('#payment_required').val(#}
-        {#        ($('#quantity_per_acre').val() * $('#size_of_land').val() * $('#price_per_kg').val()) +#}
-        {#        (($('#quantity_per_acre').val() * $('#size_of_land').val()) * $('#price_per_kg').val() *#}
-        {#            ($('#commission').val() / 100))#}
-        {#    )#}
-        {#    $('.details_container').show(300);#}
-        {#1});#}
-        {#$('#size_of_land').blur(function () {#}
-        {#    let payment_required = (quantity_per_acre * price_per_kg * size_of_land)#}
-        {#    let total_commission = (commission)#}
-        {#    $('#payment_required').html(0)#}
-        {##}
-        {#    $('.details_container').show(300);#}
-        {#/});#}
-        {#$('#done_btn').click(function () {#}
-        {#$('#payment_required').val(#}
-        {#    ($('#quantity_per_acre').val() * $('#size_of_land').val()) * $('#price_per_kg').val() +#}
-        {#    ((($('#quantity_per_acre').val() * $('#size_of_land').val()) * $('#price_per_kg').val() *#}
-        {#        (100 - $('#commission') / 100)))#}
-        {#)#}
-        {#$('.details_container').show(300);#}
-        {#/});#}
     });
 </script>
-{#    bootstrap#}
-{#    <script type="text/javascript"#}
-{#            src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>#}
 </body>
 </html>

@@ -26,7 +26,7 @@
     <a href="#" class="sidenav-trigger" data-target="mobile_links">
         <i class="material-icons">menu</i>
     </a>
-    <a href="{{ url_for('user_homepage') }}" class="brand-logo">Habahaba Ukulima</a>
+    <a href="{{ url_for('user_homepage') }}" class="brand-logo" style="padding-left: 0.5em">Habahaba Ukulima</a>
     <ul class="right hide-on-med-and-down">
         <li><a href="{{ url_for('ukulima') }}">Ukulima Wallet</a></li>
         <li><a href="#">About</a></li>
@@ -56,17 +56,17 @@
 </a>
 
 {#[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[FLOATING BUTTON]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]#}
-<div class="fixed-action-btn">
-    <a class="btn-floating btn-large red">
-        <i class="large material-icons">mode_edit</i>
-    </a>
-    <ul>
-        <li><a class="btn-floating red"><i class="material-icons">insert_chart</i></a></li>
-        <li><a class="btn-floating yellow darken-1"><i class="material-icons">format_quote</i></a></li>
-        <li><a class="btn-floating green"><i class="material-icons">publish</i></a></li>
-        <li><a class="btn-floating blue"><i class="material-icons">attach_file</i></a></li>
-    </ul>
-</div>
+{#<div class="fixed-action-btn">#}
+{#    <a class="btn-floating btn-large red">#}
+{#        <i class="large material-icons">mode_edit</i>#}
+{#    </a>#}
+{#    <ul>#}
+{#        <li><a class="btn-floating red"><i class="material-icons">insert_chart</i></a></li>#}
+{#        <li><a class="btn-floating yellow darken-1"><i class="material-icons">format_quote</i></a></li>#}
+{#        <li><a class="btn-floating green"><i class="material-icons">publish</i></a></li>#}
+{#        <li><a class="btn-floating blue"><i class="material-icons">attach_file</i></a></li>#}
+{#    </ul>#}
+{#</div>#}
 {#[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[FLOATING BUTTON]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]#}
 
 
@@ -101,9 +101,12 @@
 
                     </p>
                     <div class="collapsible-header">
-                        <a href="#!" class="secondary-content black-text">
+                        <a href="#!" class="secondary-content black-text change_btn">
                             {#                            <ion-icon name="checkmark-circle-outline" style="color: greenyellow"></ion-icon>#}
-                            <i class="material-icons" style="color: #80ff00; font-size: 34px;">check</i>
+                            {#                            <i class="material-icons" style="color: #80ff00; font-size: 34px;">check</i>#}
+                            <i class="material-icons done_btn" style="color: #80ff00; font-size: 34px;">done</i>
+                            {#                            <i class="material-icons done_all_btn"#}
+                            {#                               style="color: #80ff00; font-size: 34px;">done_all</i>#}
                         </a>
                     </div>
 
@@ -215,9 +218,9 @@
         window.history.replaceState(null, null, window.location.href);
     }
 
-    function update_price(price) {
-        $('#price').val(price);
-    }
+    {#function update_price(price) {#}
+    {#    $('#price').val(price);#}
+    //    }
 
     //floating action button
     document.addEventListener('DOMContentLoaded', function () {
@@ -227,32 +230,16 @@
         });
     });
 
-    function buildmodal(obj) {
-        console.log(obj);
-        console.log(JSON.parse(obj))
+    {#function buildmodal(obj) {#}
+    {#    console.log(obj);#}
+    {#    console.log(JSON.parse(obj))#}
+    {##}
+    {#    $('#vendor_name').val(obj.vendor_name);#}
+    {#    $('.modal').modal();#}
+    //}
 
-        $('#vendor_name').val(obj.vendor_name);
-        $('.modal').modal();
-    }
-
-    //=============================================================
 
     $(document).ready(function () {
-        {#MATERIAL CALCULATOR#}
-        {#        {% for vendor_details in all_members %}#}
-        {#            $('#/ukulima-targets/{{ vendor_details['material_id'] }}').click(function () {#}
-        {#                console.log('Leslie')#}
-        {#                $('#size_of_land').on('input ', function () {#}
-        {#                    let this_var = document.getElementById('payment_required').value#}
-        {#                    console.log(this_var)#}
-        {#                    $('#payment_required').val(#}
-        {#                        ($('#quantity_per_acre').val() * $('#size_of_land').val()) * $('#price_per_kg').val()#}
-        {#                    )#}
-        {#                });#}
-        {#            })#}
-        {#        {% endfor %}#}
-
-
         $('.modal_btn').click(function () {
             $('#size_of_land').on('input ', function () {
                 let this_var = document.getElementById('payment_required').value
@@ -264,18 +251,10 @@
         })
 
 
-        //____________________________________________________________________
-
-
-    });
-    //Collapsible
-    $(document).ready(function () {
+        //Collapsible
         $('.collapsible').collapsible();
 
-    });
-
-    //Dropdown
-    $(document).ready(function () {
+        //Dropdown
         $('select').formSelect()
 
         //data tables
@@ -294,71 +273,13 @@
     });
 
     //regular inputs
-    $(document).ready(function () {
-        M.updateTextFields();
-    });
+    M.updateTextFields();
 
-    //modal
-    //    $(document).ready(function () {
-    //        $('.modal').modal();
-    //    });
 
     //sidenav
     $(document).ready(function () {
         $('.sidenav').sidenav();
 
-        //dropdown
-        $('#crop_type').change(function () {
-            let my_data = this.value;
-            {#alert(my_data)#}
-            let price = 0;
-
-            {#$.ajax({#}
-            {#    'url': '/partner-options/',#}
-            {#    'method': 'post',#}
-            {#    'data': {my_data: my_data},#}
-            {#    'success': function (data) {#}
-            {#        data = JSON.parse(data);#}
-            {#        console.log(data);#}
-            {##}
-            {#        $('#viable_partners').removeAttr('style');#}
-            {##}
-            {#        let partners = `<h5>${my_data} Vendors</h5>`#}
-            {##}
-            {#        data.map(#}
-            {#            item => {#}
-            {#                if (my_data === item.crop_name && item.material_status === 'accepted') {#}
-            {#                    partners += `#}
-            {#                        <ul style="display: flex; justify-content: space-between">#}
-            {#                        <li>#}
-            {##}
-            {#                             ${item.vendor_name} ${item.vendor_email} ${item.phone_no}#}
-            {#                              <a href="#modal1" class="btn waves-effect waves-light modal-trigger"#}
-            {#                                style="border-radius: 60px; width: 2em; height: 2em;#}
-            {#                                display: inline-flex; justify-content: center; align-items: center;#}
-            {#                                font-weight: bold">+</a>#}
-            {#                        </li>#}
-            {#                        </ul>#}
-            {##}
-            {#                            <div class="modal black-text" id="modal1">#}
-            {#                                    <div class="modal-content">#}
-            {#                                        <h4>Partners</h4>#}
-            {#                                        <div class="mydata">#}
-            {##}
-            {#                                        </div>#}
-            {#                                    </div>#}
-            {#                                    <div class="modal-footer">#}
-            {#                                        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>#}
-            {#                                    </div>#}
-            {#                                </div>#}
-            {#                    `;#}
-            {#                }#}
-            {#            })#}
-            {#        $('#viable_partners').html(partners)#}
-            {#    }#}
-            // })
-
-        });
     });
 
 

@@ -35,56 +35,102 @@
     {#    </div>#}
     <br>
     <div class="content-top-1 box box-success">
+        <div class="box-header">
+            <div class="flash" style="text-align: center">
+                {% include 'includes/flashmsg_bootstrap.html' %}
+
+            </div>
+            <br>
+            <div class="{#box-tools pull-left#}" style="padding-right: 30px; display: flex; justify-content: flex-end">
+                <button type="button" id="btnedit" class="btn btn-info btn-sm" style="width: 8em;"><i
+                        class="fa fa-edit"></i> Edit
+                </button>
+            </div>
+
+            <a type="button" id="emodal" data-toggle="modal" data-target="#edit_modal"></a>
+            <div class="modal fade" id="edit_modal" tabindex="-1"
+                 role="dialog"
+                 aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <form method="post">
+                        <input type="hidden" id="id" name="vendor_id">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title"
+                                    id="exampleModalLabel"></h5>
+                                <button type="button" class="close" data-dismiss="modal"
+                                        aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            {#                            body#}
+                            <div class="modal-body">
+                                <div class="form-group row">
+                                    <label for="commission" class="col-sm-2 col-form-label">Commission:</label>
+                                    <div class="col-sm-10">
+                                        <input type="number" class="form-control" placeholder="Commission"
+                                               name="commission"
+                                               id="commission">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="paymode" class="col-sm-2 col-form-label">Payment Method:</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" placeholder="Payment Method"
+                                               name="payment_method"
+                                               id="paymode">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="acc_number" class="col-sm-2 col-form-label">Account Number:</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" placeholder="Account Number"
+                                               name="acc_number"
+                                               id="acc_number">
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary"
+                                        data-dismiss="modal">
+                                    Close
+                                </button>
+                                <button type="submit" class="btn btn-primary">Save changes
+                                </button>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
         <div class="box-body">
             <br>
             <div class="section1">
-                <table {#class="display black-text"#}class="ui celled table " width="100%" id="myTable">
+                <table class="ui celled table " width="100%" id="myTable">
                     <thead>
                     <tr>
                         {#                        <th>#</th>#}
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Gender</th>
-                        <th>Phone Number</th>
-                        <th>ID Number</th>
+                        <th></th>
+                        {#                        <th>First Name</th>#}
+                        {#                        <th>Last Name</th>#}
+                        {#                        <th>Gender</th>#}
+                        {#                        <th>Phone Number</th>#}
+                        {#                        <th>ID Number</th>#}
                         <th>Organisation</th>
-                        {#                <th>Payment Method</th>#}
-                        {#                <th>Account Number</th>#}
                         <th>Location</th>
                         <th>Email</th>
                         <th>Commission(%)</th>
-                        <th>Actions</th>
+                        {#                        <th>Actions</th>#}
                     </tr>
                     </thead>
 
-                    {% for vendor in vendors %}
-                        <tr>
-                            <td>{{ loop.index }}</td>
-                            <td>{{ vendor['f_name'] }}</td>
-                            <td>{{ vendor['l_name'] }}</td>
-                            <td>{{ vendor['gender'] }}</td>
-                            <td>{{ vendor['phone_no'] }}</td>
-                            <td>{{ vendor['id_no'] }}</td>
-                            <td>{{ vendor['org_name'] }}</td>
-                            {#                    <td>{{ vendor['payment_method'] }}</td>#}
-                            {#                    <td>{{ vendor['acc_number'] }}</td>#}
-                            <td>{{ vendor['location'] }}</td>
-                            <td>{{ vendor['email'] }}</td>
-                            <td>{{ vendor['commission'] }}</td>
-                            {#                            <td>#}
-                            {#                                <input type="text" name="" class="checking" value="{{ vendor.vendor_id }}">#}
-                            {#                                <button class="myButton">+</button>#}
-                            {#                            </td>#}
-                            {#                    <td>{{ user['quantity_per_acre'] }}</td>#}
-                            {#                    <td>{{ user['price_per_kg'] }}</td>#}
-                            {#                            <td>#}
-                            {#                                <button class="btn btn-success">Edit</button>#}
-                            {#                            </td>#}
-                        </tr>
-                    {% endfor %}
 
-                    <tbody>
-                    </tbody>
                 </table>
                 <div class="divContent" hidden>
 
@@ -99,70 +145,15 @@
     <div class="content-top-1 box box-success">
         <div class="box-body">
             <br>
-            <div class="haeding">
-                <h3 style="text-align: center; text-decoration: underline">Edit Vendor Details</h3>
-            </div>
-            <br>
-            <div class="section2">
-                <label for="selected_vendor"></label>
-                <div class="col-md-6">
-                    <select name="selected_vendor" id="selected_vendor" class="form-control drop_down">
-                        <option value="" selected disabled>Please select a vendor</option>
-                    </select>
-                </div>
-            </div>
-            <hr>
-            <form action="" id="vendor_details_frm" hidden>
-                <div class="section3">
-                    <div class="form-group row">
-                        <label for="f_name" class="col-sm-1 col-form-label">First Name:</label>
-                        <div class="col-md-6">
-                            <input type="text" name="f_name" id="f_name" class="form-control">
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <label for="l_name" class="col-sm-1 col-form-label">Last Name:</label>
-                        <div class="col-md-6">
-                            <input type="text" name="l_name" id="l_name" class="form-control col-md-6">
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <label for="phone_no" class="col-sm-1 col-form-label">Phone Number:</label>
-                        <div class="col-md-6">
-                            <input type="number" name="phone_no" id="phone_no" class="form-control col-md-6">
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <label for="commission" class="col-sm-1 col-form-label">Commission in (%):</label>
-                        <div class="col-md-6">
-                            <input type="number" name="commission" id="commission" min="0" max="100"
-                                   class="form-control col-md-6">
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <label for="payment_method" class="col-sm-1 col-form-label">Payment Method:</label>
-                        <div class="col-md-6">
-                            <input type="text" name="payment_method" id="payment_method" class="form-control col-md-6">
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <label for="acc_number" class="col-sm-1 col-form-label">Account Number:</label>
-                        <div class="col-md-6">
-                            <input type="number" name="acc_number" id="acc_number" class="form-control col-md-6">
-                        </div>
-                    </div>
-                    <br>
-                    <div class="submit_btn" style="display: flex;">
-                        <button class="btn btn-success" id="submit_btn" style="margin-left: 20vw" disabled>Confirm
-                        </button>
-                    </div>
-                </div>
+            <form action="{{ url_for('csv') }}" method="post" enctype="multipart/form-data">
+                {#                {% include 'includes/flashmsg_bootstrap.html' %}#}
+                <input type="file" name="names" id="names" accept=".csv">
+                <br>
+                <br>
+                <button type="submit">Send</button>
             </form>
+
+            {#            {{ names }}#}
         </div>
     </div>
     {#[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[JAVASCRIPT]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]#}
@@ -179,110 +170,62 @@
         if (window.history.replaceState) {
             window.history.replaceState(null, null, window.location.href);
         }
-
         //datatables
         $(document).ready(function () {
-            $('#myTable').dataTable();
+            {#$('#myTable').DataTable();#}
+            var table = $('#myTable').DataTable({
+                destroy: true,
+                responsive: false,
+                "ajax": {
+                    url: '/admin-vendors-json/',
+                    type: 'get'
+                },
+                "order": [[0, "asc"]],
+                select: {
+                    style: 'single',
+                    selector: 'tr'
+                },
+                {#having a checkbox#}
+                columnDefs: [{
+                    orderable: false,
+                    className: 'select-checkbox',
+                    targets: 0
+                }],
+                scrollY: "800px",
+                scrollX: true,
+                scrollCollapse: true,
+                paging: true,
+                fixedColumns: true,
+                lengthChange: true,
+                "rowCallback": function (nRow, aData) {
+                    {#removing the values on a checkbox#}
+                    $('td', nRow).eq(0).html('');
+                    {#$('td', nRow).eq(2).html('<label class="label label-default">'+ aData[2] +'</label>'); #}
+                    {#if(aData[3]>0)#}
+                    {# $('td', nRow).eq(3).html('<label class="label label-success">OK</label>');#}
+                    {#else#}
+                    {#$('td', nRow).eq(3).html('<label class="label label-danger">FAIL</label>'); #}
+                },
 
-            $(".myButton").click(function () {
-                $('.divContent').show(300)
-            })
-
-            $.ajax({
-                url: '/vendor-json/',
-                method: 'post',
-                success: function (data) {
-                    data = JSON.parse(data)
-                    {#console.log(data)#}
-                    let details = ``
-                    let vendor_id = ''
-                    {#let counter = $('.checking').val()#}
-
-                    data.map(
-                        item => {
-                            {#console.log(item)#}
-                            details += `
-                {#<select name="selected_vendor" id="selected_vendor" class="form-control">#}
-                            <option value="${item.org_name}">${item.org_name}</option>
-                {#</select>#}
-                {#${item.org_name}#}
-                            `
-                            $('#selected_vendor').change(function () {
-                                if ($("#selected_vendor").val() === item.org_name) {
-                                    {#    vendor_id += `#}
-                                    {#${item.vendor_id}#}
-                                    {#`#}
-                                    vendor_id = item.vendor_id + item.f_name
-                                    console.log(vendor_id)
-
-                                    $('#vendor_details_frm').show(400)
-                                    $("#f_name").val(item.f_name)
-                                    $("#l_name").val(item.l_name)
-                                    $("#phone_no").val(item.phone_no)
-                                    $("#commission").val(item.commission)
-                                    $("#payment_method").val(item.payment_method)
-                                    $("#acc_number").val(item.acc_number)
-                                    $('#submit_btn').removeAttr('disabled')
-                                }
-                            });
-                        }
-                    )
-                    {#data.map(#}
-                    {#    item2 => {#}
-                    {#        $('#selected_vendor').change(function () {#}
-                    {#            if ($("#selected_vendor").val() === item2.email) {#}
-                    {#    vendor_id += `#}
-                    {#${item.vendor_id}#}
-                    {#`#}
-                    {#                vendor_id = item2.vendor_id + item2.f_name#}
-                    {#                console.log(vendor_id)#}
-                    {#            }#}
-                    {#        });#}
-                    {#    }#}
-                    {#)#}
-                    $('#selected_vendor').html(details)
-                    {#$('#item').html(vendor_id)#}
-                }
             });
 
+            let buttons = new $.fn.dataTable.Buttons(table, {
+                buttons: ['excelHtml5', 'pdfHtml5', 'colvis']
+            });
+            buttons.container().appendTo($('div.right.aligned.eight.column:eq(0)', table.table().container()));
 
-            //datatables
-            $(document).ready(function () {
-                {#$('#myTable').DataTable();#}
-                var table = $('#myTable').DataTable({
-                    destroy: true,
-                    responsive: false,
-                    "ajax": {
-                        url: '/admin-vendors-json/',
-                        type: 'get'
-                    },
-                    "order": [[2, "desc"]],
-                    select: {
-                        style: 'none',
-                        selector: 'td:first-child'
-                    },
-                    scrollY: "800px",
-                    scrollX: true,
-                    scrollCollapse: true,
-                    paging: true,
-                    fixedColumns: true,
-                    lengthChange: true,
-                    "rowCallback": function (nRow, aData) {
-                        {#$('td', nRow).eq(2).html('<label class="label label-default">'+ aData[2] +'</label>'); #}
-                        {#if(aData[3]>0)#}
-                        {# $('td', nRow).eq(3).html('<label class="label label-success">OK</label>');#}
-                        {#else#}
-                        {#$('td', nRow).eq(3).html('<label class="label label-danger">FAIL</label>'); #}
-                    },
-                    columnDefs: [{
-                        targets: 0
-                    }]
-                });
-
-                let buttons = new $.fn.dataTable.Buttons(table, {
-                    buttons: ['excelHtml5', 'pdfHtml5', 'colvis']
-                });
-                buttons.container().appendTo($('div.right.aligned.eight.column:eq(0)', table.table().container()));
+            $('#btnedit').click(function () {
+                if (table.rows('.selected').data().length > 0) {
+                    var row = table.rows('.selected').data()[0];
+                    console.log(row);
+                    $('#id').val(row[0])
+                    $('#exampleModalLabel').html(row[1] + " " + row[2])
+                    $('#commission').val(row[9]);
+                    $('#paymode').val(row[10]);
+                    $('#acc_number').val(row[11]);
+                    $('#emodal').click();
+                } else
+                    alert("please select an entry.");
             });
         });
 

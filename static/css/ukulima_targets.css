@@ -71,4 +71,12 @@ body {
   background-color: white !important;
 }
 
+@media all and (min-width: 1000px) {
+  .section2 {
+    width: 70vw;
+    display: block;
+    margin: auto;
+  }
+}
+
 /*# sourceMappingURL=ukulima_targets.css.map */

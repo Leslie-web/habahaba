@@ -8,9 +8,11 @@
     <title>Document</title>
 </head>
 <body>
-<form action="" method="post">
+<form action="{{ url_for('mpesa_express') }}" method="post">
+    {% include 'includes/flashmsg_bootstrap.html' %}
     <label for="phone">Phone:</label>
     <input type="number" name="phone" id="phone">
+    <br>
     <br>
     <label for="amount">Amount:</label>
     <input type="number" name="amount" id="amount" min="0">
@@ -18,5 +20,11 @@
     <button type="submit">Send</button>
 </form>
 
+<script>
+    //stop auto submit on reload
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+    }
+</script>
 </body>
 </html>

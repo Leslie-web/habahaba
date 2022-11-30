@@ -14,6 +14,10 @@ body {
   box-shadow: 20px 20px 60px #d9d9d9, -20px -20px 60px #ffffff;
 }
 
+#email {
+  content: "+254";
+}
+
 @media all and (max-width: 500px) {
   body {
     display: flex;

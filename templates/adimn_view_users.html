@@ -47,28 +47,10 @@
                         <th>Gender</th>
                         <th>Phone Number</th>
                         <th>ID Number</th>
-                        <th>Email</th>
+                        {#                        <th>Email</th>#}
                     </tr>
                     </thead>
 
-                    {#                    {% for user in users %}#}
-                    {#                        <tr>#}
-                    {#                            <td>{{ loop.index }}</td>#}
-                    {#                            <td>{{ user['f_name'] }}</td>#}
-                    {#                    <td>{{ user['vendor_email'] }}</td>#}
-                    {#                            <td>{{ user['l_name'] }}</td>#}
-                    {#                            <td>{{ user['gender'] }}</td>#}
-                    {#                            <td>{{ user['phone_no'] }}</td>#}
-                    {#                            <td>{{ user['id_no'] }}</td>#}
-                    {#                            <td>{{ user['email'] }}</td>#}
-                    {#                    <td>{{ user['quantity_per_acre'] }}</td>#}
-                    {#                    <td>{{ user['price_per_kg'] }}</td>#}
-                    {##}
-                    {#                        </tr>#}
-                    {#                    {% endfor %}#}
-                    {##}
-                    {#                    <tbody>#}
-                    {#                    </tbody>#}
                 </table>
             </div>
         </div>
@@ -90,7 +72,7 @@
 
         //datatables
         $(document).ready(function () {
-            $('#myTable').dataTable({
+            let table = $('#myTable').DataTable({
                 {#dom:#}
                 {#    "<'row'<'col-sm-6'B><'col-sm-6'f>>" +#}
                 {#    "<'row'<'col-sm-12'tr>>" +#}
@@ -101,7 +83,7 @@
                     url: '/view-users-json/',
                     type: 'get'
                 },
-                "order": [[2, 'desc']],
+                "order": [[0, 'asc']],
                 select: {
                     style: 'none',
                     selector: 'td:first-child'
@@ -122,6 +104,11 @@
             {#        "<'row'<'col-sm-12'tr>>" +#}
             {#        "<'row'<'col-sm-4'i><'col-sm-4 text-center'l><'col-sm-4'p>>"#}
             {#1  });#}
+            let buttons = new $.fn.dataTable.Buttons(table, {
+                buttons: ['excelHtml5', 'pdfHtml5', 'colvis']
+            });
+            buttons.container().appendTo($('div.right.aligned.eight.column:eq(0)', table.table().container()));
+
         });
 
     </script>

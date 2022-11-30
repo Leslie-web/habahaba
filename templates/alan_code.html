@@ -113,13 +113,6 @@
                 <li><a href="{{ url_for('validate_offers') }}"><span><i class="fa fa-tags"></i> Vendor Offers</span>
                 </a></li>
 
-                {#                users#}
-                {#                <li class="header">#}
-                {#                    <center>User</center>#}
-                {#                </li>#}
-                {#                <li><a href="{{ url_for('admin_onboarding_users') }}"><span><i#}
-                {#                        class="fa fa-book"></i> User Onboarding</span></a>#}
-                {#                </li>#}
 
                 {#                products#}
                 <li class="header">
@@ -150,7 +143,7 @@
                             class="fa fa-angle-down pull-right"></i></a>
                     <ul class="treeview-menu">
                         <li><a href="{{ url_for('admin_vendor_reports') }}"><span>Vendor Report</span> </a></li>
-                        <li><a href="{{ url_for('admin_onboarding_users') }}"><span>Customer History</span> </a></li>
+                        <li><a href="#"><span>Customer History</span> </a></li>
                     </ul>
                 </li>
 
@@ -163,7 +156,7 @@
                             class="fa fa-angle-down pull-right"></i></a>
                     <ul class="treeview-menu">
                         <li><a href="{{ url_for('vendor_onboarding') }}"><span>Vendor</span> </a></li>
-                        <li><a href="{{ url_for('admin_onboarding_users') }}"><span>User</span> </a></li>
+                        {#                        <li><a href="{{ url_for('admin_onboarding_users') }}"><span>User</span> </a></li>#}
                     </ul>
                 </li>
                 <li><a href="{{ url_for('validate_offers') }}"><span><i

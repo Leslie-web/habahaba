@@ -24,63 +24,6 @@
 <body>
 {% extends 'alan_code.html' %}
 {% block dashboard %}
-    <script>
-        //datatables
-        $(document).ready(function () {
-            {#$('#transactionTable').dataTable();#}
-
-            //datatables
-            $(document).ready(function () {
-                {#$('#myTable').DataTable();#}
-                var table = $('#transactionTable').DataTable({
-                    destroy: true,
-                    responsive: false,
-                    "ajax": {
-                        url: '/admin-transactions-json/',
-                        type: 'get'
-                    },
-                    "order": [[2, "desc"]],
-                    select: {
-                        style: 'none',
-                        selector: 'td:first-child'
-                    },
-                    scrollY: "800px",
-                    scrollX: true,
-                    scrollCollapse: true,
-                    paging: true,
-                    fixedColumns: true,
-                    lengthChange: true,
-                    "rowCallback": function (nRow, aData) {
-                        {#$('td', nRow).eq(2).html('<label class="label label-default">'+ aData[2] +'</label>'); #}
-                        {#if(aData[3]>0)#}
-                        {# $('td', nRow).eq(3).html('<label class="label label-success">OK</label>');#}
-                        {#else#}
-                        {#$('td', nRow).eq(3).html('<label class="label label-danger">FAIL</label>'); #}
-                    },
-                    columnDefs: [{
-                        targets: 0
-                    }]
-                });
-
-                let buttons = new $.fn.dataTable.Buttons(table, {
-                    buttons: ['excelHtml5', 'pdfHtml5', 'colvis']
-                });
-                buttons.container().appendTo($('div.right.aligned.eight.column:eq(0)', table.table().container()));
-            });
-            {#$.ajax({#}
-            {#    url: '/transactions-json/',#}
-            {#    method: 'get',#}
-            {#    success: function (data) {#}
-            {#console.log(data)#}
-            {#        data.map(#}
-            {#            item => {#}
-            {#                console.log(item[1])#}
-            {#            }#}
-            {#        )#}
-            {#    }#}
-            {#TRIAL});#}
-        });
-    </script>
     <section class="content-header" style="width: 93%; margin-left: 5.6%; padding-left: 0; ">
         <h2>Transactions</h2>
         <ol class="breadcrumb">
@@ -100,32 +43,74 @@
                     <thead>
                     {#                    <th>#</th>#}
                     <th>Client Name</th>
-                    <th>Client Email</th>
                     <th>Client Phone</th>
                     <th>Sent To</th>
-                    <th>Amount Sent</th>
-                    <th>Date Sent</th>
-                    {#                    <th>Time Sent</th>#}
+                    <th>Total Amount Sent</th>
+                    <th></th>
                     </thead>
 
-                    {#                    <tbody>#}
-                    {#                    {% for transaction in transactions %}#}
-                    {#                        <tr>#}
-                    {#                            <td>{{ loop.index }}</td>#}
-                    {#                            <td>{{ transaction.sender_name }}</td>#}
-                    {#                            <td>{{ transaction.sender_email }}</td>#}
-                    {#                            <td>{{ transaction.sender_phone }}</td>#}
-                    {#                            <td>{{ transaction.org_name }}</td>#}
-                    {#                            <td>{{ transaction.amount_sent }}</td>#}
-                    {#                            <td>{{ transaction.date_sent }}</td>#}
-                    {#                            <td>{{ transaction.time_sent }}</td>#}
-                    {#                        </tr>#}
-                    {#                    {% endfor %}#}
-                    {#                    </tbody>#}
                 </table>
             </div>
         </div>
     </div>
+
+
+    <script>
+        //stop auto submit on reload
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+        }
+        //datatables
+        $(document).ready(function () {
+            {#$('#transactionTable').dataTable();#}
+
+            //datatables
+            $(document).ready(function () {
+                {#$('#myTable').DataTable();#}
+                var table = $('#transactionTable').DataTable({
+                    destroy: true,
+                    responsive: false,
+                    "ajax": {
+                        url: '/admin-transactions-json/',
+                        type: 'get'
+                    },
+                    "order": [[2, "desc"]],
+                    select: {
+                        style: 'single',
+                        selector: 'tr'
+                    },
+                    scrollY: "800px",
+                    scrollX: true,
+                    scrollCollapse: true,
+                    paging: true,
+                    fixedColumns: true,
+                    lengthChange: true,
+                    "rowCallback": function (nRow, aData) {
+                        $('td', nRow).eq(4).html(`<a href="/${encodeURIComponent(btoa(aData[5]))}" class="btn btn-sm btn-default">View History</a>`)
+                        $('td', nRow).eq(6).html(`
+                        <form action="" method="post">
+                            <input type="hidden" name="counter" value="${aData[4]}" >
+                            <button type="submit" class="btn btn-primary">View History</button>
+                        </form>
+`)
+                        {#$('td', nRow).eq(2).html('<label class="label label-default">'+ aData[2] +'</label>'); #}
+                        {#if(aData[3]>0)#}
+                        {#;#}
+                        {#else#}
+                        {#$('td', nRow).eq(3).html('<label class="label label-danger">FAIL</label>'); #}
+                    },
+                    columnDefs: [{
+                        targets: 0
+                    }]
+                });
+
+                let buttons = new $.fn.dataTable.Buttons(table, {
+                    buttons: ['excelHtml5', 'pdfHtml5', 'colvis']
+                });
+                buttons.container().appendTo($('div.right.aligned.eight.column:eq(0)', table.table().container()));
+            });
+        });
+    </script>
 {% endblock %}
 
 

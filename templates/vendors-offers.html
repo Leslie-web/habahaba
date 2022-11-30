@@ -29,14 +29,9 @@
     <div class="content-top-1 box box-success">
         <div class="box-body">
             <br>
-            {#            <div class="offers_form">#}
-
-            {#        <br>#}
-            {#        <div class="content-top-1 box box-success">#}
-            {#            <div class="box-body">#}
-            {#                <br>#}
-            <form action="{{ url_for('vendors_offer_list') }}" method="post" style="display: grid">
-                <div class="flash" style="text-align: center; padding: 5em;">
+            <form action="{{ url_for('vendors_offer_list') }}" method="post"
+                  style="display: grid;">
+                <div class="flash" style="text-align: center;">
                     {% include 'includes/flashmsg_bootstrap.html' %}
                 </div>
                 {#            <div class="row">#}
@@ -62,7 +57,7 @@
                                 <select name="offer_name" id="offer_name" class="form-control" required>
                                     <option value="" selected disabled>Please select a product</option>
                                     {% for product in products %}
-                                        {% if product.material_status == 'accepted' %}
+                                        {% if product.material_status == 'Accepted' %}
                                             <option value="{{ product['crop_name'] }}">{{ product['crop_name'] }}</option>
                                         {% endif %}
                                     {% endfor %}
@@ -99,21 +94,10 @@
                 <fieldset class="col-sm-6">
                     <legend>Regions where offers will be available</legend>
                     <div class="col-md-6">
-                        {#                        <div style="width: 50%; display: grid; grid-template-columns: 5em 2em;">#}
-                        {#                            <label for="Nairobi">Nairobi</label>#}
-                        {#                            <input type="checkbox" name="region_available" id="Nairobi" value="Nairobi">#}
-                        {#                        </div>#}
-                        {#                        <div style="width: 50%; display: grid; grid-template-columns: 5em 2em;">#}
-                        {#                            <label for="Eldoret">Eldoret</label>#}
-                        {#                            <input type="checkbox" name="region_available" id="Eldoret" value="Eldoret">#}
-                        {#                        </div>#}
-                        {#                        <div style="width: 50%; display: grid; grid-template-columns: 5em 2em;">#}
-                        {#                            <label for="Mombasa">Mombasa</label>#}
-                        {#                            <input type="checkbox" name="region_available" id="Mombasa" value="Mombasa">#}
-                        {#                        </div>#}
-                        <div style="
-                        width: 50%; display: grid; grid-template-columns: 8em 2em;"
-                             class="checker">
+                        <div
+                                {#                            style="width: 50%; display: grid; grid-template-columns: 10em 2em;"#}
+                                style="display: flex; flex-wrap: wrap; width: 40vw;"
+                                class="checker">
                             {#                            <label for="Kisumu">Kisumu</label>#}
                             {#                            <input type="checkbox" name="region_available" id="Kisumu" value="Kisumu">#}
 
@@ -235,9 +219,18 @@
                         item => {
                             console.log(item)
                             boxes += `
-                            <label for="check">${item.county_number}: ${item.county_name}</label>
-                            <input type="checkbox" name="region_available" value="${item.county_name}">
-                            `
+                            <div class="counties_container" style="display: flex;">
+                                <div class="counties_label" style="width: 10em;">
+                                    <label for="check" class="check_label">${item.county_number}: ${item.county_name}</label>
+                                </div>
+                                <div class="counties_checkboxes" style="width: 3em;border-right: 1px solid black;
+margin-right: 1em; " >
+                                    <input type="checkbox" name="region_available" class="check_input" value="${item.county_name}">
+                                </div>
+                            </div>
+
+`
+
                         }
                     )
                     $('.checker').html(boxes)

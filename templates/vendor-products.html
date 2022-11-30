@@ -38,32 +38,39 @@
     <div class="content-top-1 box box-success">
         <div class="box-body">
             <br>
+            <div class="flash" style="text-align: center">
+                {% include 'includes/flashmsg_bootstrap.html' %}
+            </div>
             <div class="section1">
+                <div class="delete_button">
+                    <button class="btn btn-danger" style="float: right;">Delete Product</button>
+                </div>
                 <table class="ui celled table " width="100%" id="example">
                     <caption align="top">Products</caption>
                     <thead>
                     <tr>
+                        <th></th>
                         <th>Product Name</th>
                         <th>Quantity per Acre (in Kgs)</th>
                         <th>Price per Kg</th>
                     </tr>
                     </thead>
 
-                    {#                    <tbody>#}
-                    {#                    {% for product in products %}#}
-                    {#                        <tr>#}
-                    {#                            <td>{{ loop.index }}</td>#}
-                    {#                            <td>{{ product['crop_name'] }}</td>#}
-                    {#                            <td>{{ product['quantity_per_acre'] }}</td>#}
-                    {#                            <td>{{ product['price_per_kg'] }}</td>#}
-                    {#                        </tr>#}
-                    {#                    {% endfor %}#}
-                    {#                    </tbody>#}
                 </table>
             </div>
         </div>
     </div>
 
+    <br>
+    <form action="{{ url_for('delete_products') }}" method="post" hidden>
+        <input type="number" name="material_id" id="material_id">
+        <label for="material_id"></label>
+
+        <input type="text" name="material" id="material">
+        <label for="material"></label>
+
+        <button type="submit" id="deleteFormBtn">Submit</button>
+    </form>
 
     {#        [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[JAVASCRIPT]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]#}
     {#        ionicons#}
@@ -107,11 +114,16 @@
                     url: '/vendor-products-json/',
                     type: 'get'
                 },
-                {#"order": [[2, "desc"]],#}
+                {#"order": [[1, "desc"]],#}
                 select: {
-                    style: 'none',
-                    selector: 'td:first-child'
+                    style: 'single',
+                    selector: 'tr'
                 },
+                columnDefs: [{
+                    orderable: false,
+                    className: 'select-checkbox',
+                    targets: 0
+                }],
                 scrollY: "800px",
                 scrollX: true,
                 scrollCollapse: true,
@@ -119,27 +131,30 @@
                 fixedColumns: true,
                 lengthChange: true,
                 "rowCallback": function (nRow, aData) {
+                    $('td', nRow).eq(0).html('')
                     {#$('td', nRow).eq(2).html('<label class="label label-default">'+ aData[2] +'</label>'); #}
                     {#if(aData[3]>0)#}
                     {# $('td', nRow).eq(3).html('<label class="label label-success">OK</label>');#}
                     {#else#}
                     {#$('td', nRow).eq(3).html('<label class="label label-danger">FAIL</label>'); #}
-                },
-                columnDefs: [{
-                    targets: 0
-                }]
+                }
             });
 
             let buttons = new $.fn.dataTable.Buttons(table, {
                 buttons: ['excelHtml5', 'pdfHtml5', 'colvis']
             });
             buttons.container().appendTo($('div.right.aligned.eight.column:eq(0)', table.table().container()));
-            
-        });
 
-        //modal
-        $(document).ready(function () {
-            $('.modal').modal();
+            $('.delete_button').click(function () {
+                if (table.rows('.selected').data().length > 0) {
+                    var row = table.rows('.selected').data()[0];
+                    $('#material_id').val(row[0])
+                    $('#material').val(row[1])
+                    $('#deleteFormBtn').click()
+                } else {
+                    alert("Please select an entry")
+                }
+            });
         });
     </script>
 {% endblock %}

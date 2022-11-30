@@ -43,6 +43,26 @@ body {
   border-radius: 50%;
 }
 
+.section2 {
+  width: 80vw;
+  display: block;
+  margin: auto;
+}
+
+.section3 {
+  width: 80vw;
+  display: block;
+  margin: auto;
+}
+
+@media all and (max-width: 1000px) {
+  .section2 {
+    width: 100vw;
+  }
+  .section3 {
+    width: 100vw;
+  }
+}
 @media all and (max-width: 425px) {
   #heading_list {
     border-bottom: 1px solid black;
