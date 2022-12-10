@@ -1,3 +1,4 @@
+{% extends 'vendor_home.html' %}
 <!doctype html>
 <html lang="en">
 <head>
@@ -23,12 +24,11 @@
     <meta name="apple-web-app-status-bar" content="#00b0ff">
 </head>
 <body>
-{% extends 'vendor_home.html' %}
 {% block dashboard %}
     <section class="content-header" style="width: 93%; margin-left: 5.6%; padding-left: 0; ">
         <h2> Add Products</h2>
         <ol class="breadcrumb">
-            <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="{{ url_for('vendor_home') }}"><i class="fa fa-dashboard"></i> Home</a></li>
             <li class="active">Add Products</li>
         </ol>
     </section>
@@ -36,14 +36,14 @@
 {% block content %}
     <br>
     <div class="content-top-1 box box-success">
-        <div class="box-body">
+        <div class="box-body" style="height: auto">
             <br>
-            <div class="section1">
-                <form action="{{ url_for('vendor_product_verification') }}" method="post">
+            <div class="section1" style="height: max-content;">
+                <form action="{{ url_for('vendor_product_verification') }}" method="post" style="height: max-content;">
                     <div class="flash" style="text-align: center">
                         {% include 'includes/flashmsg_bootstrap.html' %}
                     </div>
-                    <div class="col-md-12" id="details_container">
+                    <div class="col-md-12" id="details_container" style="height: max-content">
                         {#                defaults#}
                         <input type="text" name="vendor_id" id="defaults" value="{{ session['vendor_id'] }}" readonly
                                hidden>
@@ -65,18 +65,29 @@
                         <label for="defaults"></label>
                         {#                defaults#}
 
-                        <div class="rows" style="display: flex">
-                            <label for="category" style="text-align: left; margin-left: -1em">Category:</label>
-                            <select name="category" id="category" class="form-control"
-                                    style="width: 50vw; margin-left: 15.2em;" required>
-                                <option value="" selected disabled>Please select a category</option>
-                                {% for category in categories %}
-                                    <option value="{{ category.category_name }}">{{ category.category_name }}</option>
-                                {% endfor %}
+                        <div class="form-group row" style="display: flex">
+                            <label for="category" class="col-sm-1 col-form-label"
+                                   style="text-align: left; margin-left: -1em">Category:</label>
+                            <div class="col-sm-6">
+                                <select name="category" id="category" class="form-control" required>
+                                    <option value="" selected disabled>Please select a category</option>
+                                    {% for category in categories %}
+                                        <option value="{{ category.category_name }}">{{ category.category_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
 
-                                {#                                <option value="Crop">Crop</option>#}
-                                {#                                <option value="Fertilizer">Fertilizer</option>#}
-                            </select>
+                        <div class="{#rows#} form-group row" style="display: flex">
+                            <label for="unit" class="col-sm-1 col-form-label"
+                                   style="text-align: left; margin-left: -1em">Unit:</label>
+                            <div class="col-sm-6">
+                                <select name="unit" id="unit" class="form-control" required>
+                                    <option value="" selected disabled>Please select a unit of measurement</option>
+                                    <option value="Kilogram (Kgs)">Kilograms (Kgs)</option>
+                                    <option value="Litres (L)">Litres (L)</option>
+                                </select>
+                            </div>
                         </div>
                         <label for="category" class="visually-hidden" hidden>Category</label>
                         <br>
@@ -84,63 +95,51 @@
 
                     {#            ITEM NAME#}
                     <div class="form-group row">
-                        <label for="item_name" class="col-sm-2 col-form-label">Item Name:</label>
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control" id="item_name" name="item_name" required
-                                   style="width: 50vw">
+                        <label for="item_name" class="col-sm-1 col-form-label">Item Name:</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="item_name" name="item_name" required>
                         </div>
                     </div>
 
                     {#            QUANTITY PER KG#}
                     <div class="form-group row">
-                        <label for="quantity_per_acre" class="col-sm-2 col-form-label">Quantity per acre (in
-                            KGs):</label>
-                        <div class="col-sm-10">
+                        <label for="quantity_per_acre" class="col-sm-1 col-form-label">Quantity per acre (in
+                            KGs / L):</label>
+                        <div class="col-sm-6">
                             <input type="number" class="form-control" id="quantity_per_acre" name="quantity_per_acre"
-                                   required
-                                   style="width: 50vw">
+                                   required>
                         </div>
                     </div>
 
 
                     <div class="form-group row">
-                        <label for="price_per_kg" class="col-sm-2 col-form-label">Price per KG:</label>
-                        <div class="col-sm-10">
-                            <input type="number" class="form-control" id="price_per_kg" name="price_per_kg" required
-                                   style="width: 50vw">
+                        <label for="price_per_kg" class="col-sm-1 col-form-label">Price per KG / L:</label>
+                        <div class="col-sm-6">
+                            <input type="number" class="form-control" id="price_per_kg" name="price_per_kg" required>
                         </div>
                     </div>
 
                     <br>
 
-                    <fieldset>
-                        <legend>Regions where products are available</legend>
-                        <div class="col-md-12">
-                            <div style="width: 50%; display: grid; grid-template-columns: 5em 2em;">
-                                <label for="Nairobi">Nairobi</label>
-                                <input type="checkbox" name="region" id="Nairobi" value="Nairobi">
+
+                    <fieldset class="col-sm-6">
+                        <legend>Regions where product will be available</legend>
+                        <div class="col-md-6">
+                            <div class="checker" style="display: flex; flex-wrap: wrap; width: 40vw;">
+
                             </div>
-                            <div style="width: 50%; display: grid; grid-template-columns: 5em 2em;">
-                                <label for="Eldoret">Eldoret</label>
-                                <input type="checkbox" name="region" id="Eldoret" value="Eldoret">
-                            </div>
-                            <div style="width: 50%; display: grid; grid-template-columns: 5em 2em;">
-                                <label for="Mombasa">Mombasa</label>
-                                <input type="checkbox" name="region" id="Mombasa" value="Mombasa">
-                            </div>
-                            <div style="width: 50%; display: grid; grid-template-columns: 5em 2em;">
-                                <label for="Kisumu">Kisumu</label>
-                                <input type="checkbox" name="region" id="Kisumu" value="Kisumu">
-                            </div>
+
                         </div>
                     </fieldset>
                     {#            <div class="submit_button">#}
                     <br>
-                    <button type="submit" class="btn btn-outline-success"
-                            style="outline: 1px solid green; display: block; width: 10em; margin: auto;"
-                            id="submit_btn">
-                        Submit
-                    </button>
+                    <div class="col-md-12" style="padding-left: 15%; padding-top: 2em; ">
+                        <button type="submit" class="btn btn-outline-success"
+                                style="outline: 1px solid green; width: 10em; {#margin-left: 15%#};"
+                                id="submit_btn">
+                            Submit
+                        </button>
+                    </div>
                     {#            </div>#}
                 </form>
             </div>
@@ -151,7 +150,6 @@
     <!-- Bootstrap -->
     <script src="{{ url_for('static', filename='/js/bootstrap.bundle.min.js') }}"></script>
     {#link to app.js for service worker#}
-    <script src="../static/js/app.js"></script>
     <script>
         //stop auto reload on submit
         if (window.history.replaceState) {
@@ -162,8 +160,6 @@
             window.print()
         }
 
-        {#document.querySelector('#example').addEventListener('click', downloadPDFWithBrowserPrint)#}
-        //making sure a checkbox is checked and prevent form submission
         $(document).ready(function () {
             $('#submit_btn').click(function () {
                 if ($('#Nairobi').prop('checked') === false && $('#Mombasa').prop('checked') === false &&
@@ -176,10 +172,49 @@
                     });
                 }
             });
+            $.ajax({
+                url: '/counties-json/',
+                method: 'get',
+                success: function (data) {
+                    data = JSON.parse(data)
+                    let boxes = ``
+                    let all_regions = `
+                            <div class="counties_container" style="display: flex;">
+                                <div class="counties_label" style="width: 10em;">
+                                    <label for="country_wide" class="check_label">Country Wide:</label>
+                                </div>
+                                <div class="counties_checkboxes" style="width: 5em; margin-right: 1em; " >
+                                    <input type="checkbox" name="region_available" class="check_input" id="country_wide" value="Country wide">
+                                </div>
+                            </div>
+                    `
+
+                    data.map(
+                        item => {
+                            {#console.log(item)#}
+                            boxes += `
+                            <div class="counties_container" style="display: flex;">
+                                <div class="counties_label" style="width: 10em;">
+                                    <label for="${item.county_name}" class="check_label">${item.county_number}: ${item.county_name}</label>
+                                </div>
+                                <div class="counties_checkboxes" style="width: 3em;border-right: 1px solid black;
+margin-right: 1em; " >
+                                    <input type="checkbox" name="region_available" class="check_input" id="${item.county_name}" value="${item.county_name}">
+                                </div>
+                            </div>
+`
+
+                        }
+                    )
+                    $('.checker').html(boxes);
+                    {#$('.all_regions').html(all_regions);#}
+                }
+            });
         });
 
         {#remember to cancel form submission#}
     </script>
+    <script src="../static/js/app.js"></script>
 {% endblock %}
 </body>
 </html>

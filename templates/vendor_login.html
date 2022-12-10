@@ -48,37 +48,27 @@
     <div class="row">
 
         <div class="col-md-6 col-md-offset-3"
-             style="background: #fff; border-radius: 5px; color: #000; opacity: 6.5; z-index: 999; padding-top: 5em; margin-bottom: 20vw;">
-            <center><img src="/static/_public/images/maize.png"
-                         style="border-radius: 5px; width: 150px; transform: scaleX(-1); margin-top: 5px;"/></center>
+             style="background: #fff; border-radius: 5px; color: #000; opacity: 6.5; z-index: 999; padding-top: 1em; margin-bottom: 20vw;">
+            <center><img src="/static/_public/images/habahaba6bg.png"
+                         style="border-radius: 5px; width: 600px; height: 200px;
+                                 {#transform: scaleX(-1); margin-top: 5px;#}; object-fit: contain; "/>
+            </center>
             <br>
             <h4 class="text-center" style="margin-top: -16px; color: #a79f97">Haba Haba</h4>
             <br>
-
-            {#            {% with messages = get_flashed_messages(with_categories=true) %}#}
-            {#                <!-- Categories: success (green), info (blue), warning (yellow), danger (red) -->#}
-            {#                {% if messages %}#}
-            {#                    {% for category, message in messages %}#}
-            {#                        <div class="alert alert-{{ category }} alert-dismissible" role="alert">#}
-            {#                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span#}
-            {#                                    aria-hidden="true">&times;</span></button>#}
-            {#                            <h5 class="text-center"> {{ message }}</h5>#}
-            {#                        </div>#}
-            {#                    {% endfor %}#}
-            {#                {% endif %}#}
-            {#            {% endwith %}#}
             <div class="flash">
                 {% include 'includes/flashmsg_bootstrap.html' %}
             </div>
 
             <form action="{{ url_for('vendor_login') }}" method="post">
-                <input class="form-control" type="email" name="email" placeholder="Username" required="required"/>
+                <input class="form-control" type="number" name="phone_no" placeholder="Phone Number"
+                       required="required"/>
                 <br>
                 <input class="form-control" type="password" autocomplete="off" placeholder="Password"
                        required="required" name="password"/>
                 <br>
                 <div class="row" style="padding:0 10px 0 10px; column-gap: 5px">
-                    <button class="btn pull-left btn-primary col-md-12 col-sm-12 col-lg-6"
+                    <button id="login_btn" class="btn pull-left btn-primary col-md-12 col-sm-12 col-lg-6"
                             style="margin-top: 10px" type="submit">Log In
                     </button>
 
@@ -106,6 +96,8 @@
     //regular inputs
     $(document).ready(function () {
         M.updateTextFields();
+        
+
     });
 
 </script>

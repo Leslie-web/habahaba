@@ -1,3 +1,4 @@
+{% extends 'alan_code.html' %}
 <!doctype html>
 <html lang="en">
 <head>
@@ -19,12 +20,11 @@
 </head>
 <body>
 
-{% extends 'alan_code.html' %}
 {% block dashboard %}
     <section class="content-header" style="width: 93%; margin-left: 5.6%; padding-left: 0; ">
         <h2>Registered Farmers</h2>
         <ol class="breadcrumb">
-            <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="{{ url_for('alan_code') }}"><i class="fa fa-dashboard"></i> Home</a></li>
             <li class="active">Registered Farmers</li>
         </ol>
     </section>
@@ -38,7 +38,7 @@
         <div class="box-body">
             <br>
             <div class="section1x">
-                <table class="{#display black-text#}ui celled table " width="100%" id="myTable">
+                <table class="ui celled table " width="100%" id="myTable">
                     <thead>
                     <tr>
                         {#                        <th>#</th>#}
@@ -46,7 +46,7 @@
                         <th>Last Name</th>
                         <th>Gender</th>
                         <th>Phone Number</th>
-                        <th>ID Number</th>
+                        <th>Location of land</th>
                         {#                        <th>Email</th>#}
                     </tr>
                     </thead>

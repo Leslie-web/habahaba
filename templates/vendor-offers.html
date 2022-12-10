@@ -1,3 +1,4 @@
+{% extends 'vendor_home.html' %}
 <!doctype html>
 <html lang="en">
 <head>
@@ -27,7 +28,6 @@
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 <body>
-{% extends 'vendor_home.html' %}
 {% block dashboard %}
     <section class="content-header" style="width: 93%; margin-left: 5.6%; padding-left: 0; ">
         <h2> Offers</h2>
@@ -70,7 +70,15 @@
                     {#if(aData[3]>0)#}
                     {# $('td', nRow).eq(3).html('<label class="label label-success">OK</label>');#}
                     {#else#}
-                    {#$('td', nRow).eq(3).html('<label class="label label-danger">FAIL</label>'); #}
+                    if (aData[4] === 'Accepted') {
+                        $('td', nRow).eq(4).html('<label class="label label-success">Accepted</label>');
+                    } else if (aData[4] === 'Declined') {
+                        $('td', nRow).eq(4).html('<label class="label label-danger">Declined</label>');
+                    } else if (aData[4] === 'Suspended') {
+                        $('td', nRow).eq(4).html('<label class="label label-warning">Suspended</label>');
+                    } else if (aData[4] === 'Pending') {
+                        $('td', nRow).eq(4).html('<label class="label label-secondary" style="background-color: darkgrey">Pending</label>');
+                    }
                 },
                 columnDefs: [{
                     targets: 0
@@ -92,7 +100,8 @@
                     <thead>
                     <tr>
                         <th>Offer Name</th>
-                        <th>Percentage off</th>
+                        <th>Percentage Off</th>
+                        <th>Available Regions</th>
                         <th>Valid Until</th>
                         <th>Offer Status</th>
                     </tr>

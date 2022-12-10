@@ -23,7 +23,7 @@
     <a href="#" class="sidenav-trigger" data-target="mobile_links">
         <i class="material-icons">menu</i>
     </a>
-    <a href="{{ url_for('user_homepage') }}" class="brand-logo">Habahaba Ukulima</a>
+    <a href="{{ url_for('ukulima') }}" class="brand-logo">Habahaba Ukulima</a>
     <ul class="right hide-on-med-and-down">
         <li><a href="{{ url_for('ukulima') }}">Ukulima Wallet</a></li>
         <li><a href="#">About</a></li>
@@ -173,7 +173,7 @@
                 'data': {profile: profile},
                 'success': function (data) {
                     data = JSON.parse(data);
-                    console.log(data);
+                    {#console.log(data);#}
                     $('#confirm').removeAttr('disabled');
 
                     let mycrops = `<h4>${profile}Crops</h4>`;
@@ -210,7 +210,7 @@ ${item.crop_type}</a> <hr>`;
         if (progressStartValue === progress_end_value) {
             clearInterval(progress)
         }
-        console.log(progressStartValue);
+        {#console.log(progressStartValue);#}
     }, speed);
     //progress bar
 

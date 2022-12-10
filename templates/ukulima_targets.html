@@ -5,6 +5,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="theme-color" content="#008300FF">
     <title>Document</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='/css/materialize.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='/css/ukulima_targets.css') }}">
@@ -26,7 +27,7 @@
     <a href="#" class="sidenav-trigger" data-target="mobile_links">
         <i class="material-icons">menu</i>
     </a>
-    <a href="{{ url_for('user_homepage') }}" class="brand-logo" style="padding-left: 0.5em">Habahaba Ukulima</a>
+    <a href="{{ url_for('ukulima') }}" class="brand-logo" style="padding-left: 0.5em">Habahaba Ukulima</a>
     <ul class="right hide-on-med-and-down">
         <li><a href="{{ url_for('ukulima') }}">Ukulima Wallet</a></li>
         <li><a href="#">About</a></li>
@@ -84,20 +85,22 @@
             {% if partner['amount_sent'] == partner['saving_target'] %}
                 <li class="collection-item avatar black-text white">
                     <ion-icon name="people-outline" class="circle" style="color: green"></ion-icon>
-                    <span class="title"><b>{{ partner['vendor_name'] }}</b></span>
-                    <p>{{ partner['org_name'] }}
+                    <span class="title"><b>{{ partner['org_name'] }}</b></span>
+                    <p>
+                        {#                        <br>#}
+                        <b>{{ partner['payment_for'] }}</b>
                         <br>
-                        {{ partner['payment_for'] }}
+                        <b>Target: {{ partner['saving_target'] / partner['price_per_kg'] }} KGs </b>
+                        (ksh {{ partner['saving_target'] }})
                         <br>
-                        <b>Tartget: ksh {{ partner['saving_target'] }}</b>
-                        ( {{ partner['saving_target'] / partner['price_per_kg'] }} KGs )
-                        <br>
-                        <b>Progress: Ksh {{ partner['amount_sent'] }}
-                            ({{ "%.2f"|format ( partner['amount_sent'] / partner['price_per_kg'] ) }}
-                            KGs)
-                            of Ksh {{ partner['saving_target'] }}
-                            ({{ partner['saving_target'] / partner['price_per_kg'] }}
-                            KGs) </b>
+                        <b>Progress:{{ "%.2f"|format ( partner['amount_sent'] / partner['price_per_kg'] ) }}
+                            KGs
+
+                            (Ksh {{ partner['amount_sent'] }})
+                            of {{ partner['saving_target'] / partner['price_per_kg'] }}
+                            KGs
+                            (Ksh {{ partner['saving_target'] }})
+                        </b>
 
                     </p>
                     <div class="collapsible-header">
@@ -161,20 +164,21 @@
             {% elif partner['amount_sent'] < partner['saving_target'] %}
                 <li class="collection-item avatar black-text white">
                     <ion-icon name="people-outline" class="circle" style="color: green"></ion-icon>
-                    <span class="title"><b>{{ partner['vendor_name'] }}</b></span>
-                    <p>{{ partner['org_name'] }}
+                    <span class="title"><b>{{ partner['org_name'] }}</b></span>
+                    <p>
+                        {#                        <br>#}
+                        <b>{{ partner['payment_for'] }}</b>
                         <br>
-                        {{ partner['payment_for'] }}
+                        <b>Target: {{ partner['saving_target'] / partner['price_per_kg'] }} KGs </b>
+                        (ksh {{ partner['saving_target'] }})
                         <br>
-                        <b>Target: ksh {{ partner['saving_target'] }}</b>
-                        ( {{ partner['saving_target'] / partner['price_per_kg'] }} KGs )
-                        <br>
-                        <b>Progress: Ksh {{ partner['amount_sent'] }}
-                            ({{ "%.2f"|format ( partner['amount_sent'] / partner['price_per_kg'] ) }}
-                            KGs)
-                            of Ksh {{ partner['saving_target'] }}
-                            ({{ partner['saving_target'] / partner['price_per_kg'] }}
-                            KGs) </b>
+                        <b>Progress: {{ "%.2f"|format ( partner['amount_sent'] / partner['price_per_kg'] ) }}
+                            KGs
+                            (Ksh {{ partner['amount_sent'] }})
+                            of {{ partner['saving_target'] / partner['price_per_kg'] }}
+                            KGs
+                            (Ksh {{ partner['saving_target'] }})
+                        </b>
                     </p>
                     <div class="collapsible-header">
                         <a href="#!" class="secondary-content black-text"><i class="material-icons">more_horiz</i></a>
@@ -191,8 +195,12 @@
                                 ksh {{ partner['saving_target'] }}</div>
                         </div>
                         <div class="row">
-                            You have saved ksh <b>{{ partner['amount_sent'] }}</b> out of
-                            ksh<b>{{ partner['saving_target'] }}</b>
+                            {#                            You have saved ksh <b>{{ partner['amount_sent'] }}</b> out of#}
+                            {#                            ksh<b>{{ partner['saving_target'] }}</b>#}
+                            You have saved ksh
+                            <b>{{ "%.2f"|format ( partner['amount_sent'] / partner['price_per_kg'] ) }}
+                                KGs</b> out of
+                            <b>{{ "%.2f"|format ( partner['saving_target'] / partner['price_per_kg'] ) }} KGs</b>
                         </div>
                     </div>
                 </li>
@@ -243,7 +251,7 @@
         $('.modal_btn').click(function () {
             $('#size_of_land').on('input ', function () {
                 let this_var = document.getElementById('payment_required').value
-                console.log(this_var)
+                {#console.log(this_var)#}
                 $('#payment_required').val(
                     ($('#quantity_per_acre').val() * $('#size_of_land').val()) * $('#price_per_kg').val()
                 )

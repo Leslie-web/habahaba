@@ -1,0 +1,151 @@
+{% extends 'vendor_home.html' %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Float Summary</title>
+</head>
+<body>
+{% block dashboard %}
+    <section class="content-header" style="width: 93%; margin-left: 5.6%; padding-left: 0; ">
+        <h2>Float Summary</h2>
+        <ol class="breadcrumb">
+            <li><a href="{{ url_for('alan_code') }}"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Float Summary</li>
+        </ol>
+    </section>
+{% endblock %}
+
+{% block content %}
+    <br>
+    <div class="content-top-1 box box-success">
+        <div class="box-body">
+            <br>
+            <table class="ui celled table" width="100%" id="floatSummaryTable">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>Total Purchased</th>
+                    <th>Total Redeemed</th>
+                    <th>Balances</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+
+    <br>
+    <div class="content-top-1 box box-info">
+        <div class="box-body">
+            <br>
+            <canvas id="floatChart" style="width: 100%">
+
+            </canvas>
+        </div>
+    </div>
+
+    <script>
+        //datatables
+        $(document).ready(function () {
+            //datatables
+            $(document).ready(function () {
+                {#$('#myTable').DataTable();#}
+                var table = $('#floatSummaryTable').DataTable({
+                    destroy: true,
+                    responsive: false,
+                    "ajax": {
+                        url: '/float-summary-json/',
+                        type: 'get'
+                    },
+                    "order": [[0, "desc"]],
+                    select: {
+                        style: 'single',
+                        selector: 'tr'
+                    },
+                    {#having a checkbox#}
+                    columnDefs: [{
+                        orderable: false,
+                        className: 'select-checkbox',
+                        targets: 0
+                    }],
+                    scrollY: "800px",
+                    scrollX: true,
+                    scrollCollapse: true,
+                    paging: true,
+                    fixedColumns: true,
+                    lengthChange: true,
+                    "rowCallback": function (nRow, aData) {
+                        {#removing the values on a checkbox#}
+                        $('td', nRow).eq(0).html('');
+                        {#$('td', nRow).eq(3).html('<label class="label label-danger">FAIL</label>'); #}
+                    }
+                });
+
+                {#let buttons = new $.fn.dataTable.Buttons(table, {#}
+                {#    buttons: ['csvHtml5', 'excelHtml5', 'pdfHtml5', 'colvis']#}
+                // });
+                {#buttons.container().appendTo($('div.right.aligned.eight.column:eq(0)', table.table().container()));#}
+            });
+
+            $.ajax({
+                url: '/float-summary-chart/',
+                type: 'get',
+                success: function (data) {
+                    data = JSON.parse(data)
+                    {#console.log(data)#}
+
+                    data.map(
+                        item => {
+                            {#console.log(item.amount_redeemed)#}
+                            let amount_redeem = `${item.amount_redeemed}`
+                            let amount_send = `${item.amount_sent}`
+                            let quantity_redeem = `${item.quantity_redeemed}`
+                            let balance = `${item.balance}`
+                            {#console.log(item)#}
+                            const ctx = document.getElementById('floatChart').getContext('2d');
+                            const myChart = new Chart(ctx, {
+                                type: 'pie',
+                                data: {
+                                    labels: ['Total Saved', 'Total Redeemed', 'Balance'],
+                                    datasets: [{
+                                        label: 'Commission',
+                                        data: [amount_send, amount_redeem, balance],
+                                        backgroundColor: [
+                                            'rgba(255, 99, 132, 0.2)',
+                                            'rgba(54, 162, 235, 0.2)',
+                                            'rgba(255, 206, 86, 0.2)',
+                                            'rgba(75, 192, 192, 0.2)',
+                                            'rgba(153, 102, 255, 0.2)',
+                                            'rgba(255, 159, 64, 0.2)'
+                                        ],
+                                        borderColor: [
+                                            'rgba(255, 99, 132, 1)',
+                                            'rgba(54, 162, 235, 1)',
+                                            'rgba(255, 206, 86, 1)',
+                                            'rgba(75, 192, 192, 1)',
+                                            'rgba(153, 102, 255, 1)',
+                                            'rgba(255, 159, 64, 1)'
+                                        ],
+                                        borderWidth: 1
+                                    }]
+                                },
+                                options: {
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    )
+                }
+            })
+        });
+    </script>
+{% endblock %}
+</body>
+</html>

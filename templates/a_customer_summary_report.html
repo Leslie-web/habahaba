@@ -1,0 +1,124 @@
+{% extends 'alan_code.html' %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Customer Summary</title>
+    <link rel="stylesheet" type="text/css" href="/static/_public/js/datatables/media/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css"
+          href="/static/_public/js/datatables/extensions/Responsive/css/responsive.dataTables.min.css" media="screen">
+
+</head>
+<body>
+{% block dashboard %}
+    <section class="content-header"
+             style="width: 93%; margin-left: 5.6%; padding-left: 0;">
+        <h2> Customer Summary</h2>
+        <ol class="breadcrumb">
+            <li><a href=""><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Customer Summary</li>
+        </ol>
+    </section>
+{% endblock %}
+
+{% block content %}
+    <br>
+    <div class="content-top-1 box box-success">
+        <div class="box-body">
+            <br>
+            <div class="section1">
+                <table class="ui celled table" width="100%" id="customerSummary">
+                    <thead>
+                    <th></th>
+                    <th>Farmer Name</th>
+                    <th>County</th>
+                    <th>Type of land</th>
+                    <th>Amount of land (in Acres)</th>
+                    <th>Vendor Name</th>
+                    <th>Saving Category</th>
+                    <th>Amount Saved</th>
+                    <th>% saved</th>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function (string) {
+
+            let table = $('#customerSummary').DataTable({
+                destroy: true,
+                responsive: false,
+                "ajax": {
+                    url: '/customer-summary-json/',
+                    type: 'get'
+                },
+                "order": [[0, 'asc']],
+                select: {
+                    style: 'single',
+                    selector: 'tr'
+                },
+                {#having a checkbox#}
+                columnDefs: [{
+                    orderable: false,
+                    className: 'select-checkbox',
+                    targets: 0
+                }],
+                scrollY: "800px",
+                scrollX: true,
+                scrollCollapse: true,
+                paging: true,
+                fixedColumns: true,
+                lengthChange: true,
+                "rowCallback": function (nRow, aData) {
+                    $('td', nRow).eq(0).html('')
+                    if (aData[3] <= 10) {
+                        $('td', nRow).eq(3).html('Small Scale')
+                    } else if (aData > 10) {
+                        $('td', nRow).eq(3).html('Large Scale')
+                    }
+                    $('td', nRow).eq(8).html(aData[8] + ' %')
+                }
+            });
+
+            let buttons = new $.fn.dataTable.Buttons(table, {
+                buttons: ['csvHtml5', 'excelHtml5', 'pdfHtml5', 'colvis']
+            });
+
+            buttons.container().appendTo($('div.right.aligned.eight.column:eq(0)', table.table().container()));
+        });
+    </script>
+    <script type="text/javascript"
+            src="/static/_public/js/datatables/media/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript"
+            src="/static/_public/js/datatables/media/js/dataTables.semanticui.min.js"></script>
+    <script type="text/javascript"
+            src="/static/_public/js/datatables/extensions/Responsive/js/dataTables.responsive.min.js"></script>
+    <script type="text/javascript"
+            src="/static/_public/js/datatables/extensions/FixedHeader/js/dataTables.fixedHeader.min.js"></script>
+    <script type="text/javascript"
+            src="/static/_public/js/datatables/extensions/Select/js/dataTables.select.min.js"></script>
+
+    <script type="text/javascript"
+            src="/static/_public/js/datatables/extensions/Buttons/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript"
+            src="/static/_public/js/datatables/extensions/Buttons/js/buttons.semanticui.min.js"></script>
+    <script type="text/javascript"
+            src="/static/_public/js/datatables/extensions/Buttons/js/vfs_fonts.js"></script>
+
+    <script type="text/javascript"
+            src="/static/_public/js/datatables/extensions/Buttons/js/buttons.html5.min.js"></script>
+    <script type="text/javascript"
+            src="/static/_public/js/datatables/extensions/Buttons/js/buttons.print.min.js"></script>
+    <script type="text/javascript"
+            src="/static/_public/js/datatables/extensions/Buttons/js/buttons.colVis.min.js"></script>
+    <script type="text/javascript" src="/static/_public/js/datatables/media/js/semanticui.js"></script>
+
+
+{% endblock %}
+</body>
+</html>

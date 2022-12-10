@@ -1,3 +1,4 @@
+{% extends 'alan_code.html' %}
 <!doctype html>
 <html lang="en">
 <head>
@@ -18,13 +19,11 @@
     <meta name="apple-web-app-status-bar" content="#00b0ff">
 </head>
 <body>
-
-{% extends 'alan_code.html' %}
 {% block dashboard %}
     <section class="content-header" style="width: 93%; margin-left: 5.6%; padding-left: 0; ">
         <h2>Vendor Products</h2>
         <ol class="breadcrumb">
-            <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="{{ url_for('alan_code') }}"><i class="fa fa-dashboard"></i> Home</a></li>
             <li class="active">Vendor Products</li>
         </ol>
     </section>
@@ -38,9 +37,23 @@
         <div class="box-body">
             <br>
             <div class="section1">
+                <div class="btnContainer" style="display: flex; justify-content: flex-end">
+                    <button class="btn btn-warning" id="suspendProduct" style="width: max-content; margin-bottom: 5px;">
+                        Suspend
+                        Product
+                    </button>
+                </div>
+                {#            suspend product form#}
+                <form action="{{ url_for('admin_suspend_product') }}" method="post" hidden>
+                    <input type="text" name="suspend_product" id="suspend_product" value="Suspended" readonly>
+                    <label for="suspend_product"></label>
+                    <input type="hidden" name="product_id" id="product_id" readonly>
+                    <button type="submit" id="suspendProductBtn">Submit</button>
+                </form>
                 <table {#class="display black-text"#} class="ui celled table " width="100%" id="myTable">
                     <thead>
                     <tr>
+                        <th></th>
                         <th>Organization</th>
                         <th>Product</th>
                         <th>Quantity per Acre( in KGs )</th>
@@ -82,11 +95,17 @@
                         url: '/admin-view-products-json/',
                         type: 'get'
                     },
-                    "order": [[0, "asc"]],
+                    "order": [[0, "desc"]],
                     select: {
-                        style: 'none',
-                        selector: 'td:first-child'
+                        style: 'single',
+                        selector: 'tr'
                     },
+                    {#having a checkbox#}
+                    columnDefs: [{
+                        orderable: false,
+                        className: 'select-checkbox',
+                        targets: 0
+                    }],
                     scrollY: "800px",
                     scrollX: true,
                     scrollCollapse: true,
@@ -94,21 +113,36 @@
                     fixedColumns: true,
                     lengthChange: true,
                     "rowCallback": function (nRow, aData) {
-                        {#$('td', nRow).eq(2).html('<label class="label label-default">'+ aData[2] +'</label>'); #}
-                        {#if(aData[3]>0)#}
-                        {# $('td', nRow).eq(3).html('<label class="label label-success">OK</label>');#}
-                        {#else#}
-                        {#$('td', nRow).eq(3).html('<label class="label label-danger">FAIL</label>'); #}
-                    },
-                    columnDefs: [{
-                        targets: 0
-                    }]
+                        {#removing the values on a checkbox#}
+                        $('td', nRow).eq(0).html('');
+
+                    }
                 });
 
                 let buttons = new $.fn.dataTable.Buttons(table, {
                     buttons: ['excelHtml5', 'pdfHtml5', 'colvis']
                 });
                 buttons.container().appendTo($('div.right.aligned.eight.column:eq(0)', table.table().container()));
+                $('#suspendProduct').click(function () {
+                    if (table.rows('.selected').data().length > 0) {
+                        let row = table.rows('.selected').data()[0]
+
+                        $('#product_id').val(row[0])
+                        $('#suspendProductBtn').click();
+                        {#confirm('Are you sure you want to suspend this offer?')#}
+                        if (confirm('Are you sure you want to delete this?') === true) {
+
+                        } else {
+                            {#prevent form submission#}
+                            $('form').click(function (event) {
+                                event.preventDefault()
+                            });
+                        }
+
+                    } else {
+                        alert("Please select an entry")
+                    }
+                });
             });
         });
     </script>

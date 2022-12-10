@@ -494,3 +494,113 @@ $.ajax({
 {#</script>#}
 {#</body>#}
 {#</html>#}
+
+[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[UKULIMA FUNDS]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+<div class="section2 col s12" id="test-swipe-1" hidden="hidden">
+
+        <h4 class="center-align black-text">Deposit to...</h4>
+        <ul class="collection collapsible black-text">
+
+            {% for partner in partners %}
+                <li class="collection-item avatar">
+                    {#                    <div class="collapsible-header"></div>#}
+                    {#                <img src="images/yuna.jpg" alt="" class="circle">#}
+                    <ion-icon name="people-outline" class="circle"
+                              style="border: 3px solid white;"></ion-icon>
+                    <span class="title" id="v_name"><b>{{ partner['vendor_name'] }}</b></span>
+                    <p class="black-text">{{ partner['org_name'] }}
+                        <br>
+                        {{ partner['payment_for'] }}
+                        <br>
+                        <b>Balance: ksh{{ partner['saving_target'] - partner['amount_sent'] }}</b>
+                    </p>
+                    <div class="collapsible-header" style="background: transparent">
+                        <a href="#!" class="secondary-content"><i class="material-icons">menu</i></a>
+                    </div>
+                    {#                    ============================================================================================#}
+                    <div class="collapsible-body">
+                        <form action="{{ url_for('ukulima_funds') }}" method="post">
+                            <label for="defaults"></label>
+                            {#                        vendor#}
+
+                            <input type="text" name="payment_id" id="defaults" value="{{ partner['payment_id'] }}"
+                                   readonly hidden>
+                            {#                            <input type="text" name="vendor_id" id="defaults" value="{{ partner['vendor_id'] }}"#}
+                            {#                                   readonly hidden>#}
+                            {#                            <input type="text" name="vendor_name" id="defaults" value="{{ partner['vendor_name'] }}"#}
+                            {#                                   readonly hidden>#}
+                            {#                            <input type="text" name="vendor_email" id="defaults" value="{{ partner['vendor_email'] }}"#}
+                            {#                                   readonly hidden>#}
+                            {#                            <input type="text" name="vendor_phone" id="defaults" value="{{ partner['vendor_phone'] }}"#}
+                            {#                                   readonly hidden>#}
+                            {#                            <input type="text" name="vendor_org" id="defaults" value="{{ partner['org_name'] }}"#}
+                            {#                                   readonly#}
+                            {#                                   hidden>#}
+                            {#                            <input type="text" name="payment_method" id="defaults"#}
+                            {#                                   value="{{ partner['payment_method'] }}"#}
+                            {#                                   readonly hidden>#}
+                            {#                            <input type="text" name="acc_number" id="defaults" value="{{ partner['acc_no'] }}"#}
+                            {#                                   readonly hidden>#}
+                            {#                            <input type="text" name="vendor_crop" id="defaults" value="{{ partner['vendor_crop'] }}"#}
+                            {#                                   readonly hidden>#}
+                            {#                            <input type="text" name="payment_for" id="defaults" value="{{ partner['payment_for'] }}"#}
+                            {#                                   readonly hidden>#}
+                            {#                            <input type="text" name="saving_target" id="defaults" value="{{ partner['saving_target'] }}"#}
+                            {#                                   readonly hidden>#}
+                            {#                        user#}
+                            {#                            <input type="text" name="client_id" id="defaults" value="{{ partner['sender_id'] }}"#}
+                            {#                                   readonly hidden>#}
+                            {#                            <input type="text" name="client_name" id="defaults"#}
+                            {#                                   value="{{ session['f_name'] }} {{ session['l_name'] }}" readonly hidden>#}
+                            {#                            <input type="text" name="client_email" id="defaults" value="{{ session['email'] }}" readonly#}
+                            {#                                   hidden>#}
+                            {#                            <input type="text" name="client_phone" id="defaults" value="{{ session['phone_no'] }}"#}
+                            {#                                   readonly#}
+                            {#                                   hidden>#}
+                            {##}
+                            {#                            <input type="text" name="amount_sent" id="defaults" value="{{ partner['amount_sent'] }}"#}
+                            {#                                   readonly hidden>#}
+
+
+                            <div class="row">
+                                <div class="input-field col s12 white-text">
+                                    {#                                tashwishi on required#}
+                                    <input type="text" name="amount" id="amount"
+                                           class="validate white-text amount"
+                                           required>
+                                    <label class="white-text" for="amount">Amount</label>
+                                </div>
+                            </div>
+                            <div class="row" style="display: flex; justify-content: center">
+                                <button type="submit" class="btn waves-light waves-effect white black-text">Submit
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+<div class="details_container" style="margin-bottom: 40px; background-color: rgb(255 255 255 / 0.7)">
+            <div class="quantity_needed">
+                <b>Quantity Needed (in KGs):</b> <input type="number" name="quantity_per_acre" id="quantity_per_acre"
+                                                        style="width: 8em; text-align: center"
+                                                        value="{{ vendor_details['quantity_per_acre'] }}" readonly
+                                                        required>
+                {#            <span style="border-bottom: 1px solid grey; padding: 0.7em;">In KGs</span>#}
+            </div>
+            <div class="price_per_kilo">
+                <b>Price Per KG / L:</b> <input type="number" name="price_per_kg" id="price_per_kg"
+                                                style="width: 8em; text-align: center"
+                                                value="{{ vendor_details['price_per_kg'] }}" readonly required>
+            </div>
+            <div class="payment">
+                <b>Payment Required:</b> <input type="number" name="payment_required" id="payment_required"
+                                                style="width: 8em; text-align: center" readonly required>
+            </div>
+
+            <div class="accept" style="display: flex; justify-content: center;">
+                <button type="submit" class="btn waves-light waves-effect">Confirm</button>
+            </div>
+        </div>

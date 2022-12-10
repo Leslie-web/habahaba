@@ -1,3 +1,4 @@
+{% extends 'alan_code.html' %}
 <!doctype html>
 <html lang="en">
 <head>
@@ -13,12 +14,11 @@
     <script type="text/javascript" src="{{ url_for('static', filename='/js/jquery-3.6.1.min.js') }}"></script>
 </head>
 <body style="width: 100vw; ">
-{% extends 'alan_code.html' %}
 {% block dashboard %}
     <section class="content-header" style="width: 93%; margin-left: 5.6%; padding-left: 0; ">
         <h2>Vendor Onboarding</h2>
         <ol class="breadcrumb">
-            <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="{{ url_for('alan_code') }}"><i class="fa fa-dashboard"></i> Home</a></li>
             <li class="active">Vendor Onboarding</li>
         </ol>
     </section>
@@ -51,20 +51,20 @@
                     </div>
                     {#                    EMAIL#}
                     <div class="form-group row">
-                        <label for="email" class="col-sm-2 col-form-label">Email:</label>
+                        <label for="phone_no" class="col-sm-2 col-form-label">Phone Number:</label>
                         <div class="col-md-5">
-                            <input type="email" class="form-control" id="email" name="email"
+                            <input type="number" class="form-control" id="phone_no" name="phone_no" min="0"
                                    required>
                         </div>
                     </div>
                     {#                    PASSWORD#}
-                    <div class="form-group row">
-                        <label for="password" class="col-sm-2 col-form-label">Password:</label>
-                        <div class="col-md-5">
-                            <input type="password" class="form-control" id="password" name="password"
-                                   required>
-                        </div>
-                    </div>
+                    {#                    <div class="form-group row">#}
+                    {#                        <label for="password" class="col-sm-2 col-form-label">Password:</label>#}
+                    {#                        <div class="col-md-5">#}
+                    {#                            <input type="password" class="form-control" id="password" name="password"#}
+                    {#                                   required>#}
+                    {#                        </div>#}
+                    {#                    </div>#}
                     <div class="row" style="display: flex; margin-top: 1em">
                         <button type="submit" class="btn btn-success"
                                 style="outline: 1px solid green; width: 10vw; margin-left: 18vw;">

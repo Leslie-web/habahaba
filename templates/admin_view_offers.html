@@ -1,3 +1,4 @@
+{% extends 'alan_code.html' %}
 <!doctype html>
 <html lang="en">
 <head>
@@ -22,13 +23,12 @@
 </head>
 <body>
 
-{% extends 'alan_code.html' %}
 {% block dashboard %}
     <section class="content-header" style="width: 93%; margin-left: 5.6%; padding-left: 0; ">
-        <h2>Vendor Offers</h2>
+        <h2>Running Offers</h2>
         <ol class="breadcrumb">
-            <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
-            <li class="active">Vendor Offers</li>
+            <li><a href="{{ url_for('alan_code') }}"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Running Offers</li>
         </ol>
     </section>
 {% endblock %}
@@ -41,9 +41,26 @@
         <div class="box-body">
             <br>
             <div class="section1">
+                <div class="flash" style="text-align: center">
+                    {% include 'includes/flashmsg_bootstrap.html' %}
+                </div>
+                <div class="btnContainer" style="display: flex; justify-content: flex-end">
+                    <button class="btn btn-warning" id="suspendOffer" style="width: max-content; margin-bottom: 5px;">
+                        Suspend
+                        Offer
+                    </button>
+                </div>
+                {#            suspend product form#}
+                <form action="{{ url_for('admin_suspend_offer') }}" method="post" hidden>
+                    <input type="text" name="suspend_offer" id="suspend_product" value="Suspended" readonly>
+                    <label for="suspend_product"></label>
+                    <input type="hidden" name="offer_id" id="offer_id" readonly>
+                    <button type="submit" id="suspendOfferBtn">Submit</button>
+                </form>
                 <table class="ui celled table " width="100%" id="offersTable">
                     <thead>
                     <tr>
+                        <th></th>
                         <th>Organization</th>
                         <th>Product</th>
                         <th>Percentage Off</th>
@@ -74,13 +91,6 @@
 
         //datatables
         $(document).ready(function () {
-            {#$('#offersTable').dataTable({#}
-            {#    dom:#}
-            {#        "<'row'<'col-sm-6'B><'col-sm-6'f>>" +#}
-            {#        "<'row'<'col-sm-12'tr>>" +#}
-            {#        "<'row'<'col-sm-4'i><'col-sm-4 text-center'l><'col-sm-4'p>>"#}
-            {#1 });#}
-            {#$("#offersTable").dataTable();#}
             //datatables
             $(document).ready(function () {
                 {#$('#myTable').DataTable();#}
@@ -91,11 +101,17 @@
                         url: '/admin-view-offers-json/',
                         type: 'get'
                     },
-                    "order": [[2, "desc"]],
+                    "order": [[0, "desc"]],
                     select: {
-                        style: 'none',
-                        selector: 'td:first-child'
+                        style: 'single',
+                        selector: 'tr'
                     },
+                    {#having a checkbox#}
+                    columnDefs: [{
+                        orderable: false,
+                        className: 'select-checkbox',
+                        targets: 0
+                    }],
                     scrollY: "800px",
                     scrollX: true,
                     scrollCollapse: true,
@@ -103,21 +119,32 @@
                     fixedColumns: true,
                     lengthChange: true,
                     "rowCallback": function (nRow, aData) {
+                        {#removing the values on a checkbox#}
+                        $('td', nRow).eq(0).html('');
                         {#$('td', nRow).eq(2).html('<label class="label label-default">'+ aData[2] +'</label>'); #}
                         {#if(aData[3]>0)#}
                         {# $('td', nRow).eq(3).html('<label class="label label-success">OK</label>');#}
                         {#else#}
                         {#$('td', nRow).eq(3).html('<label class="label label-danger">FAIL</label>'); #}
-                    },
-                    columnDefs: [{
-                        targets: 0
-                    }]
+                    }
                 });
 
                 let buttons = new $.fn.dataTable.Buttons(table, {
                     buttons: ['csvHtml5', 'excelHtml5', 'pdfHtml5', 'colvis']
                 });
                 buttons.container().appendTo($('div.right.aligned.eight.column:eq(0)', table.table().container()));
+
+                $('#suspendOffer').click(function () {
+                    if (table.rows('.selected').data().length > 0) {
+                        let row = table.rows('.selected').data()[0]
+
+                        $('#offer_id').val(row[0])
+                        $('#suspendOfferBtn').click();
+                        confirm('Are you sure you want to suspend this offer?')
+                    } else {
+                        alert("Please select an entry")
+                    }
+                });
             });
         });
     </script>

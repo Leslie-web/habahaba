@@ -5,47 +5,37 @@
   "start_url": "/",
   "description": "First PWA app",
   "display": "standalone",
-  "background_color": "#00b0ff",
-  "theme_color": "#00b0ff",
+  "background_color": "#008300FF",
+  "theme_color": "#008300FF",
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "../images/pngwing.com.png",
+      "src": "../images/habahaba-launcher-icon-48-48.png",
+      "type": "image/png",
+      "sizes": "48x48"
+    },
+    {
+      "src": "../images/habahaba-launcher-icon-72-72.png",
       "type": "image/png",
       "sizes": "72x72"
     },
     {
-      "src": "../images/pngwing.com.png",
+      "src": "../images/habahaba-launcher-icon-96-96.png",
       "type": "image/png",
       "sizes": "96x96"
     },
     {
-      "src": "../images/pngwing.com.png",
-      "type": "image/png",
-      "sizes": "128x128"
-    },
-    {
-      "src": "../images/pngwing.com.png",
+      "src": "../images/habahaba-launcher-icon-144-144.png",
       "type": "image/png",
       "sizes": "144x144"
     },
     {
-      "src": "../images/pngwing.com.png",
-      "type": "image/png",
-      "sizes": "152x152"
-    },
-    {
-      "src": "../images/pngwing.com.png",
+      "src": "../images/habahaba-launcher-icon-192-192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "../images/pngwing.com.png",
-      "type": "image/png",
-      "sizes": "384x384"
-    },
-    {
-      "src": "../images/pngwing.com.png",
+      "src": "../images/habahaba-launcher-icon-512-512.png",
       "type": "image/png",
       "sizes": "512x512"
     }

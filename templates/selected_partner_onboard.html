@@ -27,7 +27,7 @@
     <a href="#" class="sidenav-trigger" data-target="mobile_links">
         <i class="material-icons">menu</i>
     </a>
-    <a href="{{ url_for('user_homepage') }}" class="brand-logo" style="padding-left: 0.5em">Habahaba Ukulima</a>
+    <a href="{{ url_for('ukulima') }}" class="brand-logo" style="padding-left: 0.5em">Habahaba Ukulima</a>
     <ul class="right hide-on-med-and-down">
         <li><a href="{{ url_for('ukulima') }}">Ukulima Wallet</a></li>
         <li><a href="#">About</a></li>
@@ -88,27 +88,7 @@ border-radius: 30px;
                readonly hidden>
         <input type="number" name="price_per_kg" id="defaults" value="{{ vendor_details['price_per_kg'] }}" readonly
                hidden>
-        <div class="details_container" style="margin-bottom: 40px; background-color: rgb(255 255 255 / 0.7)">
-            <div class="quantity_needed">
-                <b>Quantity Needed (in KGs):</b> <input type="number" name="quantity_per_acre" id="quantity_per_acre"
-                                                        style="width: 8em; text-align: center"
-                                                        value="{{ vendor_details['quantity_per_acre'] }}" readonly>
-                {#            <span style="border-bottom: 1px solid grey; padding: 0.7em;">In KGs</span>#}
-            </div>
-            <div class="price_per_kilo">
-                <b>Price Per KG:</b> <input type="number" name="price_per_kg" id="price_per_kg"
-                                            style="width: 8em; text-align: center"
-                                            value="{{ vendor_details['price_per_kg'] }}" readonly>
-            </div>
-            <div class="payment">
-                <b>Payment Required:</b> <input type="number" name="payment_required" id="payment_required"
-                                                style="width: 8em; text-align: center" readonly>
-            </div>
 
-            <div class="accept" style="display: flex; justify-content: center;">
-                <button type="submit" class="btn waves-light waves-effect">Confirm</button>
-            </div>
-        </div>
         <div class="values" style="margin-top: 30px">
             <div class="save_until">
                 <input type="number" name="commission" id="commission" value="{{ vendor_details.commission }}" readonly
@@ -120,13 +100,43 @@ border-radius: 30px;
             </div>
             {#            <input type="number" name="commission" id="commission" value="{{ vendor_details.commission }}">#}
             <div class="input-field col s6" id="land_size">
-                <input type="number" name="size_of_land" id="size_of_land">
+                <input type="number" name="size_of_land" id="size_of_land" min="0" style="text-align: left" required>
                 <label for="size_of_land" style="display: flex; justify-content: center">Enter size of land in
                     acres</label>
             </div>
         </div>
         <div class="button" style="display: flex; justify-content: center;">
             <button type="button" class="btn btn-flat green lighten-2 waves-light" id="done_btn">Done</button>
+        </div>
+        <div class="payments" hidden="hidden">
+            Payment Required:<input type="number" name="payment_required" id="payment_required"
+                                    readonly required>
+            <div class="accept" style="display: flex; justify-content: center;">
+                <button type="submit" class="btn waves-light waves-effect confirmation_btn">Confirm</button>
+            </div>
+        </div>
+
+        <div class="details_container" style="all: initial; margin-bottom: 40px;">
+            <div class="quantity_needed">
+                <input type="number" name="quantity_per_acre" id="quantity_per_acre"
+                       style="width: 8em; text-align: center"
+                       value="{{ vendor_details['quantity_per_acre'] }}" readonly
+                       required hidden="hidden">
+                {#            <span style="border-bottom: 1px solid grey; padding: 0.7em;">In KGs</span>#}
+            </div>
+            <div class="price_per_kilo">
+                <input type="number" name="price_per_kg" id="price_per_kg"
+                       style="width: 8em; text-align: center"
+                       value="{{ vendor_details['price_per_kg'] }}" readonly required hidden="hidden">
+            </div>
+            <div class="payment">
+                <b>Payment Required:</b> <input type="number" name="payment_required" id="payment_required"
+                                                readonly required>
+            </div>
+
+            <div class="accept" style="display: flex; justify-content: center;">
+                <button type="submit" class="btn waves-light waves-effect">Confirm</button>
+            </div>
         </div>
 
         {#        defaults#}
@@ -149,6 +159,8 @@ border-radius: 30px;
                    value="{{ vendor_details['acc_number'] }}" readonly hidden>
             <input type="text" name="vendor_org" id="defaults"
                    value="{{ vendor_details['org_name'] }}" readonly hidden>
+            <input type="text" name="category" id="defaults" value="{{ vendor_details['category'] }}" readonly
+                   hidden="hidden">
 
 
             <input type="text" name="client_id" id="defaults"
@@ -196,14 +208,17 @@ border-radius: 30px;
 
             if ($('#size_of_land').val() >= 0.5) {
                 $('#done_btn').click(function () {
-                    $('.details_container').show(300);
-                    $('.warning_heading').hide(300)
+                    $('.payments').show(300);
+                    $('.warning_heading').hide(300);
+                    $('.confirmation_btn').show(300);
                 });
             } else if ($('#size_of_land').val() < 0.5) {
                 {#$('#done_btn').style.background = 'red !important';#}
                 $('#done_btn').hide(300)
                 $('.details_container').hide(300);
-                $('.warning_heading').show(300)
+                $('.warning_heading').show(300);
+                $('.confirmation_btn').hide(300);
+                $('.payments').hide(300);
             }
         });
 
@@ -238,6 +253,14 @@ border-radius: 30px;
                 $('#done_btn').show(300)
             }
         });
+
+        $.ajax({
+            url: '/testing-route/',
+            method: 'get',
+            success: function (data) {
+                {#console.log(data)#}
+            }
+        })
 
     });
 </script>

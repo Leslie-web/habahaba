@@ -30,7 +30,7 @@
     <section class="content-header" style="width: 93%; margin-left: 5.6%; padding-left: 0; ">
         <h2>Offer Validation</h2>
         <ol class="breadcrumb">
-            <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="{{ url_for('alan_code') }}"><i class="fa fa-dashboard"></i> Home</a></li>
             <li class="active">Offer Validation</li>
         </ol>
     </section>
@@ -102,7 +102,7 @@
             <table class="ui celled table " width="100%" id="offersTable">
                 <thead>
                 <tr>
-                    <th>#</th>
+                    <th></th>
                     {#                    <th>Vendor Name</th>#}
                     {#                    <th>Vendor Email</th>#}
                     <th>Organization</th>
@@ -171,6 +171,29 @@
                     "rowCallback": function (nRow, aData) {
                         {#removing the values on a checkbox#}
                         $('td', nRow).eq(0).html('');
+
+                        if (aData[5] === 'Accepted') {
+                            $('td', nRow).eq(5).html(
+                                '<div class="btn btn-success"' +
+                                'style="outline: 1px solid green">Accepted</div>'
+                            );
+                        } else if (aData[5] === 'Pending') {
+                            $('td', nRow).eq(5).html(
+                                '<div class="btn btn-secondary" ' +
+                                'style="background: #c2c2c2 !important; outline: 1px solid grey">Pending</div>'
+                            );
+                        } else if (aData[5] === 'Declined') {
+                            $('td', nRow).eq(5).html(
+                                '<div class="btn btn-danger"' +
+                                'style="outline: 1px solid red;">Declined</div>'
+                            );
+                        } else if (aData[5] === 'Suspended') {
+                            $('td', nRow).eq(5).html(
+                                '<div class="btn btn-warning"' +
+                                'style="outline: 1px solid orange">Suspended</div>'
+                            );
+                        }
+
                     },
 
                 });
@@ -191,7 +214,23 @@
                         alert("Please select an entry");
                     }
                 });
+
+
+                {#$.ajax({#}
+                {#    url: '/categories-columns/',#}
+                {#    type: 'get',#}
+                {#    success: function (data) {#}
+                {#        data = JSON.parse(data)#}
+                {##}
+                {#        data.map(#}
+                {#            item => {#}
+                {#                console.log(item.Field)#}
+                {#            }#}
+                {#        )#}
+                {#    }#}
+                // })
             });
+
         </script>
     </div>
 {% endblock %}

@@ -1,3 +1,4 @@
+{% extends 'ukulima_partners.html' %}
 <!doctype html>
 <html lang="en">
 <head>
@@ -22,52 +23,78 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='/css/jquery.dataTables.min.css') }}">
 </head>
 <body>
-{% extends 'ukulima_partners.html' %}
+{% block back_button %}
+    <a href="{{ url_for('ukulima_partners') }}"
+       class="btn-floating waves-effect waves-light {#blue lighten-3#} hide-on-large-only"
+       id="back_button" style="background-color: transparent">
+        <ion-icon name="arrow-back-outline" class="back_icon"></ion-icon>
+    </a>
+{% endblock %}
 {% block content %}
-    <div class="section1 white black-text" style="padding: 2em; margin-top: 2em;">
-        <h3 class="center-align">{{ vendor_org['vendor_org'] }}</h3>
-        <table class="display" id="example1">
-            <thead>
-            <tr>
-                <th>#</th>
-                <th>Product</th>
-                <th>Price per KG (in Ksh)</th>
-                <th>Action</th>
-            </tr>
-            </thead>
+    {#    <div class="section1 white black-text" style="padding: 2em; margin-top: 2em;">#}
+    {#        <h3 class="center-align">{{ vendor_org['vendor_org'] }}</h3>#}
+    {#        <table class="display ui celled table" id="example1">#}
+    {#            <thead>#}
+    {#            <tr>#}
+    {#                <th>#</th>#}
+    {#                <th>Product</th>#}
+    {#                <th>Price per KG/L (in Ksh)</th>#}
+    {#                <th>Action</th>#}
+    {#            </tr>#}
+    {#            </thead>#}
+    {##}
+    {#            <tbody>#}
+    {#            {% for product in vendors %}#}
+    {#                <tr>#}
+    {#                    <td>{{ loop.index }}</td>#}
+    {#                    <td>{{ product['crop_name'] }}</td>#}
+    {#                    <td>{{ product['price_per_kg'] }}</td>#}
+    {#                    <td>#}
+    {#                        <form action="{{ url_for('selected_partner_redirect') }}" method="post">#}
+    {#                            <input type="number" name="material_id" id="defaults" value="{{ product['material_id'] }}"#}
+    {#                                   readonly hidden>#}
+    {#                            <input type="number" name="user_id" id="defaults" value="{{ session['user_id'] }}"#}
+    {#                                   readonly hidden>#}
+    {#                            <label for="defaults"></label>#}
+    {#                            <button type="submit" class="btn btn-block waves-effect" style="">#}
+    {#                                <i class="material-icons">send</i>#}
+    {#                            </button>#}
+    {#                        </form>#}
+    {#                    </td>#}
+    {#                </tr>#}
+    {#            {% endfor %}#}
+    {##}
+    {#            </tbody>#}
+    {#        </table>#}
+    {#    </div>#}
 
-            <tbody>
-            {% for product in vendors %}
-                <tr>
-                    <td>{{ loop.index }}</td>
-                    <td>{{ product['crop_name'] }}</td>
-                    <td>{{ product['price_per_kg'] }}</td>
-                    <td>
-                        <form action="{{ url_for('selected_partner_redirect') }}" method="post">
-                            <input type="number" name="material_id" id="defaults" value="{{ product['material_id'] }}"
-                                   readonly hidden>
-                            <input type="number" name="user_id" id="defaults" value="{{ session['user_id'] }}"
-                                   readonly hidden>
-                            <label for="defaults"></label>
-                            <button type="submit" class="btn btn-block waves-effect" style="">
-                                <i class="material-icons">send</i>
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-            {% endfor %}
+    <div class="section2 white black-text" style="padding: 5px; margin-top: 5em;">
+        <div class="section2_heading">
 
-            </tbody>
-        </table>
+        </div>
+        <div class="section2_details">
+
+        </div>
+        <div class="section2_purchase">
+
+        </div>
     </div>
+
+
+    {#    <div class="section3 white black-text" style="padding: 5px; margin-top: 5em;">#}
+    {#        <div class="section3_heading">#}
+    {##}
+    {#        </div>#}
+    {#        <div class="section3_details">#}
+    {##}
+    {#        </div>#}
+    {#        <div class="section3_purchase">#}
+    {##}
+    {#        </div>#}
+    {#    </div>#}
     {% block itemsDiv %}
 
     {% endblock %}
-    {#    <div class="section2 white black-text">#}
-    {#        <ul id="section2_ul">#}
-    {##}
-    {#        </ul>#}
-    {#    </div>#}
 
     {#        [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[JAVASCRIPT]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]#}
     {#        ionicons#}
@@ -83,16 +110,6 @@
         if (window.history.replaceState) {
             window.history.replaceState(null, null, window.location.href);
         }
-        //sidenav
-        $(document).ready(function () {
-            $('.sidenav').sidenav();
-        });
-
-        //Dropdown
-        $(document).ready(function () {
-            $('select').formSelect()
-        });
-
         //collapsible
         document.addEventListener('DOMContentLoaded', function () {
             let elems = document.querySelectorAll('.collapsible');
@@ -100,29 +117,93 @@
                 inDuration: 300
             });
         });
-
-        //datatables
+        //sidenav
         $(document).ready(function () {
+            $('.sidenav').sidenav();
+
+
+            //Dropdown
+            $('select').formSelect()
+
+
+            //datatables
             $('#example1').dataTable();
-        });
 
-        //modal
-        $(document).ready(function () {
+
+            //modal
             $('.modal').modal();
-        });
 
-        //ajax
-        $(document).ready(function () {
-            let $order = $('#section2_ul')
+
+            //ajax
             $.ajax({
+                url: '/redirected-item/',
                 method: 'get',
-                url: '/all_goods/',
-                success: function (orders) {
-                    {#$.each(orders, function (index, products) {#}
-                    {#$order.append(`name: ${orders}`)#}
-                    {#0                    });#}
-                    console.log(JSON.parse(orders))
+                success: function (data) {
+                    data = JSON.parse(data)
+                    {#console.log(data)#}
+                    let item_details = ``
+                    let heading = ``
+                    let purchase = ``
+                    data.map(
+                        item => {
+                            {#console.log(item)#}
+                            heading += `<h4 style="text-align: center; text-decoration: underline">${item.org_name}</h4>`
+                            {#console.log(item)#}
+                            item_details += `
+<table class="highlight striped centered">
+    <thead>
+        <th>Item Name</th>
+        <th>Price (per KG / L in Ksh)</th>
+        <th>Quantity needed per acre</th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>${item.crop_name}</td>
+            <td>${item.price_per_kg}</td>
+            <td>${item.quantity_per_acre}</td>
+        </tr>
+    </tbody>
+</table>
+                            `
 
+                            purchase += `
+<form action="/selected-partner-redirect/" method="post">
+    <input type="hidden" name="material_id" value="${item.material_id}">
+    <div class="btnContainer" style="display: flex; justify-content: center; padding-top: 10px">
+        <button type="submit" class="btn waves-effect waves-light">Purchase Item</button>
+    </div>
+</form>
+                           `
+                        }
+                    )
+
+                    $('.section2_heading').html(heading)
+                    $('.section2_details').html(item_details)
+                    $('.section2_purchase').html(purchase)
+
+                }
+            });
+
+            // getting offers
+            $.ajax({
+                url: '/vendor-goods-offers-json/',
+                type: 'get',
+                success: function (data) {
+                    data = JSON.parse(data)
+                    {#console.log(data)#}
+
+                    let section3Heading = ``
+                    let section3Details = ``
+                    let section3Purchase = ``
+                    data.map(
+                        item => {
+                            {#console.log(item)#}
+
+                            section3Heading += `
+
+                            `
+                        }
+                    )
                 }
             });
         });

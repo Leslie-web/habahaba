@@ -44,15 +44,24 @@
 </head>
 
 <body class="promotions-dark sidebar-mini fixed layout-boxed">
+<div id="preloader" style="
+  background: white url('/static/_public/images/preloader5.gif') no-repeat center center;
+  height: 100vh;
+  width: 100%;
+  position: fixed;
+  z-index: 100;
+
+"></div>
 <div class="wrapper">
 
-    <header class="main-header  no-print">
-        <a href="#" class="logo" style="background-color: #031c3f !important;">
-            {#            <span class="logo-mini"><img src="/static/_public/images/logo-nogreen.png"#}
-            {#                                         style="height:50px !important"></span>#}
-            {#            <span class="logo-lg"><img src="/static/_public/images/logo-nogreen.png"#}
-            {#                                       style="height:54px !important"></span>#}
-            Welcome {{ session['f_name'] }} {{ session['l_name'] }}
+    <header class="main-header  no-print" style="background-color: #d55a00 !important;">
+        <a href="{{ url_for('vendor_home') }}" class="logo" style="background-color: #d55a00 !important;">
+                                                <span class="logo-mini"><img
+                                                        src="/static/_public/images/maize_cob.png"
+                                                        style="height:50px !important; "></span>
+            <span class="logo-lg"><img src="/static/_public/images/maize_cob.png"
+                                       style="height:48px !important;"></span>
+            {#            Welcome {{ session['f_name'] }} {{ session['l_name'] }}#}
             <br>
             <br>
         </a>
@@ -67,7 +76,7 @@
                          style="width: 93%; margin-left: 5.6%; padding-left: 0;">
                     <h2> Vendor Dashboard</h2>
                     <ol class="breadcrumb">
-                        <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+                        <li><a href="{{ url_for('vendor_home') }}"><i class="fa fa-dashboard"></i> Home</a></li>
                         <li class="active">Vendor Dashboard</li>
                     </ol>
                 </section>
@@ -78,8 +87,8 @@
     <aside class="main-sidebar">
         <section class="sidebar">
             <ul class="sidebar-menu">
-                <li class="header" style="background-color: rgb(14,17,61) !important;">
-                    <center>{#Save Pole Pole{#</center>#}</center>
+                <li class="header" style="background-color: #d55a00 !important;">
+                    <center>Haba Haba</center>
                 </li>
                 {#                <li><a href="{{ url_for('vendor_home') }}"><span><i#}
                 {#                        class="fa fa-windows"></i> Vendor Dashboard</span></a>#}
@@ -89,7 +98,7 @@
                 </li>
 
                 {#                users#}
-                <li class="header" style="background-color: #031c3f">
+                <li class="header" style="background-color: #d55a00">
                     <center>Client</center>
                 </li>
 
@@ -104,8 +113,8 @@
 
                 {#                {% if acc_type.account_type == 0 %}#}
                 {#                products#}
-                <li class="header" style="background-color: #031c3f">
-                    <center>Vendor</center>
+                <li class="header" style="background-color: #d55a00">
+                    <center>Products</center>
                 </li>
 
                 <li><a href="{{ url_for('vendor_product_verification') }}"><span><i
@@ -114,7 +123,7 @@
                 {#                {% else %}#}
                 {#                {% endif %}#}
                 {#                products#}
-                <li class="header" style="background-color: #031c3f">
+                <li class="header" style="background-color: #d55a00">
                     <center>Offers</center>
                 </li>
 
@@ -127,7 +136,7 @@
                 </a></li>
 
                 {#                reports#}
-                <li class="header" style="background-color: #031c3f">
+                <li class="header" style="background-color: #d55a00">
                     <center>Reports</center>
                 </li>
 
@@ -135,13 +144,21 @@
                     <a href="#"><i class="fa fa-file-o"></i> <span>Reports</span><i
                             class="fa fa-angle-down pull-right"></i></a>
                     <ul class="treeview-menu">
-                        <li><a href="#"><span>Customer Achievement</span> </a></li>
-                        <li><a href="#"><span>Customer History</span> </a></li>
+                        <li><a href="{{ url_for('v_campaign_performance') }}"><span>Campaign Performance</span></a></li>
+                        <li><a href="{{ url_for('v_commission_report') }}"><span>Commission Report</span></a></li>
+                        <li><a href="{{ url_for('v_float_summary') }}"><span>Float Summary</span> </a></li>
+                        <li><a href="{{ url_for('v_redemption_summary') }}"><span>Redemption Summary</span> </a></li>
+                        <li><a href="{{ url_for('v_savings_summary') }}"><span>Saving Summary</span> </a></li>
+                        <li><a href="{{ url_for('v_savings_insight') }}"><span>Saving Insight</span> </a></li>
+                        <li><a href="{{ url_for('v_savings_report') }}"><span>Savings Report</span> </a></li>
+                        <li><a href="{{ url_for('v_savings_vs_achievement_summary') }}"><span>Savings vs Achievement Summary</span>
+                        </a></li>
+                        {#                        <li><a href="{{ url_for('savings_insight') }}"><span>Savings Insight</span> </a></li>#}
                     </ul>
                 </li>
 
-                <li class="header" style="background-color: #031c3f">
-                    <center>Account</center>
+                <li class="header" style="background-color: #d55a00">
+                    <center>Users</center>
                 </li>
 
                 {#                <li class="treeview">#}
@@ -158,16 +175,16 @@
                 {#                            class="fa fa-user"></i> Add Account</span>#}
                 {#                    </a></li>#}
                 <li class="treeview requirement">
-                    <a href="#"><i class="fa fa-users"></i> <span>Accounts</span><i
+                    <a href="#"><i class="fa fa-users"></i> <span>Users</span><i
                             class="fa fa-angle-down pull-right"></i></a>
                     <ul class="treeview-menu">
-                        <li><a href="{{ url_for('vendor_add_account') }}"><span>Add Account</span> </a></li>
-                        <li><a href="#"><span>View Accounts</span> </a></li>
+                        <li><a href="{{ url_for('vendor_add_account') }}"><span>Add User</span> </a></li>
+                        {#                        <li><a href="{{ url_for('vendor_view_vendor_users') }}"><span>View Accounts</span> </a></li>#}
                     </ul>
                 </li>
                 {#                {% endif %}#}
-                <li><a href="{{ url_for('validate_offers') }}"><span><i
-                        class="fa fa-exchange"></i> Change Password</span>
+                <li><a href="{{ url_for('vendor_change_password') }}"><span><i
+                        class="fa fa-exchange"></i> Change Pin</span>
                 </a></li>
                 <li><a href="{{ url_for('vendor_logout') }}"> <i class="fa fa-lock"></i> <span>Log Out</span> </a>
                 </li>
@@ -268,6 +285,14 @@
 
 
 <script type="text/javascript" src="/static/_public/js/mburu.js"></script>
+{#PRELOADER SCRIPT#}
+<script>
+    //preloader
+    let preloader = document.getElementById('preloader')
+    window.addEventListener('load', function () {
+        preloader.style.display = "none"
+    })
+</script>
 <script>
     $(document).ready(function () {
         $.ajax({
@@ -275,7 +300,7 @@
             method: 'get',
             success: function (data) {
                 data = JSON.parse(data)
-                console.log(data.account_type)
+                {#console.log(data.account_type)#}
                 if (data.account_type !== 0) {
                     $('.requirement').hide()
                 }

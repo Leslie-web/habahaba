@@ -1,0 +1,87 @@
+{% extends 'vendor_home.html' %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>View users</title>
+</head>
+<body>
+{% block dashboard %}
+    <section class="content-header" style="width: 93%; margin-left: 5.6%; padding-left: 0; ">
+        <h2> View Users</h2>
+        <ol class="breadcrumb">
+            <li><a href="{{ url_for('vendor_home') }}"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">View Users</li>
+        </ol>
+    </section>
+{% endblock %}
+
+{% block content %}
+    <br>
+    <div class="content-top-1 box box-success">
+        <div class="box-body">
+            <br>
+
+            <table class="ui celled table " width="100%" id="vendorViewUsers">
+                <thead>
+                {#                    <th>#</th>#}
+                <th>Vendor Name</th>
+                <th>Vendor Phone</th>
+                <th>Account Type</th>
+                {#                    <th>Total Amount Sent</th>#}
+                {#                    <th></th>#}
+                </thead>
+
+            </table>
+        </div>
+    </div>
+
+    <script>
+        //datatables
+        $(document).ready(function () {
+            {#$('#example').DataTable();#}
+            var table = $('#example').DataTable({
+                destroy: true,
+                responsive: false,
+                "ajax": {
+                    url: '/vendor-products-json/',
+                    type: 'get'
+                },
+                {#"order": [[1, "desc"]],#}
+                select: {
+                    style: 'single',
+                    selector: 'tr'
+                },
+                columnDefs: [{
+                    {#orderable: false,#}
+                    {#className: 'select-checkbox',#}
+                    targets: 0
+                }],
+                scrollY: "800px",
+                scrollX: true,
+                scrollCollapse: true,
+                paging: true,
+                fixedColumns: true,
+                lengthChange: true,
+                "rowCallback": function (nRow, aData) {
+                    $('td', nRow).eq(0).html('')
+                    {#$('td', nRow).eq(2).html('<label class="label label-default">'+ aData[2] +'</label>'); #}
+                    {#if(aData[3]>0)#}
+                    {# $('td', nRow).eq(3).html('<label class="label label-success">OK</label>');#}
+                    {#else#}
+                    {#$('td', nRow).eq(3).html('<label class="label label-danger">FAIL</label>'); #}
+                }
+            });
+
+            let buttons = new $.fn.dataTable.Buttons(table, {
+                buttons: ['excelHtml5', 'pdfHtml5', 'colvis']
+            });
+            buttons.container().appendTo($('div.right.aligned.eight.column:eq(0)', table.table().container()));
+        });
+    </script>
+{% endblock %}
+</body>
+</html>

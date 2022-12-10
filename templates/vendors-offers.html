@@ -1,3 +1,4 @@
+{% extends 'vendor_home.html' %}
 <!doctype html>
 <html lang="en">
 <head>
@@ -23,7 +24,16 @@
     <meta name="apple-web-app-status-bar" content="#00b0ff">
 </head>
 <body style="transition: 300ms ease;">
-{% extends 'vendor_home.html' %}
+{% block dashboard %}
+    <section class="content-header" style="width: 93%; margin-left: 5.6%; padding-left: 0; ">
+        <h2>Add Offer</h2>
+        <ol class="breadcrumb">
+            <li><a href="{{ url_for('vendor_home') }}"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Add Offer</li>
+        </ol>
+    </section>
+{% endblock %}
+
 {% block content %}
     <br>
     <div class="content-top-1 box box-success">
@@ -57,59 +67,104 @@
                                 <select name="offer_name" id="offer_name" class="form-control" required>
                                     <option value="" selected disabled>Please select a product</option>
                                     {% for product in products %}
-                                        {% if product.material_status == 'Accepted' %}
-                                            <option value="{{ product['crop_name'] }}">{{ product['crop_name'] }}</option>
-                                        {% endif %}
+                                        {#                                        {% if product.material_status == 'accepted' %}#}
+                                        <option value="{{ product['crop_name'] }}">{{ product['crop_name'] }}</option>
+                                        {#                                        {% endif %}#}
                                     {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <br>
+
+                    <div class="input-field col s12">
+                        <div class="rows" style="display: flex;">
+                            <label for="offer_type" class="col-sm-1" style="width: 9em; padding: 0">Type of
+                                offer:</label>
+                            <div class="col-sm-5">
+                                <select name="offer_type" id="offer_type" class="form-control offer_type" required>
+                                    <option value="" selected disabled>Please select an offer type</option>
+                                    <option value="Discount">Discount</option>
+                                    <option value="Promotion">Promotion</option>
                                 </select>
                             </div>
                         </div>
                     </div>
                     <br>
                 </div>
-                <div class="row">
-                    <div class="input-field col s5">
-                        <div class="form-group row">
-                            <label for="percentage_off" class="col-sm-1 col-form-label">Percentage Off:</label>
-                            <div class="col-sm-5">
-                                <input type="text" class="form-control" id="percentage_off" name="percentage_off"
-                                       required {#style="width: 50vw"#}>
+                <div class="discount" hidden="hidden">
+                    <div class="row">
+                        <div class="input-field col s5">
+                            <div class="form-group row">
+                                <label for="campaign_name" class="col-sm-1 col-form-label">Offer Name:</label>
+                                <div class="col-sm-5">
+                                    <input type="text" class="form-control" id="campaign_name" name="campaign_name"
+                                           placeholder="Offer Name" required {#style="width: 50vw"#}>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <br>
-                <div class="row">
-                    <div class="input-field col s5">
-                        <div class="form-group row">
-                            <label for="valid_until" class="col-sm-1 col-form-label">Valid Until:</label>
-                            <div class="col-sm-5">
-                                <input type="date" class="form-control" id="valid_until" name="valid_until"
-                                       required>
+                    <div class="row">
+                        <div class="input-field col s5">
+                            <div class="form-group row">
+                                <label for="percentage_off" class="col-sm-1 col-form-label">Percentage Off:</label>
+                                <div class="col-sm-5">
+                                    <input type="number" class="form-control" id="percentage_off" name="percentage_off"
+                                           min="0" max="100" placeholder="Percentage Off" required
+                                            {#style="width: 50vw"#}>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <br>
+                    <div class="row">
+                        <div class="input-field col s5">
+                            <div class="form-group row">
+                                <label for="valid_until" class="col-sm-1 col-form-label">Valid Until:</label>
+                                <div class="col-sm-5">
+                                    <input type="date" class="form-control" id="valid_until" name="valid_until"
+                                           required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
                 </div>
-                <br>
-                <fieldset class="col-sm-6">
-                    <legend>Regions where offers will be available</legend>
-                    <div class="col-md-6">
-                        <div
-                                {#                            style="width: 50%; display: grid; grid-template-columns: 10em 2em;"#}
-                                style="display: flex; flex-wrap: wrap; width: 40vw;"
-                                class="checker">
-                            {#                            <label for="Kisumu">Kisumu</label>#}
-                            {#                            <input type="checkbox" name="region_available" id="Kisumu" value="Kisumu">#}
 
+                <div class="promotions" hidden="hidden">
+                    <div class="row">
+                        <div class="input-field col s5">
+                            <div class="form-group row">
+                                <label for="valid_untils" class="col-sm-1 col-form-label">Valid Until:</label>
+                                <div class="col-sm-5">
+                                    <input type="date" class="form-control" id="valid_untils" name="valid_untils"
+                                           required>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </fieldset>
+                </div>
+
+                <div class="regions_available" hidden="hidden">
+                    <fieldset class="col-sm-6">
+                        <legend>Regions where offers will be available</legend>
+                        <div class="col-md-6">
+                            <div class="checker" style="display: flex; flex-wrap: wrap; width: 40vw;">
+
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <label for="material_ids"></label>
+                <input type="text" name="material_ids" id="material_ids" hidden="hidden">
+
                 <br>
                 <div class="rows" class="col-sm-6" style="display: flex;">
                     {#                <button type="submit" class="btn waves-effect waves-light green lighten-2">Submit</button>#}
                     <button type="submit" class="btn btn-outline-success"
-                            style="outline: 1px solid green; margin-left: 20vw"
-                            id="submit_btn">
+                            style="outline: 1px solid green; margin-left: 20vw" id="submit_btn">
                         Submit
                     </button>
                 </div>
@@ -119,38 +174,6 @@
     {#    </div>#}
     <hr>
 
-    {#    <div class="heading">#}
-    {#        <h3>Partnered Users</h3>#}
-    {#    </div>#}
-    {#    <div class="section1" style="padding: 5em;">#}
-    {#        <table class="display black-text" id="example" style="width: 70vw; margin-left: 15vw;">#}
-    {#            <caption align="top">Partnered Users</caption>#}
-    {#            <thead>#}
-    {#            <tr>#}
-    {#                <th>#</th>#}
-    {#                <th>Item name</th>#}
-    {#                <th>Percentage Off</th>#}
-    {#                <th>Valid until</th>#}
-    {#                <th>Actions</th>#}
-    {#            </tr>#}
-    {#            </thead>#}
-    {##}
-    {#            <tbody>#}
-    {#            {% for offer in offers %}#}
-    {#                <tr>#}
-    {#                    <td>{{ loop.index }}</td>#}
-    {#                    <td>{{ offer['offer_name'] }}</td>#}
-    {#                    <td>{{ offer['percentage_off'] }}</td>#}
-    {#                    <td>{{ offer['valid_until'] }}</td>#}
-    {##}
-    {#                </tr>#}
-    {#            {% endfor %}#}
-    {#            </tbody>#}
-    {#        </table>#}
-    {#    </div>#}
-
-    {#        </div>#}
-    {#    </div>#}
     {#        [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[JAVASCRIPT]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]#}
     {#        ionicons#}
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
@@ -174,9 +197,43 @@
                     });
                 }
             });
+
+            $('#offer_name').change(function () {
+                // loading material id when select box changes
+                $.ajax({
+                    url: '/get-materials-json/',
+                    type: 'get',
+                    success: function (data) {
+                        data = JSON.parse(data)
+
+                        let materials = ``
+                        data.map(
+                            item => {
+                                if ($('#offer_name').val() === item.crop_name) {
+                                    materials += `${item.material_id}`
+                                }
+                            }
+                        )
+                        $('#material_ids').val(materials)
+                    }
+                });
+            });
+
+
+            $('#offer_type').change(function () {
+                if ($('.offer_type').val() === 'Discount') {
+                    $('.discount').show(300)
+                    $('.promotions').hide(300)
+                    $('.regions_available').show(300)
+                } else if ($('#offer_type').val() !== 'Discount') {
+                    $('.discount').hide(300)
+                    $('.promotions').show(300)
+                    $('.regions_available').show(300)
+                }
+            });
         });
-    </script>
-    <script>
+
+
         //stop auto submit on reload
         if (window.history.replaceState) {
             window.history.replaceState(null, null, window.location.href);
@@ -185,7 +242,7 @@
         $(document).ready(function () {
             $('#offer_name').change(function () {
                 let materials = this.value
-                console.log(materials);
+                {#console.log(materials);#}
                 $.ajax({
                     url: '/products-json/',
                     method: 'post',
@@ -212,12 +269,11 @@
                 method: 'get',
                 success: function (data) {
                     data = JSON.parse(data)
-                    {#console.log(data)#}
                     boxes = ``
 
                     data.map(
                         item => {
-                            console.log(item)
+                            {#console.log(item)#}
                             boxes += `
                             <div class="counties_container" style="display: flex;">
                                 <div class="counties_label" style="width: 10em;">
@@ -233,7 +289,7 @@ margin-right: 1em; " >
 
                         }
                     )
-                    $('.checker').html(boxes)
+                    $('.checker').html(boxes);
                 }
             });
         });

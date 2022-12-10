@@ -1,0 +1,205 @@
+{% extends 'ukulima.html' %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="/static/css/selected_offer.css">
+    <title>Selected Offer</title>
+</head>
+<body>
+{% block navs %}
+    <style>
+        #back_button {
+            display: grid;
+            place-items: center;
+        }
+
+        #back_button .back_icon {
+            font-size: 2em;
+        }
+    </style>
+    {#navbar#}
+    <nav class="nav-wrapper green lighten-2 hide-on-med-and-down hide-on-small-and-down">
+        <a href="#" class="sidenav-trigger" data-target="mobile_links">
+            <i class="material-icons">menu</i>
+        </a>
+        <a href="{{ url_for('ukulima') }}" class="brand-logo">Habahaba Ukulima</a>
+        <ul class="right hide-on-med-and-down">
+            <li><a href="{{ url_for('ukulima') }}">Ukulima wallet</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="{{ url_for('user_logout') }}">Logout</a></li>
+        </ul>
+    </nav>
+    {#<a href="#" class="sidenav-trigger btn transparent hide-on-med-and-up" data-target="mobile_links">#}
+    {#    <i class="material-icons">menu</i>#}
+    {#</a>#}
+    <ul class="sidenav" id="mobile_links">
+        <div class="nav_container"
+             style="height: 100vw; display: flex; flex-direction: column; justify-content: space-between">
+            <ul class="top">
+                <li><a href="{{ url_for('ukulima') }}">Ukulima wallet</a></li>
+                <li><a href="#">Services</a></li>
+                <li><a href="#">About</a></li>
+            </ul>
+            <ul class="logout">
+                <li><a href="{{ url_for('user_logout') }}">Logout</a></li>
+            </ul>
+        </div>
+    </ul>
+    <a href="{{ url_for('ukulima_offers') }}"
+       class="btn-floating waves-effect waves-light hide-on-large-only"
+       id="back_button" style="background-color: transparent;">
+        <ion-icon name="arrow-back-outline" class="back_icon"></ion-icon>
+    </a>
+{% endblock %}
+
+{% block body %}
+    <div class="flash_msg" style="margin-bottom: 1em; margin-top: 1em;">
+        {% include 'includes/_flashmsg.html' %}
+    </div>
+    <div class="section1"
+         style="
+        background-color: rgb(255 255 255 / 1);
+        padding: 3em;
+        display: grid;
+        justify-content: center;
+        margin: 3em auto auto;
+        width: 80vw;
+        border-radius: 50px 50px 0 0 ;
+">
+        <form action="{{ url_for('specific_offer') }}"
+              style="
+              width: 70vw;" method="post">
+            <div class="input-field">
+                <input type="date" name="saving_duration" id="saving_duration" min="{{ current_date }}" class="validate"
+                       required>
+                <label for="saving_duration">Save Until:</label>
+            </div>
+
+            <div class="first_detail" hidden="hidden">
+                <div class="input-field">
+                    <label for="size_of_land">Size of land (in acres):</label>
+                    <input type="number" name="size_of_land" id="size_of_land" min="0" required>
+                </div>
+            </div>
+
+            <div class="second_detail" hidden="hidden">
+                {#            OFFER NAME#}
+                <div class="input-field">
+                    {#                <input type="text" name="offer_name" id="offer_name" placeholder=" " readonly>#}
+                    {#                <label for="offer_name">Offer Name:</label>#}
+                </div>
+                {#            ITEM NAME#}
+                <div class="input-field">
+                    <input type="text" name="item_name" id="item_name" placeholder=" " readonly>
+                    <label for="item_name">Item Name:</label>
+                </div>
+                {#            DISCOUNT#}
+                <div class="input-field">
+                    <input type="number" name="percentage_off" id="percentage_off" placeholder=" " readonly>
+                    <label for="percentage_off">Discount (in %):</label>
+                </div>
+                {#            PRICE PER KG / L#}
+                <div class="input-field">
+                    <input type="number" name="price_per_kg" id="price_per_kg" placeholder=" " readonly>
+                    <label for="price_per_kg">Price per Kg / L:</label>
+                </div>
+                {#            QUANTITY PER ACRE#}
+                <div class="input-field">
+                    <input type="number" name="quantity_per_acre" id="quantity_per_acre" placeholder=" " readonly>
+                    <label for="quantity_per_acre">Quantity per acre:</label>
+                </div>
+                <div class="input-field">
+                    <input type="text" name="available_regions" id="available_regions" placeholder=" " readonly>
+                    <label for="available_regions">Available Regions:</label>
+                </div>
+                <div class="input-field">
+                    <label for="amount_to_pay">Amount to pay:</label>
+                    <input type="number" name="amount_to_pay" id="amount_to_pay" placeholder=" " readonly>
+                </div>
+
+                <input type="number" name="material_id" id="material_id" hidden="hidden">
+                <input type="text" name="client_name" id="client_name" value="{{ session.f_name }} {{ session.l_name }}"
+                       hidden="hidden">
+                <input type="text" name="client_id" id="client_id" value="{{ session.user_id }}" hidden="hidden">
+                <input type="number" name="vendor_id" id="vendor_id" hidden="hidden">
+                <input type="text" name="vendor_name" id="vendor_name" hidden="hidden">
+                <input type="text" name="org_name" id="org_name" hidden="hidden">
+                <input type="text" name="valid_until" id="valid_until" hidden="hidden">
+                <input type="number" name="offer_id" id="offer_id" hidden="hidden">
+
+
+                <div class="submitButton" style="display: grid; place-items: center;">
+                    <button type="submit" class="btn waves-effect waves-effect green lighten-2 z-depth-3">Pick Offer
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+
+            $('#saving_duration').on('input', function () {
+                $('.first_detail').show(300)
+            });
+
+            $.ajax({
+                url: '/selected-offer-json/',
+                type: 'get',
+                success: function (data) {
+                    data = JSON.parse(data)
+                    {#console.log(data)#}
+                    let offer_name = ``
+                    let item_name = `${data.offer_name}`
+                    let discount = `${data.percentage_off}`
+                    let price_per_kg = `${data.price_per_kg}`
+                    let quantity_per_acres = `${data.quantity_per_acre}`
+                    let regions_available = `${data.region_available}`
+
+                    let material_id = `${data.material_id}`
+                    let vendor_id = `${data.vendor_id}`
+                    let vendor_name = `${data.vendor_name}`
+                    let org_name = `${data.org_name}`
+                    let valid_until = `${data.valid_until}`
+                    let offer_id = `${data.offer_id}`
+
+                    {#data.map(item => {#}
+                    {#    console.log(item)#}
+                    {#    item_name = `${item.offer_name}`#}
+                    {#    discount = `${item.percentage_off}`#}
+                    {#    price_per_kg = `${item.price_per_kg}`#}
+                    {#    quantity_per_acres = `${item.quantity_per_acre}`#}
+                    {#regions_available = `${item.region}`#}
+                    // });
+                    $('#item_name').val(item_name)
+                    $('#percentage_off').val(discount)
+                    $('#price_per_kg').val(price_per_kg)
+                    $('#quantity_per_acre').val(quantity_per_acres)
+                    $('#available_regions').val(regions_available)
+
+                    $('#material_id').val(material_id)
+                    $('#vendor_id').val(vendor_id)
+                    $('#vendor_name').val(vendor_name)
+                    $('#org_name').val(org_name)
+                    $('#valid_until').val(valid_until)
+                    $('#offer_id').val(offer_id)
+
+
+                    $('#size_of_land').on('input', function () {
+                        $('.second_detail').show(300)
+
+                        let amount_to_pay = ((price_per_kg * quantity_per_acres) * $('#size_of_land').val()) * ((100 - $('#percentage_off').val()) / 100)
+                        $('#amount_to_pay').val(amount_to_pay).css("background", "rgb(0 0 0 / 0.1)")
+                    });
+                }
+            });
+        });
+    </script>
+{% endblock %}
+</body>
+</html>

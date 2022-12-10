@@ -5,6 +5,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="theme-color" content="#008300FF">
     <title>Login</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='/css/materialize.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='/css/user_login.css') }}">
@@ -13,16 +14,39 @@
     <script type="text/javascript" src="{{ url_for('static', filename='/js/jquery-3.6.1.min.js') }}"></script>
 
     <script type="text/javascript" src="{{ url_for('static', filename='/js/materialize.min.js') }}"></script>
-    <link rel="manifest" href="../static/js/manifest.json">
+    <link rel="manifest" href="/static/js/manifest.json">
 
     <!--IOS support-->
     <link rel="apple-touch-icon" href="../static/images/pngwing.com.png">
     <meta name="apple-web-app-status-bar" content="#00b0ff">
 </head>
 <body>
-<form action="{{ url_for('user_login') }}" method="post">
+<style>
+    @media all and (max-width: 650px) {
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .details_container {
+            width: 100vw;
+            padding: 1em;
+            background-color: transparent;
+            box-shadow: none;
+        }
+
+        h3 {
+            text-decoration: underline;
+        }
+    }
+</style>
+
+<form action="{{ url_for('user_login') }}" method="post" id="login_form">
     <div class="details_container">
-        {% include 'includes/_flashmsg.html' %}
+        <div class="flash_msg" style="display: flex; justify-content: center;">
+            {% include 'includes/_flashmsg.html' %}
+        </div>
         <center>
             <h1 id="background_gradient">Login</h1>
         </center>
@@ -58,10 +82,35 @@
 {#link to app.js for service worker#}
 <script src="../static/js/app.js"></script>
 <script>
-    //regular inputs
+    localStorage.setItem('some-nested-array', JSON.stringify(['this', ['is'], ['an', ['item']]]))
+
     $(document).ready(function () {
+        //regular inputs
         M.updateTextFields();
+
+        {#$.ajax({#}
+        {#    url: '/user-login/',#}
+        {#    type: 'POST',#}
+        {#    data: {#}
+        {#        phone_no: "0745632145",#}
+        {#        password: "1234"#}
+        {#    },#}
+        {#    success: function (data) {#}
+        {#        console.log('data')#}
+        {#        if (data.token) {#}
+        {#            let token = data.token#}
+        {#            console.log(token)#}
+        {#            localStorage.setItem('token', token)#}
+        {#            const stored_token = localStorage.getItem(token)#}
+        {#            console.log(stored_token)#}
+        {#        } else {#}
+        {#            console.log('token not found')#}
+        {#        }#}
+        {#    }#}
+        // });
     });
+
+
     //stop auto reload on submit
     if (window.history.replaceState) {
         window.history.replaceState(null, null, window.location.href);

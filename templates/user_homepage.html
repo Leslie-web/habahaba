@@ -5,6 +5,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="theme-color" content="#008300FF">
     <title>Home</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='/css/materialize.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='/css/user_homepage.css') }}">
@@ -98,7 +99,7 @@
                 <div class="modal" id="modal1">
                     <div class="modal-content black-text">
                         <h4>Activate Wallet</h4>
-                        <form action="{{ url_for('user_homepage') }}" method="post">
+                        <form action="{{ url_for('ukulima') }}" method="post">
                             {#                        default values#}
                             <input type="number" name="balance" id="defaults" value="0" hidden>
                             <input type="number" name="spent" id="defaults" value="0" hidden>

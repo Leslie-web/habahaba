@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Account not set up</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+</head>
+<body>
+<style>
+    body {
+        display: grid;
+        place-items: center;
+        height: 100vh;
+    }
+
+    .context_container {
+        display: grid;
+        justify-content: center;
+        width: 90vw;
+        height: 60vh;
+    }
+
+    .image_container {
+        background-image: url('/static/_public/images/habahaba6bg.png');
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        width: 30vw;
+        height: 80%;
+        border-radius: 20px;
+        box-shadow: 0 0 10px -5px black;
+    }
+
+    .content_container {
+        text-align: center;
+    }
+
+
+</style>
+<div class="overall_container">
+    <div class="context_container">
+        <div class="image_container">
+
+        </div>
+
+        <div class="content_container">
+            <p>Please wait for your account to be set up</p>
+            {#        <br>#}
+            <a href="{{ url_for('vendor_logout') }}">Return to log in</a>
+        </div>
+    </div>
+</div>
+{#<div class="footer_container">#}
+{#    <div class="left_footer"></div>#}
+{#    <div class="right_footer"></div>#}
+{#</div>#}
+</body>
+</html>

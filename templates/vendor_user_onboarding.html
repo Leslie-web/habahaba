@@ -14,7 +14,7 @@
     <section class="content-header" style="width: 93%; margin-left: 5.6%; padding-left: 0; ">
         <h2> Client Registration</h2>
         <ol class="breadcrumb">
-            <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="{{ url_for('vendor_home') }}"><i class="fa fa-dashboard"></i> Home</a></li>
             <li class="active">Client Registration</li>
         </ol>
     </section>
@@ -62,15 +62,7 @@
                             {#                                <label for="gender" class="visually-hidden" hidden>Gender:</label>#}
                         </div>
                     </div>
-                    {#                    </div>#}
 
-                    {#            DATE OF BIRTH#}
-                    {#                    <div class="form-group row">#}
-                    {#                        <label for="dob" class="col-sm-1 col-form-label">Date of Birth:</label>#}
-                    {#                        <div class="col-sm-4">#}
-                    {#                            <input type="text" class="form-control" id="dob" name="dob" required>#}
-                    {#                        </div>#}
-                    {#                    </div>#}
 
                     {#            PHONE NUMBER#}
                     <div class="form-group row">
@@ -87,6 +79,28 @@
                         </div>
                     </div>
 
+
+                    {#    Size of land#}
+                    <div class="form-group row">
+                        <label for="size_of_land" class="col-sm-1 col-form-label">Size of land <br>
+                            (in Acres):</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" id="size_of_land" name="size_of_land" min="0"
+                                   required>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="land_location" class="col-sm-1 col-form-label">Farm Location:</label>
+                        <div class="col-sm-4">
+                            <select name="land_location" id="land_location" class="form-control" required>
+                                <option value="" selected disabled>Please select where your farm is located</option>
+                                {% for county in county_list %}
+                                    <option value="{{ county.county_name }}">{{ county.county_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
                     {#                    EMAIL ADDRESS#}
                     <div class="form-group row">
                         <label for="email" class="col-sm-1 col-form-label">Email:</label>

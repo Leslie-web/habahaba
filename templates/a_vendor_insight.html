@@ -1,0 +1,83 @@
+{% extends 'alan_code.html' %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Vendor Insight</title>
+</head>
+<body>
+{% block dashboard %}
+    <section class="content-header" style="width: 93%; margin-left: 5.6%; padding-left: 0; ">
+        <h2>Vendor Insight</h2>
+        <ol class="breadcrumb">
+            <li><a href="{{ url_for('alan_code') }}"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Vendor Insight</li>
+        </ol>
+    </section>
+{% endblock %}
+
+{% block content %}
+    <br>
+    <div class="content-top-1 box box-success">
+        <div class="box-body">
+            <br>
+
+            <table class="ui celled table" width="100%" id="vendorInsigtTable">
+                <thead>
+                <tr>
+                    <th>Vendor Name</th>
+                    <th>Category</th>
+                    <th>% of customers</th>
+                    <th>Average land size (in Acres)</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function (string) {
+
+            let table = $('#vendorInsigtTable').DataTable({
+                destroy: true,
+                responsive: false,
+                "ajax": {
+                    url: '/vendor-insight-json/',
+                    type: 'get'
+                },
+                "order": [[0, 'asc']],
+                select: {
+                    style: 'single',
+                    selector: 'tr'
+                },
+                {#having a checkbox#}
+                columnDefs: [{
+                    {#orderable: false,#}
+                    {#className: 'select-checkbox',#}
+                    targets: 0
+                }],
+                scrollY: "800px",
+                scrollX: true,
+                scrollCollapse: true,
+                paging: true,
+                fixedColumns: true,
+                lengthChange: true,
+                "rowCallback": function (nRow, aData) {
+                    {#$('td', nRow).eq(0).html('')#}
+                    $('td', nRow).eq(3).html(aData[3] + ' %')
+                }
+            });
+
+            let buttons = new $.fn.dataTable.Buttons(table, {
+                buttons: ['csvHtml5', 'excelHtml5', 'pdfHtml5', 'colvis']
+            });
+
+            buttons.container().appendTo($('div.right.aligned.eight.column:eq(0)', table.table().container()));
+        });
+    </script>
+{% endblock %}
+</body>
+</html>

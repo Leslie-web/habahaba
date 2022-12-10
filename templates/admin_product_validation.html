@@ -4,7 +4,7 @@
     <section class="content-header" style="width: 93%; margin-left: 5.6%; padding-left: 0; ">
         <h2>Vendor Product Validation</h2>
         <ol class="breadcrumb">
-            <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="{{ url_for('alan_code') }}"><i class="fa fa-dashboard"></i> Home</a></li>
             <li class="active">Vendor Product Validation</li>
         </ol>
     </section>
@@ -19,12 +19,31 @@
             </div>
             <br>
             {#            edit btn#}
-            <div class="{#box-tools pull-left#}" style="padding-right: 30px; display: flex; justify-content: flex-end">
+            <div class="{#box-tools pull-left#}"
+                 style="padding-right: 30px; display: flex; justify-content: flex-end; column-gap: 1em;">
+                {#                suspend button#}
+                <button class="btn btn-warning" id="suspendProduct" style="width: max-content; margin-bottom: 5px;"
+                >Suspend Product
+                </button>
+
+                {#                edit button#}
                 <button type="button" id="editButton" class="btn btn-info btn-sm"
                         style="width: max-content; margin-bottom: 5px;"><i
                         class="fa fa-edit"></i> Change Status
                 </button>
             </div>
+            {#            <button class="btn btn-warning" id="suspendProduct" style="width: max-content; margin-bottom: 5px;">Suspend#}
+            {#                Product#}
+            {#            </button>#}
+            {#            suspend product form#}
+            {#            <form action="{{ url_for('admin_suspend_product') }}" method="post" hidden>#}
+            {#                <input type="text" name="suspend_product" id="suspend_product" value="Suspended" readonly>#}
+            {#                <label for="suspend_product"></label>#}
+            {#                <input type="text" name="materials_id" id="materials_id" readonly>#}
+            {#                <button type="submit" id="suspendProductBtn">Submit</button>#}
+            {#            </form>#}
+
+
             {#            edit modal#}
             <a type="button" id="emodal" data-toggle="modal" data-target="#edit_modal"></a>
             <div class="modal fade" id="edit_modal" tabindex="-1"
@@ -85,7 +104,7 @@
                         <th>Item</th>
                         <th>Available in...</th>
                         <th>Quantity per Acre</th>
-                        <th>Price per KG</th>
+                        <th>Price per KG / L</th>
                         <th>Status</th>
                     </tr>
                     </thead>
@@ -136,12 +155,23 @@
                     let row = table.rows('.selected').data()[0];
                     $('#material_id').val(row[0])
                     $('#selected').html(row[8]);
-                    console.log(row)
+                    {#console.log(row)#}
                     $('#emodal').click()
                 } else {
                     alert("Please select an entry");
                 }
             });
+
+            {#$('#suspendProduct').click(function () {#}
+            {#    if (table.rows('.selected').data().length > 0) {#}
+            {#        let row = table.rows('.selected').data()[0]#}
+            {##}
+            {#        $('#materials_id').val(row[0])#}
+            {#        $('#suspendProductBtn').click()#}
+            {#    } else {#}
+            {#        alert("Please select an entry")#}
+            {#    }#}
+            // });
         });
     </script>
 {% endblock %}

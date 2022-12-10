@@ -5,11 +5,13 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="theme-color">
     <title>Offers</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='/css/materialize.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='/css/ukulima_offers.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='/css/m_icons.css') }}">
     <link rel="manifest" href="../static/js/manifest.json">
+    <meta name="theme-color" content="#008300FF">
 
     <script type="text/javascript" src="{{ url_for('static', filename='/js/jquery-3.6.1.min.js') }}"></script>
 
@@ -18,12 +20,45 @@
     <meta name="apple-web-app-status-bar" content="#00b0ff">
 </head>
 <body>
+<style>
+    @media all and (max-width: 400px) {
+        .section2 {
+            padding: 1em;
+            width: 90%;
+        }
+
+        .offers_container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .offers_card {
+            border: none;
+            box-shadow: 0 0 20px -5px black;
+            width: 90vw !important;
+        }
+
+        .offer_org, .offer_name {
+            font-family: "MV Boli", sans-serif;
+            font-size: 20px;
+        }
+
+        .offers_header {
+            display: flex;
+            align-items: center;
+        }
+
+    }
+
+</style>
 {#navbar#}
 <nav class="nav-wrapper green lighten-2 hide-on-med-and-down hide-on-small-and-down">
     <a href="#" class="sidenav-trigger" data-target="mobile_links">
         <i class="material-icons">menu</i>
     </a>
-    <a href="{{ url_for('user_homepage') }}" class="brand-logo">Habahaba Ukulima</a>
+    <a href="{{ url_for('ukulima') }}" class="brand-logo">Habahaba Ukulima</a>
     <ul class="right hide-on-med-and-down">
         <li><a href="{{ url_for('ukulima') }}">Ukulima wallet</a></li>
         <li><a href="#">About</a></li>
@@ -62,65 +97,43 @@
 </div>
 {#<div class="section1 black-text">#}
 
-{#    {% for offers in available_offers %}#}
-{#        {% if offers['offer_status'] == 'accepted' %}#}
-{##}
-{#            <div class="offer_card z-depth-4">#}
-{#                <div class="offers_header">#}
-{#                    {{ offers['org_name'] }}#}
-{#                </div>#}
-{#                <div class="offers_body">#}
-{#                    <div class="offer_item">#}
-{#                        Item: {{ offers['offer_name'] }}#}
-{#                    </div>#}
-{#                    <div class="percentage_off">#}
-{#                        {{ offers['percentage_off'] }}% off#}
-{#                    </div>#}
-{#                    <div class="actions">#}
-{#                        <a href="#" class="btn waves-light waves-effect green lighten-2">View Deal</a>#}
-{#                    </div>#}
-{#                </div>#}
-{#                <div class="offers_footer">#}
-{#                    <div class="valid_until">#}
-{#                        Valid Until: {{ offers['valid_until'] }}#}
-{#                    </div>#}
-{#                </div>#}
-{#            </div>#}
-{#        {% else %}#}
-{#            <h5 style="text-align: center">No offers available</h5>#}
-{#        {% endif %}#}
-{#    {% endfor %}#}
-{#</div>#}
-
 
 <div class="section2 black-text">
     {% for offers in available_offers %}
         {% if offers|count > 1 %}
-            {% if offers['offer_status'] == 'accepted' %}
-                <div class="offers_container">
-                    <div class="offers_card">
-                        <div class="offers_content">
-                            <div class="offers_header offer_details">
-                                <ion-icon name="bag-check-outline" style="font-size: 25px"></ion-icon>
-                                <h3>{{ offers.org_name }}</h3>
-                            </div>
-                            <div class="offer_details offer_details">
-                                <ion-icon name="pricetag-outline" style="font-size: 25px"></ion-icon>
-                                <h5>{{ offers.offer_name }} at <b>{{ offers.percentage_off }}%</b> off</h5>
-                            </div>
-                            <div class="view_btn">
-                                <button class="btn waves-light">View Deal</button>
-                            </div>
-                            <br>
-                            <div class="offer_date">
-                                <ion-icon name="calendar-outline" style="font-size: 25px"></ion-icon>
-                                &nbsp
-                                <h6>Valid until: <b>{{ offers.valid_until }}</b></h6>
-                            </div>
+            {#            {% if offers['offer_status'] == 'accepted' %}#}
+            <div class="offers_container">
+                <div class="offers_card">
+                    <div class="offers_content">
+                        <div class="offers_header offer_details">
+                            <ion-icon name="bag-check-outline" class="offers_icon" style="font-size: 25px"></ion-icon>
+                            <h3 class="offer_org">{{ offers.org_name }}</h3>
+                        </div>
+                        <div class="offer_details offer_details">
+                            <ion-icon name="pricetag-outline" style="font-size: 25px"></ion-icon>
+                            <h5 class="offer_name">{{ offers.offer_name }} at <b>{{ offers.percentage_off }}%</b> off
+                            </h5>
+                        </div>
+                        <div class="view_btn">
+                            <form action="{{ url_for('ukulima_offers_redirect') }}" method="post">
+                                <label for="defaults"></label>
+                                <input type="number" name="offer_id" id="defaults" value="{{ offers.offer_id }}"
+                                       readonly hidden="hidden">
+                                <input type="number" name="user_id" id="defaults" value="{{ session['user_id'] }}"
+                                       readonly hidden="hidden">
+                                <button class="btn waves-effect waves-light" type="submit">View Deal</button>
+                            </form>
+                        </div>
+                        <br>
+                        <div class="offer_date">
+                            <ion-icon name="calendar-outline" style="font-size: 25px"></ion-icon>
+                            &nbsp
+                            <h6>Valid until: <b>{{ offers.valid_until }}</b></h6>
                         </div>
                     </div>
                 </div>
-            {% endif %}
+            </div>
+            {#            {% endif %}#}
         {% else %}
 
             <h4>No offers available</h4>

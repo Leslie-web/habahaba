@@ -1,0 +1,117 @@
+{% extends 'alan_code.html' %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Saving Summary</title>
+</head>
+<body>
+{% block dashboard %}
+    <section class="content-header" style="width: 93%; margin-left: 5.6%; padding-left: 0; ">
+        <h2>Saving Summary</h2>
+        <ol class="breadcrumb">
+            <li><a href="{{ url_for('alan_code') }}"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Saving Summary</li>
+        </ol>
+    </section>
+{% endblock %}
+
+{% block content %}
+    <br>
+    <div class="content-top-1 box box-success">
+        <div class="box-body">
+            <br>
+
+            <table class="ui stripped celled table" width="100%" id="vendorSummaryTable">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>Farmer Name</th>
+                    <th>Amount Saved</th>
+                    <th>Category of Saving</th>
+                </tr>
+                </thead>
+                <tfoot>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function (string) {
+
+            let table = $('#vendorSummaryTable').DataTable({
+                destroy: true,
+                responsive: false,
+                "ajax": {
+                    url: '/saving-summary-json/',
+                    type: 'get'
+                },
+                "order": [[0, 'asc']],
+                select: {
+                    style: 'single',
+                    selector: 'tr'
+                },
+                {#having a checkbox#}
+                columnDefs: [{
+                    orderable: false,
+                    className: 'select-checkbox',
+                    targets: 0
+                }],
+                scrollY: "800px",
+                scrollX: true,
+                scrollCollapse: true,
+                paging: true,
+                fixedColumns: true,
+                lengthChange: true,
+                "rowCallback": function (nRow, aData) {
+                    $('td', nRow).eq(0).html('')
+                },
+                footerCallback: function (row, data, start, end, display) {
+                    var api = this.api();
+
+                    // Remove the formatting to get integer data for summation
+                    var intVal = function (i) {
+                        return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0;
+                    };
+
+                    // Total over all pages
+                    total = api
+                        .column(2)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    // Total over this page
+                    pageTotal = api
+                        .column(2, {page: 'current'})
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    // Update footer
+                    $(api.column(2).footer()).html('Current Page <b>KSH ' + pageTotal + '</b> Out of total <b>KSH ' + total + '</b>)');
+                }
+            });
+
+            let buttons = new $.fn.dataTable.Buttons(table, {
+                buttons: ['csvHtml5', 'excelHtml5', 'pdfHtml5', 'colvis']
+            });
+
+            buttons.container().appendTo($('div.right.aligned.eight.column:eq(0)', table.table().container()));
+        });
+    </script>
+{% endblock %}
+</body>
+</html>

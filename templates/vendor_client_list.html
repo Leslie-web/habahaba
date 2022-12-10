@@ -47,6 +47,7 @@
                     <caption align="top">Partnered Users</caption>
                     <thead>
                     <tr>
+                        <th></th>
                         <th>Name</th>
                         <th>Email</th>
                         <th>Phone Number</th>
@@ -84,23 +85,6 @@
         if (window.history.replaceState) {
             window.history.replaceState(null, null, window.location.href);
         }
-        //sidenav
-        $(document).ready(function () {
-            $('.sidenav').sidenav();
-        });
-
-        //Dropdown
-        $(document).ready(function () {
-            $('select').formSelect()
-        });
-
-        //collapsible
-        document.addEventListener('DOMContentLoaded', function () {
-            let elems = document.querySelectorAll('.collapsible');
-            let instances = M.Collapsible.init(elems, {
-                inDuration: 300
-            });
-        });
 
         //datatables
         $(document).ready(function () {
@@ -124,6 +108,7 @@
                 fixedColumns: true,
                 lengthChange: true,
                 "rowCallback": function (nRow, aData) {
+                    $('td', nRow).eq(0).html('');
                     {#$('td', nRow).eq(2).html('<label class="label label-default">'+ aData[2] +'</label>'); #}
                     {#if(aData[3]>0)#}
                     {# $('td', nRow).eq(3).html('<label class="label label-success">OK</label>');#}
@@ -131,6 +116,8 @@
                     {#$('td', nRow).eq(3).html('<label class="label label-danger">FAIL</label>'); #}
                 },
                 columnDefs: [{
+                    orderable: false,
+                    className: 'select-checkbox',
                     targets: 0
                 }]
             });
@@ -141,10 +128,6 @@
             buttons.container().appendTo($('div.right.aligned.eight.column:eq(0)', table.table().container()));
         });
 
-        //modal
-        $(document).ready(function () {
-            $('.modal').modal();
-        });
     </script>
 {% endblock %}
 </body>

@@ -1,3 +1,4 @@
+{% extends 'alan_code.html' %}
 <!doctype html>
 <html lang="en">
 <head>
@@ -22,12 +23,11 @@
     <meta name="apple-web-app-status-bar" content="#00b0ff">
 </head>
 <body>
-{% extends 'alan_code.html' %}
 {% block dashboard %}
     <section class="content-header" style="width: 93%; margin-left: 5.6%; padding-left: 0; ">
         <h2>Transactions</h2>
         <ol class="breadcrumb">
-            <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="{{ url_for('alan_code') }}"><i class="fa fa-dashboard"></i> Home</a></li>
             <li class="active">Transactions</li>
         </ol>
     </section>
@@ -46,7 +46,7 @@
                     <th>Client Phone</th>
                     <th>Sent To</th>
                     <th>Total Amount Sent</th>
-                    <th></th>
+                    {#                    <th></th>#}
                     </thead>
 
                 </table>
@@ -86,13 +86,14 @@
                     fixedColumns: true,
                     lengthChange: true,
                     "rowCallback": function (nRow, aData) {
-                        $('td', nRow).eq(4).html(`<a href="/${encodeURIComponent(btoa(aData[5]))}" class="btn btn-sm btn-default">View History</a>`)
-                        $('td', nRow).eq(6).html(`
-                        <form action="" method="post">
-                            <input type="hidden" name="counter" value="${aData[4]}" >
-                            <button type="submit" class="btn btn-primary">View History</button>
-                        </form>
-`)
+                        {#$('td', nRow).eq(4).html(`<a href="/${encodeURIComponent(btoa(aData[5]))}" class="btn btn-sm btn-default">View History</a>`)#}
+                        {#$('td', nRow).eq(4).html(`<a href="/individual/${aData[4]}" class="btn btn-sm btn-default">View History</a>`)#}
+                        {#$('td', nRow).eq(4).html(`#}
+                        {#                        <form action="/individual/" method="post">#}
+                        {#                            <input type="hidden" name="client_id" value="${aData[4]}" >#}
+                        {#                            <button type="submit" class="btn btn-primary">View History</button>#}
+                        {#                        </form>#}
+                        {#`)#}
                         {#$('td', nRow).eq(2).html('<label class="label label-default">'+ aData[2] +'</label>'); #}
                         {#if(aData[3]>0)#}
                         {#;#}
@@ -108,6 +109,15 @@
                     buttons: ['excelHtml5', 'pdfHtml5', 'colvis']
                 });
                 buttons.container().appendTo($('div.right.aligned.eight.column:eq(0)', table.table().container()));
+
+                {#trial#}
+                $.ajax({
+                    url: '/transactions/',
+                    method: 'get',
+                    success: function (data) {
+                        {#console.log(data)#}
+                    }
+                })
             });
         });
     </script>
