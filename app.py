@@ -15,11 +15,13 @@ from passlib.hash import sha256_crypt
 from functools import wraps
 from datetime import date, datetime
 
+from counties import counties
+
 # ngrok
-from flask_ngrok import run_with_ngrok
+# from flask_ngrok import run_with_ngrok
 
 app = Flask(__name__)
-run_with_ngrok(app)
+# run_with_ngrok(app)
 
 mysql = MySQL()
 app.secret_key = 'erxycutvhkbjlnk'
@@ -28,6 +30,13 @@ app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'habahaba_trial'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
+
+# app.secret_key = 'erxycutvhkbjlnk'
+# app.config['MYSQL_HOST'] = '13.231.240.156'
+# app.config['MYSQL_USER'] = 'habahaba_usa'
+# app.config['MYSQL_PASSWORD'] = 'h@b@h@b@#'
+# app.config['MYSQL_DB'] = 'habahaba_trial'
+# app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
 mysql.init_app(app)
 
@@ -118,6 +127,9 @@ def datatable(table_result):
 # admin registration
 @app.route('/admin-registration/', methods=['POST', 'GET'])
 def admin_registration():
+    password_pin = random.randint(1000, 9999)
+    password = str(password_pin)
+    registration_date = datetime.today()
     if request.method == 'POST':
         f_name = request.form['f_name']
         l_name = request.form['l_name']
@@ -125,18 +137,23 @@ def admin_registration():
         residence = request.form['residence']
         dob = request.form['dob']
         phone_no = request.form['phone_no']
-        password = sha256_crypt.encrypt(str(request.form['password']))
+        passwords = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+        # password = sha256_crypt.encrypt(str(request.form['password']))
 
         try:
             cur = mysql.connection.cursor()
             cur.execute("INSERT INTO habahaba_trial.admin (f_name, l_name, email, residence, dob, phone_no,"
-                        " password) VALUES (%s, %s, %s, %s, %s, %s, %s)", (
-                            f_name, l_name, email, residence, dob, phone_no, password
+                        " password, date_registered) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", (
+                            f_name, l_name, email, residence, dob, phone_no, passwords, registration_date
                         ))
             mysql.connection.commit()
             cur.close()
+
+            admin_text_msg(phone_no, password)
+            flash("Admin registered successfully", "green lighten-2")
             return redirect(url_for('admin_login'))
-        except:
+
+        except(MySQLdb.Error, MySQLdb.Warning) as e:
             flash('This email already exists, Please enter another one', 'red lighten-2')
             return redirect(url_for('admin_registration'))
     return render_template('admin_registration.html')
@@ -146,11 +163,12 @@ def admin_registration():
 @app.route('/admin-login/', methods=['POST', 'GET'])
 def admin_login():
     if request.method == 'POST':
-        email = request.form['email']
+        # email = request.form['email']
+        phone_no = request.form['phone_no']
         password_candidate = request.form['password']
 
         cur = mysql.connection.cursor()
-        result = cur.execute("SELECT * FROM habahaba_trial.admin WHERE email=%s", [email])
+        result = cur.execute("SELECT * FROM habahaba_trial.admin WHERE phone_no=%s", [phone_no])
 
         if result > 0:
             data = cur.fetchone()
@@ -161,7 +179,8 @@ def admin_login():
             l_name = data['l_name']
             phone_no = data['phone_no']
 
-            if sha256_crypt.verify(password_candidate, password):
+            if bcrypt.checkpw(password_candidate.encode('utf-8'), password.encode('utf-8')):
+                # if sha256_crypt.verify(password_candidate, password):
                 session['admin_logged_in'] = True
                 session['admin_id'] = uid
                 session['email'] = email
@@ -182,6 +201,44 @@ def admin_login():
     return render_template('admin_login.html')
 
 
+@app.route('/change-password/', methods=['POST', 'GET'])
+def admin_change_password():
+    cur = mysql.connection.cursor()
+    cur.execute(f"SELECT * FROM habahaba_trial.admin WHERE phone_no ='{session['phone_no']}' ")
+    admin = cur.fetchone()
+
+    pin = admin['password']
+    cur.close()
+
+    if request.method == 'POST':
+        current_pin = request.form['current_pin']
+        new_pin = request.form['new_pin']
+        confirm_pin = request.form['confirm_pin']
+        if bcrypt.checkpw(current_pin.encode('utf-8'), pin.encode('utf-8')):
+            if confirm_pin == new_pin:
+                new_pin_value = bcrypt.hashpw(new_pin.encode('utf_8'), bcrypt.gensalt())
+
+                cur = mysql.connection.cursor()
+                cur.execute(f"""
+                UPDATE habahaba_trial.admin
+                SET password=%s
+                WHERE phone_no=%s
+                """, (
+                    new_pin_value, admin['phone_no']
+                ))
+                mysql.connection.commit()
+                cur.close()
+                flash('Pin updated successfully', 'success')
+                return redirect(url_for('admin_change_password'))
+            else:
+                flash('Your new pin and confirm pin must match!', 'danger')
+                return redirect(url_for('admin_change_password'))
+        else:
+            flash('Wrong pin, please try again', 'danger')
+            return redirect(url_for('admin_change_password'))
+    return render_template('admin-change-password.html')
+
+
 # admin logout
 @app.route('/admin-logout/', methods=['POST', 'GET'])
 def admin_logout():
@@ -197,7 +254,7 @@ def admin_logout():
 
 
 # admin home page
-@app.route('/template/', methods=['POST', 'GET'])
+@app.route('/admin-home/', methods=['POST', 'GET'])
 def alan_code():
     # all users
     cur = mysql.connection.cursor()
@@ -251,8 +308,8 @@ def admin_vendor_setup():
     if request.method == 'POST':
         f_name = request.form['f_name']
         l_name = request.form['l_name']
-        id_no = request.form['id_no']
-        phone_no = request.form['phone_no']
+        # id_no = request.form['id_no']
+        # phone_no = request.form['phone_no']
         gender = request.form.get('gender')
         payment_method = request.form.get('payment_method')
         acc_number = request.form['acc_number']
@@ -266,11 +323,11 @@ def admin_vendor_setup():
         cur = mysql.connection.cursor()
         cur.execute(f"""
         UPDATE habahaba_trial.vendors
-        SET f_name=%s, l_name=%s, id_no=%s, gender=%s, phone_no=%s, payment_method=%s, acc_number=%s, location=%s,
+        SET f_name=%s, l_name=%s, gender=%s, payment_method=%s, acc_number=%s, location=%s,
          commission=%s, acc_status=%s
          WHERE org_name='{organization_name}' AND acc_status = 'pending'
         """, (
-            f_name, l_name, id_no, gender, phone_no, payment_method, acc_number, org_location, commission,
+            f_name, l_name, gender, payment_method, acc_number, org_location, commission,
             vendor_status
         ))
         mysql.connection.commit()
@@ -285,8 +342,38 @@ def admin_vendor_setup():
     return render_template('admin_vendor_setup.html', org_name=org_name)
 
 
-@app.route('/create-user/', methods=['POST'])
+@app.route('/create-user/', methods=['POST', 'GET'])
 def admin_create_user():
+    # generate a 4 number pin
+    password_pin = random.randint(1000, 9999)
+    password = str(password_pin)
+    date_registered = datetime.today()
+    if request.method == 'POST':
+        f_name = request.form['f_name']
+        l_name = request.form['l_name']
+        residence = request.form['residence']
+        phone_no = request.form['phone_no']
+        # password = sha256_crypt.encrypt(str(request.form['password']))
+        passwords = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+        account_type = request.form['account_type']
+
+        try:
+            cur = mysql.connection.cursor()
+            cur.execute(
+                "INSERT INTO habahaba_trial.admin (f_name, l_name, residence, phone_no, account_type, password,"
+                " date_registered) "
+                "VALUES (%s, %s, %s, %s, %s, %s, %s)", (
+                    f_name, l_name, residence, phone_no, account_type, passwords, date_registered
+                ))
+            mysql.connection.commit()
+            cur.close()
+
+            admin_text_msg(phone_no, password)
+            flash('User added successfully', 'success')
+            return redirect(url_for('admin_create_user'))
+        except (MySQLdb.Error, MySQLdb.Warning) as e:
+            flash('This phone number already exists', 'danger')
+            return redirect(url_for('admin_create_user'))
     return render_template('admin-create-users.html')
 
 
@@ -294,9 +381,13 @@ def admin_create_user():
 @app.route('/transactions/', methods=['POST', 'GET'])
 def admin_transactions():
     cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM habahaba_trial.payment_transactions")
+    cur.execute("SELECT vendor_id, org_name, sender_id, sender_name, sender_phone, amount_sent, date_sent, "
+                " saving_target, payment_for, amount_redeemed, quantity_redeemed "
+                " FROM habahaba_trial.payment_transactions")
     transactions = cur.fetchall()
     cur.close()
+    if request.method == 'POST':
+        return redirect(url_for('admin_individual_transactions'))
     return render_template('admin_transactions.html', transactions=transactions)
 
 
@@ -365,6 +456,61 @@ def product_validation():
         flash('Action completed successfully', 'success')
         return redirect(url_for('product_validation'))
     return render_template('admin_product_validation.html', vendor_products=vendor_products)
+
+
+@app.route('/suspend-offer/', methods=['POST', 'GET'])
+def admin_suspend_offer():
+    if request.method == 'POST':
+        suspend_offer = 'Suspended'
+        offer_id = request.form['offer_id']
+
+        cur = mysql.connection.cursor()
+        cur.execute(f"""
+        UPDATE habahaba_trial.offers 
+        SET offer_status=%s
+        WHERE offer_id =%s
+        """, (suspend_offer, offer_id))
+        mysql.connection.commit()
+        cur.close()
+        flash('Offer suspended successfully', 'success')
+        return redirect(url_for('admin_view_offers'))
+
+
+@app.route('/suspend-product/', methods=['POST', 'GET'])
+def admin_suspend_product():
+    if request.method == 'POST':
+        suspend_offer = 'Suspended'
+        product_id = request.form['product_id']
+
+        cur = mysql.connection.cursor()
+        cur.execute(f"""
+        UPDATE habahaba_trial.materials 
+        SET material_status=%s
+        WHERE material_id =%s
+        """, (suspend_offer, product_id))
+        mysql.connection.commit()
+        cur.close()
+        flash('Product suspended successfully', 'success')
+        return redirect(url_for('admin_view_products'))
+
+
+@app.route('/suspend-vendor/', methods=['POST', 'GET'])
+def admin_suspend_vendor():
+    if request.method == 'POST':
+        # account_type of -1 == suspended
+        suspend_offer = 'Suspended'
+        vendor_id = request.form['vendor_id']
+
+        cur = mysql.connection.cursor()
+        cur.execute(f"""
+        UPDATE habahaba_trial.vendors 
+        SET account_type=%s
+        WHERE vendor_id =%s
+        """, (suspend_offer, vendor_id))
+        mysql.connection.commit()
+        cur.close()
+        flash('Vendor suspended successfully', 'success')
+        return redirect(url_for('admin_view_offers'))
 
 
 # ADMIN VIEW VENDORS
@@ -491,6 +637,11 @@ def delete_category():
         return redirect(url_for('admin_product_categories'))
 
 
+@app.route('/customer-summary/', methods=['POST', 'GET'])
+def admin_customer_summary():
+    return render_template('a_customer_summary_report.html')
+
+
 # admin delete product
 # @app.route('/delete-product/<string:id_data>', methods=['POST', 'GET'])
 # def delete_category(id_data):
@@ -498,6 +649,15 @@ def delete_category():
 #     cur.execute("DELETE FROM habahaba_trial.materials WHERE material_id=%s" % id_data)
 #     mysql.connection.commit()
 #     return redirect(url_for('category'))
+@app.route('/customer-summary-json/', methods=['POST', 'GET'])
+def customer_summary_json():
+    cur = mysql.connection.cursor()
+    cur.execute(
+        "SELECT max(user_id), max(sender_name), max(location_of_land), max(land_scale), max(size_of_land), max(payments_table.org_name), max(category), max(saving_target), max(amount_sent) , max(client_vendor_crop) FROM (habahaba_trial.users INNER JOIN habahaba_trial.payments_table"
+        " ON habahaba_trial.users.user_id = habahaba_trial.payments_table.sender_id) INNER JOIN habahaba_trial.materials ON materials.vendor_id = habahaba_trial.payments_table.vendor_id GROUP BY client_vendor_crop")
+    user_details = cur.fetchall()
+    cur.close()
+    return datatable(user_details)
 
 
 @app.route('/vendor-reports-json/', methods=['POST', 'GET'])
@@ -519,7 +679,26 @@ def admin_transactions_json():
         " max(payment_for) FROM habahaba_trial.payment_transactions group by sender_phone")
     transactions = cur.fetchall()
     cur.close()
+    # return datatable(transactions)
     return datatable(transactions)
+
+
+@app.route('/individual-json/', methods=['POST', 'GET'])
+def admin_individual_transactions_json():
+    if request.method == 'POST':
+        cur = mysql.connection.cursor()
+        cur.execute(
+            "SELECT sender_name, sender_phone, org_name, amount_sent, sender_id,"
+            " payment_for FROM habahaba_trial.payment_transactions")
+        transactions = cur.fetchall()
+        cur.close()
+        # return datatable(transactions)
+        return datatable(transactions)
+
+
+@app.route('/individual/', methods=['POST', 'GET'])
+def admin_individual_transactions():
+    return render_template('admin_individual_transactions.html')
 
 
 @app.route('/admin-view-categories/', methods=['GET'])
@@ -531,195 +710,7 @@ def view_categories():
     return datatable(categories)
 
 
-counties = [{
-    "name": "Mombasa",
-    "code": 1,
-    "capital": "Mombasa City"
-}, {
-    "name": "Kwale",
-    "code": 2,
-    "capital": "Kwale"
-}, {
-    "name": "Kilifi",
-    "code": 3,
-    "capital": "Kilifi"
-}, {
-    "name": "Tana River",
-    "code": 4,
-    "capital": "Hola"
-
-}, {
-    "name": "Lamu",
-    "code": 5,
-    "capital": "Lamu"
-}, {
-    "name": "Taita-Taveta",
-    "code": 6,
-    "capital": "Voi"
-}, {
-    "name": "Garissa",
-    "code": 7,
-    "capital": "Garissa"
-}, {
-    "name": "Wajir",
-    "code": 8,
-    "capital": "Wajir"
-}, {
-    "name": "Mandera",
-    "code": 9,
-    "capital": "Mandera"
-}, {
-    "name": "Marsabit",
-    "code": 10,
-    "capital": "Marsabit"
-}, {
-    "name": "Isiolo",
-    "code": 11,
-    "capital": "Isiolo"
-}, {
-    "name": "Meru",
-    "code": 12,
-    "capital": "Meru"
-}, {
-    "name": "Tharaka-Nithi",
-    "code": 13,
-    "capital": "Chuka"
-}, {
-    "name": "Embu",
-    "code": 14,
-    "capital": "Embu"
-}, {
-    "name": "Kitui",
-    "code": 15,
-    "capital": "Kitui"
-}, {
-    "name": "Machakos",
-    "code": 16,
-    "capital": "Machakos"
-}, {
-    "name": "Makueni",
-    "code": 17,
-    "capital": "Wote"
-}, {
-    "name": "Nyandarua",
-    "code": 18,
-    "capital": "Ol Kalou"
-}, {
-    "name": "Nyeri",
-    "code": 19,
-    "capital": "Nyeri"
-}, {
-    "name": "Kirinyaga",
-    "code": 20,
-    "capital": "Kerugoya/Kutus"
-}, {
-    "name": "Murang'a",
-    "code": 21,
-    "capital": "Murang'a"
-}, {
-    "name": "Kiambu",
-    "code": 22,
-    "capital": "Kiambu"
-}, {
-    "name": "Turkana",
-    "code": 23,
-    "capital": "Lodwar"
-}, {
-    "name": "West Pokot",
-    "code": 24,
-    "capital": "Kapenguria"
-}, {
-    "name": "Samburu",
-    "code": 25,
-    "capital": "Maralal"
-}, {
-    "name": "Trans-Nzoia",
-    "code": 26,
-    "capital": "Kitale"
-}, {
-    "name": "Uasin Gishu",
-    "code": 27,
-    "capital": "Eldoret"
-}, {
-    "name": "Elgeyo-Marakwet",
-    "code": 28,
-    "capital": "Iten"
-}, {
-    "name": "Nandi",
-    "code": 29,
-    "capital": "Kapsabet"
-}, {
-    "name": "Baringo",
-    "code": 30,
-    "capital": "Kabarnet"
-}, {
-    "name": "Laikipia",
-    "code": 31,
-    "capital": "Rumuruti"
-}, {
-    "name": "Nakuru",
-    "code": 32,
-    "capital": "Nakuru"
-}, {
-    "name": "Narok",
-    "code": 33,
-    "capital": "Narok"
-}, {
-    "name": "Kajiado",
-    "code": 34
-}, {
-    "name": "Kericho",
-    "code": 35,
-    "capital": "Kericho"
-}, {
-    "name": "Bomet",
-    "code": 36,
-    "capital": "Bomet"
-}, {
-    "name": "Kakamega",
-    "code": 37,
-    "capital": "Kakamega"
-}, {
-    "name": "Vihiga",
-    "code": 38,
-    "capital": "Vihiga"
-}, {
-    "name": "Bungoma",
-    "code": 39,
-    "capital": "Bungoma"
-}, {
-    "name": "Busia",
-    "code": 40,
-    "capital": "Busia"
-}, {
-    "name": "Siaya",
-    "code": 41,
-    "capital": "Siaya"
-}, {
-    "name": "Kisumu",
-    "code": 42,
-    "capital": "Kisumu"
-}, {
-    "name": "Homa Bay",
-    "code": 43,
-    "capital": "Homa Bay"
-}, {
-    "name": "Migori",
-    "code": 44,
-    "capital": "Migori"
-}, {
-    "name": "Kisii",
-    "code": 45,
-    "capital": "Kisii"
-}, {
-    "name": "Nyamira",
-    "code": 46,
-    "capital": "Nyamira"
-}, {
-    "name": "Nairobi",
-    "code": 47,
-    "capital": "Nairobi City"
-}]
+counties = counties
 
 
 @app.route('/regions-json/', methods=['POST', 'GET'])
@@ -732,11 +723,11 @@ def regions_json():
 @app.route('/vendor-login/', methods=['POST', 'GET'])
 def vendor_login():
     if request.method == 'POST':
-        email = request.form['email']
+        phone_no = request.form['phone_no']
         password_candidate = request.form['password']
 
         cur = mysql.connection.cursor()
-        result = cur.execute("SELECT * FROM habahaba_trial.vendors WHERE email=%s", [email])
+        result = cur.execute("SELECT * FROM habahaba_trial.vendors WHERE phone_no=%s", [phone_no])
 
         if result > 0:
             data = cur.fetchone()
@@ -753,7 +744,8 @@ def vendor_login():
             id_no = data['id_no']
             general_industry = data['general_industry']
 
-            if sha256_crypt.verify(password_candidate, password):
+            if bcrypt.checkpw(password_candidate.encode('utf-8'), password.encode('utf-8')):
+                # if sha256_crypt.verify(password_candidate, password):
                 session['vendor_logged_in'] = True
                 session['vendor_id'] = uid
                 session['email'] = email
@@ -771,13 +763,52 @@ def vendor_login():
                 cur.execute("UPDATE habahaba_trial.vendors SET online=%s WHERE vendor_id=%s", (x, uid))
                 return redirect(url_for('vendor_home'))
             else:
-                flash('Incorrect password, please try again', 'yellow lighten-3')
+                flash('Incorrect password, please try again', 'danger')
                 return render_template('vendor_login.html')
         else:
-            flash('This email is not registered, please register first', 'red lighten-2')
+            flash('This email is not registered, please register first', 'danger')
             cur.close()
             return render_template('vendor_login.html')
     return render_template('vendor_login.html')
+
+
+@app.route('/change-pin/', methods=['POST', 'GET'])
+def vendor_change_password():
+    cur = mysql.connection.cursor()
+    cur.execute(f"SELECT * FROM habahaba_trial.vendors WHERE phone_no= '{session['phone_no']}'")
+    vendors = cur.fetchone()
+    pin = vendors['passwords']
+    cur.close()
+
+    if request.method == 'POST':
+        current_pin = request.form['current_pin']
+        new_pin = request.form['new_pin']
+        confirm_pin = request.form['confirm_pin']
+
+        if bcrypt.checkpw(current_pin.encode('utf-8'), pin.encode('utf-8')):
+            if confirm_pin == new_pin:
+                new_pin_value = bcrypt.hashpw(new_pin.encode('utf-8'), bcrypt.gensalt())
+
+                cur = mysql.connection.cursor()
+                cur.execute(f"""
+                UPDATE habahaba_trial.vendors
+                SET passwords = %s
+                WHERE phone_no=%s
+                """, (
+                    new_pin_value, vendors['phone_no']
+                ))
+                mysql.connection.commit()
+                cur.close()
+
+                flash('Pin changed successfully', 'success')
+                return redirect(url_for('vendor_change_password'))
+            else:
+                flash('Your new password and confirm password must match!', 'danger')
+                return redirect(url_for('vendor_change_password'))
+        else:
+            flash('Wrong pin, please try again', 'danger')
+            return redirect(url_for('vendor_change_password'))
+    return render_template('vendor-change-password.html')
 
 
 # VENDOR HOMEPAGE
@@ -856,30 +887,6 @@ def vendor_logout():
     return redirect(url_for('vendor_login'))
 
 
-# VENDOR OFFERS
-# @app.route('/vendor-offers/', methods=['POST', 'GET'])
-# def vendor_offers():
-#     if request.method == 'POST':
-#         vendor_name = request.form['vendor_name']
-#         vendor_email = request.form['vendor_email']
-#         org_name = request.form['org_name']
-#         offer_name = request.form['offer_name']
-#         percentage_off = request.form['percentage_off']
-#         valid_until = request.form['valid_until']
-#
-#         cur = mysql.connection.cursor()
-#         cur.execute("INSERT INTO habahaba_trial.offers (vendor_name, vendor_email, org_name, offer_name, percentage_off"
-#                     ", valid_until) "
-#                     "VALUES (%s, %s, %s, %s, %s, %s)", (
-#                         vendor_name, vendor_email, org_name, offer_name, percentage_off, valid_until
-#                     ))
-#         mysql.connection.commit()
-#         cur.close()
-#         flash('Offer submitted successfully', 'green lighten-2')
-#         return redirect(url_for('vendor_homepage'))
-#     return render_template('vendor_homepage.html')
-
-
 # DELETE OFFERS
 @app.route('/delete-offer/<string:id_data>', methods=['POST', 'GET'])
 def delete_offer(id_data):
@@ -938,12 +945,14 @@ def vendor_home():
 # VENDOR ADD ACCOUNT
 @app.route('/add-account/', methods=['POST', 'GET'])
 def vendor_add_account():
+    password_pin = random.randint(1000, 9999)
+    password = str(password_pin)
+    date_registered = datetime.today()
+
     cur = mysql.connection.cursor()
     cur.execute(f"SELECT * FROM habahaba_trial.vendors WHERE vendor_id = '{session['vendor_id']}' ORDER BY vendor_id ")
     vendor = cur.fetchone()
     cur.close()
-
-    acc_type = 50
 
     if request.method == 'POST':
         f_name = request.form['f_name']
@@ -953,9 +962,7 @@ def vendor_add_account():
         id_no = request.form['id_no']
         account_type = request.form.get('account_type')
         location = request.form['location']
-        registered_on = request.form['registered_on']
-        email = request.form['email']
-        password = sha256_crypt.encrypt(str(request.form['password']))
+        passwords = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
         commission = vendor['commission']
         payment_method = vendor['payment_method']
@@ -964,20 +971,24 @@ def vendor_add_account():
         general_industry = vendor['general_industry']
         acc_status = 'set_up'
 
-        cur = mysql.connection.cursor()
-        cur.execute("INSERT INTO habahaba_trial.vendors (f_name, l_name, gender, phone_no, commission, id_no, "
-                    "payment_method, org_name, location, registered_on, acc_number, acc_status, general_industry,"
-                    " email, passwords, account_type) "
-                    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (
-                        f_name, l_name, gender, phone_no, commission, id_no, payment_method, org_name, location,
-                        registered_on, acc_number, acc_status, general_industry, email, password, account_type
-                    ))
-        mysql.connection.commit()
-        cur.close()
+        try:
+            cur = mysql.connection.cursor()
+            cur.execute("INSERT INTO habahaba_trial.vendors (f_name, l_name, gender, phone_no, commission, id_no, "
+                        "payment_method, org_name, location, acc_number, acc_status, general_industry,"
+                        " account_type, passwords, date_registered) "
+                        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (
+                            f_name, l_name, gender, phone_no, commission, id_no, payment_method, org_name, location,
+                            acc_number, acc_status, general_industry, account_type, passwords, date_registered
+                        ))
+            mysql.connection.commit()
+            cur.close()
+            vendor_text_msg(phone_no, password)
 
-        flash("New account added successfully", "success")
-        return redirect(url_for('vendor_add_account'))
-    return render_template('vendor_add_account.html', acc_type=acc_type)
+            flash("New account added successfully", "success")
+            return redirect(url_for('vendor_add_account'))
+        except (MySQLdb.Error, MySQLdb.Warning) as e:
+            flash("This phone number already exists, please enter another phone number", "warning")
+    return render_template('vendor_add_account.html')
 
 
 # VENDOR PRODUCT VERIFICATION
@@ -1001,9 +1012,12 @@ def vendor_product_verification():
         item_name = request.form['item_name']
         vendor_crop_counter = f"{vendor_name} {item_name}"
 
-        regions = request.form.getlist('region')
+        regions = request.form.getlist('region_available')
         region = ','.join(regions)
 
+        if 'Country Wide' in region and len(region) > 12:
+            flash('Country Wide cannot be selected with another region', 'warning')
+            return redirect(url_for('vendor_product_verification'))
         material_status = 'pending'
 
         try:
@@ -1041,6 +1055,13 @@ def vendor_partners():
 def vendor_user_onboarding():
     password_pin = random.randint(1000, 9999)
     password = str(password_pin)
+    date_registered = datetime.today()
+
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT county_name FROM habahaba_trial.counties WHERE county_name != 'Country Wide'")
+    county_list = cur.fetchall()
+    cur.close()
+
     if request.method == 'POST':
         f_name = request.form['f_name']
         l_name = request.form['l_name']
@@ -1049,40 +1070,31 @@ def vendor_user_onboarding():
         phone_no = request.form['phone_no']
         id_no = request.form['id_no']
         email = request.form['email']
-        # password = sha256_crypt.encrypt(str(request.form['password']))
-        # password = request.form['password']
+        land_location = request.form['land_location']
+        size_of_land = request.form['size_of_land']
         passwords = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+
+        if int(size_of_land) < 10:
+            scale = 'Small Scale'
+        else:
+            scale = 'Large Scale'
         try:
             cur = mysql.connection.cursor()
             cur.execute("INSERT INTO habahaba_trial.users (f_name, l_name, gender, phone_no, id_no, email,"
-                        " password) "
-                        "VALUES (%s, %s, %s, %s, %s, %s, %s)",
-                        (f_name, l_name, gender, phone_no, id_no, email, passwords))
+                        " password, date_registered, size_of_land, location_of_land, land_scale) "
+                        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                        (f_name, l_name, gender, phone_no, id_no, email, passwords, date_registered, size_of_land,
+                         land_location, scale))
             mysql.connection.commit()
             cur.close()
 
-            # headers = {
-            #     "Content-Type": "application/json"
-            #     # "Authorization": f"Bearer {ac_token()}"
-            # }
-            # payload = {
-            #     "apikey": "1d0bda2feac539bfb5042d00440a0877",
-            #     "partnerID": 196,
-            #     'pass_type': "plain",
-            #     "shortcode": "MZAWADI",
-            #     "mobile": phone_no,
-            #     "message": f"Your password is {password}.Go to www.habahaba.com and log in with your phone"
-            #                f" number and password to see more",
-            # }
-            # my_res = requests.request("POST", "https://quicksms.advantasms.com/api/services/sendsms/",
-            #                           headers=headers, json=payload)
-            text_msg(phone_no, password)
-            flash('User added successfully', 'success')
+            vendor_text_msg(phone_no, password)
+            flash(f'User will receive their password on {phone_no} ', 'success')
             return redirect(url_for('vendor_user_onboarding'))
         except (MySQLdb.Error, MySQLdb.Warning) as e:
             flash('This email already exists, please try another one', 'danger')
             return redirect(url_for('vendor_user_onboarding'))
-    return render_template('vendor_user_onboarding.html')
+    return render_template('vendor_user_onboarding.html', county_list=county_list)
 
 
 # VENDOR OFFER LIST
@@ -1132,6 +1144,11 @@ def vendor_mass_onboarding():
     # return render_template('vendor_mass_onboarding.html')
 
 
+# @app.route('/customer-summary/', methods=['POST'])
+# def vendor_customer_summary():
+#     return render_template('v_customer_summary_report.html')
+
+
 # VENDOR CLIENT LIST
 @app.route('/client-list/')
 def client_list():
@@ -1172,7 +1189,7 @@ def delete_products():
 
 
 # VENDOR OFFER LIST
-@app.route('/vendor-offer/', methods=['POST', 'GET'])
+@app.route('/vendor-offers/', methods=['POST', 'GET'])
 def vendors_offer_list():
     cur = mysql.connection.cursor()
     cur.execute(f"SELECT * FROM habahaba_trial.materials WHERE vendor_id = '{session['vendor_id']}'")
@@ -1335,9 +1352,9 @@ def vendor_offer_list_json():
 def counties_json():
     cur = mysql.connection.cursor()
     cur.execute(f"SELECT * FROM habahaba_trial.counties")
-    counties = cur.fetchall()
+    county = cur.fetchall()
     cur.close()
-    return json.dumps(counties)
+    return json.dumps(county)
 
 
 @app.route('/vendors-home-json/', methods=['POST', 'GET'])
@@ -1379,8 +1396,8 @@ def view_users_json():
 @app.route('/admin-view-offers-json/', methods=['GET'])
 def admin_view_offers_json():
     cur = mysql.connection.cursor()
-    cur.execute("SELECT org_name, offer_name, percentage_off, valid_until, region_available"
-                " FROM habahaba_trial.offers WHERE offer_status = 'accepted'")
+    cur.execute("SELECT offer_id, org_name, offer_name, percentage_off, valid_until, region_available"
+                " FROM habahaba_trial.offers WHERE offer_status = 'accepted' ORDER BY offer_id DESC")
     offers = cur.fetchall()
     cur.close()
     return datatable(offers)
@@ -1420,7 +1437,7 @@ def view_vendors_json():
 def admin_view_products_json():
     cur = mysql.connection.cursor()
     cur.execute(
-        "SELECT org_name, crop_name, quantity_per_acre, price_per_kg, region"
+        "SELECT material_id, org_name, crop_name, quantity_per_acre, price_per_kg, region"
         " FROM habahaba_trial.materials WHERE material_status = 'accepted'")
     products = cur.fetchall()
     cur.close()
@@ -1472,7 +1489,7 @@ def client_onboarding():
         f_name = request.form['f_name']
         l_name = request.form['l_name']
         gender = request.form.get('gender')
-        dob = request.form['dob']
+        age = request.form['age']
         phone_no = request.form['phone_no']
         id_no = request.form['id_no']
         email = request.form['email']
@@ -1480,15 +1497,16 @@ def client_onboarding():
 
         try:
             cur = mysql.connection.cursor()
-            cur.execute("INSERT INTO habahaba_trial.users (f_name, l_name, gender, dob, phone_no, id_no, email,"
+            cur.execute("INSERT INTO habahaba_trial.users (f_name, l_name, gender, age, phone_no, id_no, email,"
                         " password) "
                         "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
-                        (f_name, l_name, gender, dob, phone_no, id_no, email, password))
+                        (f_name, l_name, gender, age, phone_no, id_no, email, password))
             mysql.connection.commit()
             cur.close()
-            flash('User added successfully', 'success')
+            flash(f'User will receive their password on {phone_no} ', 'success')
             return redirect(url_for('client_onboarding'))
-        except:
+
+        except(MySQLdb.Error, MySQLdb.Warning) as e:
             flash('This email already exists, please try another one', 'warning')
             return redirect(url_for('client_onboarding'))
     return render_template('client_onboarding.html')
@@ -1501,30 +1519,48 @@ def example():
 
 @app.route('/user-registration/', methods=['POST', 'GET'])
 def user_registration():
+    password_pin = random.randint(1000, 9999)
+    password = str(password_pin)
+    date_registered = datetime.today()
+
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT county_name FROM habahaba_trial.counties WHERE county_name != 'Country Wide'")
+    county_list = cur.fetchall()
+    cur.close()
+
     if request.method == 'POST':
         f_name = request.form['f_name']
         l_name = request.form['l_name']
         gender = request.form.get('gender')
-        dob = request.form['dob']
+        age = request.form['age']
         phone_no = request.form['phone_no']
-        id_no = request.form['id_no']
+        size_of_land = request.form['size_of_land']
+        land_location = request.form['land_location']
         email = request.form['email']
-        password = sha256_crypt.encrypt(str(request.form['password']))
+        passwords = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+        # password = sha256_crypt.encrypt(str(request.form['password']))
+
+        if int(size_of_land) < 10:
+            scale = 'Small Scale'
+        else:
+            scale = 'Large Scale'
 
         try:
+            text_msg(phone_no, password)
             cur = mysql.connection.cursor()
-            cur.execute("INSERT INTO habahaba_trial.users (f_name, l_name, gender, dob, phone_no, id_no, email,"
-                        " password) "
-                        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
-                        (f_name, l_name, gender, dob, id_no, phone_no, email, password))
+            cur.execute("INSERT INTO habahaba_trial.users (f_name, l_name, gender, age, phone_no, size_of_land, email,"
+                        " password, date_registered, location_of_land, land_scale) "
+                        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                        (f_name, l_name, gender, age, phone_no, size_of_land, email, passwords, date_registered,
+                         land_location, scale))
             mysql.connection.commit()
             cur.close()
-            flash('User added successfully', 'green lighten-4')
-            return redirect(url_for('user_login'))
-        except:
+            flash(f'You will receive your password on {phone_no} ', 'green lighten-4')
+            return redirect(url_for('user_registration'))
+        except (MySQLdb.Error, MySQLdb.Warning) as e:
             flash('This user already exists', 'red lighten-2')
             return redirect(url_for('user_registration'))
-    return render_template('user_registration.html')
+    return render_template('user_registration.html', county_list=county_list)
 
 
 # @app.route('/user-login/', methods=['POST', 'GET'])
@@ -1559,7 +1595,7 @@ def user_login():
                 x = '1'
 
                 cur.execute("UPDATE habahaba_trial.users SET online=%s WHERE user_id=%s", (x, uid))
-                return redirect(url_for('user_homepage'))
+                return redirect(url_for('ukulima'))
             else:
                 flash('Incorrect password, please try again', 'red lighten-2')
                 return render_template('user_login.html')
@@ -2161,8 +2197,16 @@ def ukulima_funds():
 
     cur = mysql.connection.cursor()
     cur.execute(
-        f"SELECT amount_sent FROM habahaba_trial.payments_table WHERE sender_id = '{session['user_id']}' ORDER BY payment_id DESC ")
+        f"SELECT amount_sent FROM habahaba_trial.payments_table WHERE sender_id = '{session['user_id']}' "
+        f"ORDER BY payment_id DESC ")
     previous_value = cur.fetchone()
+    cur.close()
+
+    # list of crops that a client is subscribed to
+    cur = mysql.connection.cursor()
+    cur.execute(f"SELECT distinct payment_for FROM habahaba_trial.payments_table"
+                f" WHERE amount_sent < saving_target AND sender_id = '{session['user_id']}' ")
+    client_crops = cur.fetchall()
     cur.close()
 
     # time the user sends the money
@@ -2236,7 +2280,19 @@ def ukulima_funds():
             cur.close()
             flash('Amount sent successfully', 'green lighten-2 white-text')
             return redirect(url_for('ukulima_funds'))
-    return render_template('ukulima_funds.html', partners=partners, this_month=this_month, this_year=this_year)
+    return render_template('ukulima_funds.html', partners=partners, client_crops=client_crops)
+
+
+@app.route('/ukulima-funds-json/', methods=['POST', 'GET'])
+def ukulima_funds_json():
+    cur = mysql.connection.cursor()
+    cur.execute(
+        f"SELECT payment_id, vendor_id, vendor_name, vendor_phone, org_name, sender_id, sender_name, sender_phone,"
+        f" amount_sent, saving_target, payment_for, quantity_per_acre, price_per_kg "
+        f"FROM habahaba_trial.payments_table WHERE sender_id= '{session['user_id']}' ORDER BY payment_id DESC ")
+    partners = cur.fetchall()
+    cur.close()
+    return json.dumps(partners)
 
 
 @app.route('/funds-testing/', methods=['POST', 'GET'])
@@ -2303,26 +2359,38 @@ def validate_offers():
 
 @app.route('/vendor-onboarding/', methods=['POST', 'GET'])
 def vendor_onboarding():
+    password_pin = random.randint(1000, 9999)
+    password = str(password_pin)
+
     today = datetime.today()
 
     if request.method == 'POST':
         general_industry = request.form['general_industry']
         org_name = request.form['org_name']
-        email = request.form['email']
-        password = sha256_crypt.encrypt(str(request.form['password']))
+        phone_no = request.form['phone_no']
+        # password = sha256_crypt.encrypt(str(request.form['password']))
+        passwords = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
         acc_status = 'pending'
         acc_type = 0
+        ac_type = 'Vendor'
 
-        cur = mysql.connection.cursor()
-        cur.execute("INSERT INTO habahaba_trial.vendors ( org_name, general_industry, acc_status, email, passwords,"
-                    "account_type) "
-                    "VALUES (%s, %s, %s, %s, %s, %s)", (
-                        org_name, general_industry, acc_status, email, password, acc_type
-                    ))
-        mysql.connection.commit()
-        cur.close()
-        flash("Partner added successfully. Please setup the vendor at Vendor Setup", "success")
-        return redirect(url_for('vendor_onboarding'))
+        try:
+            cur = mysql.connection.cursor()
+            cur.execute("INSERT INTO habahaba_trial.vendors ( org_name, general_industry, acc_status, passwords,"
+                        "account_type, phone_no, date_registered) "
+                        "VALUES (%s, %s, %s, %s, %s, %s, %s)", (
+                            org_name, general_industry, acc_status, passwords, acc_type, phone_no, today
+                        ))
+            mysql.connection.commit()
+            cur.close()
+
+            vendor_text_msg(phone_no, password)
+
+            flash("Vendor added successfully. Please setup the vendor at Vendor Setup", "success")
+            return redirect(url_for('vendor_onboarding'))
+        except (MySQLdb.Error, MySQLdb.Warning) as e:
+            flash("This organization is already registered, please enter a different one", "danger")
+            return redirect(url_for('vendor_onboarding'))
     return render_template('admin_onboard_vendors.html', today=today)
 
 
@@ -2525,20 +2593,6 @@ def mpesa_express():
 
         # data = {
         #     "BusinessShortCode": 174379,
-        #     "Password": "MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjIxMTI0MDk0NDE5",
-        #     "Timestamp": "20221128114319",
-        #     "TransactionType": "CustomerPayBillOnline",
-        #     "Amount": amount,
-        #     "PartyA": phone,
-        #     "PartyB": 174379,
-        #     "PhoneNumber": phone,
-        #     "CallBackURL": my_endpoint + "/callback/",
-        #     "AccountReference": "CompanyXLTD",
-        #     "TransactionDesc": "Payment of X",
-        # }
-
-        # data = {
-        #     "BusinessShortCode": 174379,
         #     "Password": "MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjIxMTI4MTE0MzE5",
         #     "Timestamp": "20221128114319",
         #     "TransactionType": "CustomerPayBillOnline",
@@ -2608,13 +2662,60 @@ def text_msg(phone_no, password):
         "Content-Type": "application/json"
         # "Authorization": f"Bearer {ac_token()}"
     }
+
     payload = {
         "apikey": "1d0bda2feac539bfb5042d00440a0877",
         "partnerID": 196,
         'pass_type': "plain",
         "shortcode": "MZAWADI",
         "mobile": phone_no,
-        "message": f"Use the username {phone_no} and password {password} to login to www.habahaba.com",
+        "message": f"Use the username {phone_no} and password {password} to login to http://13.231.240.156/",
+    }
+    my_res = requests.request("POST", "https://quicksms.advantasms.com/api/services/sendsms/",
+                              headers=headers, json=payload)
+
+    return my_res.json()
+
+
+# VENDOR TEXTS
+@app.route("/vendor-text/", methods=['POST'])
+def vendor_text_msg(phone_no, password):
+    # phone = request.form['phone']
+    headers = {
+        "Content-Type": "application/json"
+        # "Authorization": f"Bearer {ac_token()}"
+    }
+
+    payload = {
+        "apikey": "1d0bda2feac539bfb5042d00440a0877",
+        "partnerID": 196,
+        'pass_type': "plain",
+        "shortcode": "MZAWADI",
+        "mobile": phone_no,
+        "message": f"Use the username {phone_no} and password {password} to login to http://13.231.240.156/vendor-login",
+    }
+    my_res = requests.request("POST", "https://quicksms.advantasms.com/api/services/sendsms/",
+                              headers=headers, json=payload)
+
+    return my_res.json()
+
+
+# ADMIN TEXTS
+@app.route("/admin-text/", methods=['POST'])
+def admin_text_msg(phone_no, password):
+    # phone = request.form['phone']
+    headers = {
+        "Content-Type": "application/json"
+        # "Authorization": f"Bearer {ac_token()}"
+    }
+
+    payload = {
+        "apikey": "1d0bda2feac539bfb5042d00440a0877",
+        "partnerID": 196,
+        'pass_type': "plain",
+        "shortcode": "MZAWADI",
+        "mobile": phone_no,
+        "message": f"Use the username {phone_no} and password {password} to login to http://13.231.240.156/admin-login",
     }
     my_res = requests.request("POST", "https://quicksms.advantasms.com/api/services/sendsms/",
                               headers=headers, json=payload)
@@ -2623,6 +2724,6 @@ def text_msg(phone_no, password):
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True, host='0.0.0.0')
 
 # LEARN JWT

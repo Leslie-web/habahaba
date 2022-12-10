@@ -1,3 +1,4 @@
+{% extends 'vendor_home.html' %}
 <!doctype html>
 <html lang="en">
 <head>
@@ -23,7 +24,6 @@
     <meta name="apple-web-app-status-bar" content="#00b0ff">
 </head>
 <body style="transition: 300ms ease;">
-{% extends 'vendor_home.html' %}
 {% block content %}
     <br>
     <div class="content-top-1 box box-success">
@@ -94,12 +94,7 @@
                 <fieldset class="col-sm-6">
                     <legend>Regions where offers will be available</legend>
                     <div class="col-md-6">
-                        <div
-                                {#                            style="width: 50%; display: grid; grid-template-columns: 10em 2em;"#}
-                                style="display: flex; flex-wrap: wrap; width: 40vw;"
-                                class="checker">
-                            {#                            <label for="Kisumu">Kisumu</label>#}
-                            {#                            <input type="checkbox" name="region_available" id="Kisumu" value="Kisumu">#}
+                        <div class="checker" style="display: flex; flex-wrap: wrap; width: 40vw;">
 
                         </div>
                     </div>
@@ -108,8 +103,7 @@
                 <div class="rows" class="col-sm-6" style="display: flex;">
                     {#                <button type="submit" class="btn waves-effect waves-light green lighten-2">Submit</button>#}
                     <button type="submit" class="btn btn-outline-success"
-                            style="outline: 1px solid green; margin-left: 20vw"
-                            id="submit_btn">
+                            style="outline: 1px solid green; margin-left: 20vw" id="submit_btn">
                         Submit
                     </button>
                 </div>
@@ -119,38 +113,6 @@
     {#    </div>#}
     <hr>
 
-    {#    <div class="heading">#}
-    {#        <h3>Partnered Users</h3>#}
-    {#    </div>#}
-    {#    <div class="section1" style="padding: 5em;">#}
-    {#        <table class="display black-text" id="example" style="width: 70vw; margin-left: 15vw;">#}
-    {#            <caption align="top">Partnered Users</caption>#}
-    {#            <thead>#}
-    {#            <tr>#}
-    {#                <th>#</th>#}
-    {#                <th>Item name</th>#}
-    {#                <th>Percentage Off</th>#}
-    {#                <th>Valid until</th>#}
-    {#                <th>Actions</th>#}
-    {#            </tr>#}
-    {#            </thead>#}
-    {##}
-    {#            <tbody>#}
-    {#            {% for offer in offers %}#}
-    {#                <tr>#}
-    {#                    <td>{{ loop.index }}</td>#}
-    {#                    <td>{{ offer['offer_name'] }}</td>#}
-    {#                    <td>{{ offer['percentage_off'] }}</td>#}
-    {#                    <td>{{ offer['valid_until'] }}</td>#}
-    {##}
-    {#                </tr>#}
-    {#            {% endfor %}#}
-    {#            </tbody>#}
-    {#        </table>#}
-    {#    </div>#}
-
-    {#        </div>#}
-    {#    </div>#}
     {#        [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[JAVASCRIPT]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]#}
     {#        ionicons#}
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
@@ -212,7 +174,6 @@
                 method: 'get',
                 success: function (data) {
                     data = JSON.parse(data)
-                    {#console.log(data)#}
                     boxes = ``
 
                     data.map(
@@ -233,7 +194,7 @@ margin-right: 1em; " >
 
                         }
                     )
-                    $('.checker').html(boxes)
+                    $('.checker').html(boxes);
                 }
             });
         });

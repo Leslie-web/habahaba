@@ -1,0 +1,42 @@
+{% extends 'vendor_home.html' %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Customer Summary</title>
+</head>
+<body>
+{% block dashboard %}
+    <section class="content-header"
+             style="width: 93%; margin-left: 5.6%; padding-left: 0;">
+        <h2> Customer Summary</h2>
+        <ol class="breadcrumb">
+            <li><a href="/vendor-home/"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Customer Summary</li>
+        </ol>
+    </section>
+{% endblock %}
+
+{% block content %}
+    <br>
+    <div class="content-top-1 box box-success">
+        <div class="box-body">
+            <br>
+            <div class="section1">
+                <table class="ui celled table" width="100%" id="myTable">
+                    <thead>
+                    <th></th>
+                    <th>Farmer Name</th>
+                    <th></th>
+                    <th></th>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+</body>
+</html>

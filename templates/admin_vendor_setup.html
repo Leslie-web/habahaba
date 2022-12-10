@@ -4,7 +4,7 @@
     <section class="content-header" style="width: 93%; margin-left: 5.6%; padding-left: 0; ">
         <h2>Vendor Setup</h2>
         <ol class="breadcrumb">
-            <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="{{ url_for('alan_code') }}"><i class="fa fa-dashboard"></i> Home</a></li>
             <li class="active">Vendor Setup</li>
         </ol>
     </section>
@@ -52,7 +52,7 @@
                     <form action="{{ url_for('admin_vendor_setup') }}" method="post"
                           style="display: grid; row-gap: 0.2em;">
                         <fieldset style="padding-left: 3em; padding-right: 1em" class="col-sm-6">
-                            <legend>Personal Details</legend>
+                            <legend>Contact Person</legend>
                             {#                            ORG NAME#}
                             <label for="org_name"></label>
                             <input type="text" name="org_name" id="org_name" readonly hidden>
@@ -81,12 +81,12 @@
                             </div>
 
                             {#                        PHONE NUMBER#}
-                            <div class="form-group row">
-                                <label for="phone_no" class="col-sm-2 col-form-label">Phone Number:</label>
-                                <div class="col-sm-9">
-                                    <input type="text" class="form-control" id="phone_no" name="phone_no" required>
-                                </div>
-                            </div>
+                            {#                            <div class="form-group row">#}
+                            {#                                <label for="phone_no" class="col-sm-2 col-form-label">Phone Number:</label>#}
+                            {#                                <div class="col-sm-9">#}
+                            {#                                    <input type="text" class="form-control" id="phone_no" name="phone_no" required>#}
+                            {#                                </div>#}
+                            {#                            </div>#}
 
                             {#                    GENDER#}
                             <div class="form-group row">

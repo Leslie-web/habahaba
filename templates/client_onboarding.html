@@ -1,3 +1,4 @@
+{% extends 'vendor_home.html' %}
 <!doctype html>
 <html lang="en">
 <head>
@@ -22,7 +23,6 @@
     <meta name="apple-web-app-status-bar" content="#00b0ff">
 </head>
 <body>
-{% extends 'vendor_home.html' %}
 {% block content %}
     <div class="section1"
          style=" padding: 5em; margin-left: 15vw;">
@@ -69,10 +69,10 @@
                 {#        date of birth#}
                 <div class="row">
                     <div class="col-md-12">
-                        <label for="dob"></label>
+                        <label for="age"></label>
                         <div class="input-group">
-                            <div class="input-group-text" style="width: 10em;">Date of Birth:</div>
-                            <input type="date" name="dob" id="dob" class="form-control" required>
+                            <div class="input-group-text" style="width: 10em;">Age:</div>
+                            <input type="number" name="age" id="age" class="form-control" required>
                         </div>
                     </div>
                 </div>

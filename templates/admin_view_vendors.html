@@ -1,3 +1,4 @@
+{% extends 'alan_code.html' %}
 <!doctype html>
 <html lang="en">
 <head>
@@ -18,13 +19,11 @@
     <meta name="apple-web-app-status-bar" content="#00b0ff">
 </head>
 <body>
-
-{% extends 'alan_code.html' %}
 {% block dashboard %}
     <section class="content-header" style="width: 93%; margin-left: 5.6%; padding-left: 0; ">
         <h2>Vendors</h2>
         <ol class="breadcrumb">
-            <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="{{ url_for('alan_code') }}"><i class="fa fa-dashboard"></i> Home</a></li>
             <li class="active">Vendors</li>
         </ol>
     </section>
@@ -41,11 +40,25 @@
 
             </div>
             <br>
-            <div class="{#box-tools pull-left#}" style="padding-right: 30px; display: flex; justify-content: flex-end">
+            <div class="{#box-tools pull-left#}" style="padding-right: 30px; display: flex; justify-content: flex-end;
+column-gap: 5px">
                 <button type="button" id="btnedit" class="btn btn-info btn-sm" style="width: 8em;"><i
                         class="fa fa-edit"></i> Edit
                 </button>
+
+                <button class="btn btn-warning" id="suspendVendor"
+                        style="width: max-content; ">
+                    Suspend
+                    Product
+                </button>
             </div>
+            {#            suspend product form#}
+            <form action="{{ url_for('admin_suspend_offer') }}" method="post" hidden>
+                <input type="text" name="suspend_vendor" id="suspend_vendor" value="Suspended" readonly>
+                <label for="suspend_vendor"></label>
+                <input type="hidden" name="vendor_id" id="vendor_id" readonly>
+                <button type="submit" id="suspendVendorBtn">Submit</button>
+            </form>
 
             <a type="button" id="emodal" data-toggle="modal" data-target="#edit_modal"></a>
             <div class="modal fade" id="edit_modal" tabindex="-1"
@@ -117,16 +130,10 @@
                     <tr>
                         {#                        <th>#</th>#}
                         <th></th>
-                        {#                        <th>First Name</th>#}
-                        {#                        <th>Last Name</th>#}
-                        {#                        <th>Gender</th>#}
-                        {#                        <th>Phone Number</th>#}
-                        {#                        <th>ID Number</th>#}
                         <th>Organisation</th>
                         <th>Location</th>
                         <th>Email</th>
                         <th>Commission(%)</th>
-                        {#                        <th>Actions</th>#}
                     </tr>
                     </thead>
 
@@ -142,20 +149,7 @@
 
     <br>
     <br>
-    <div class="content-top-1 box box-success">
-        <div class="box-body">
-            <br>
-            <form action="{{ url_for('csv') }}" method="post" enctype="multipart/form-data">
-                {#                {% include 'includes/flashmsg_bootstrap.html' %}#}
-                <input type="file" name="names" id="names" accept=".csv">
-                <br>
-                <br>
-                <button type="submit">Send</button>
-            </form>
 
-            {#            {{ names }}#}
-        </div>
-    </div>
     {#[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[JAVASCRIPT]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]#}
     {#ionicons#}
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
@@ -200,6 +194,9 @@
                 "rowCallback": function (nRow, aData) {
                     {#removing the values on a checkbox#}
                     $('td', nRow).eq(0).html('');
+                    if ($('td', nRow).eq(1).html() === 'Royal Seed') {
+                        $('tr').css("background-color", "green")
+                    }
                     {#$('td', nRow).eq(2).html('<label class="label label-default">'+ aData[2] +'</label>'); #}
                     {#if(aData[3]>0)#}
                     {# $('td', nRow).eq(3).html('<label class="label label-success">OK</label>');#}
@@ -226,6 +223,18 @@
                     $('#emodal').click();
                 } else
                     alert("please select an entry.");
+            });
+
+            $('#suspendVendor').click(function () {
+                if (table.rows('.selected').data().length > 0) {
+                    let row = table.rows('.selected').data()[0]
+
+                    $('#vendor_id').val(row[0])
+                    $('#suspendVendorBtn').click();
+                    confirm('Are you sure you want to suspend this offer?')
+                } else {
+                    alert("Please select an entry")
+                }
             });
         });
 

@@ -105,7 +105,7 @@
                 {#                {% if acc_type.account_type == 0 %}#}
                 {#                products#}
                 <li class="header" style="background-color: #031c3f">
-                    <center>Vendor</center>
+                    <center>Products</center>
                 </li>
 
                 <li><a href="{{ url_for('vendor_product_verification') }}"><span><i
@@ -135,7 +135,7 @@
                     <a href="#"><i class="fa fa-file-o"></i> <span>Reports</span><i
                             class="fa fa-angle-down pull-right"></i></a>
                     <ul class="treeview-menu">
-                        <li><a href="#"><span>Customer Achievement</span> </a></li>
+                        <li><a href="#"><span>Customer Summary</span> </a></li>
                         <li><a href="#"><span>Customer History</span> </a></li>
                     </ul>
                 </li>
@@ -166,8 +166,8 @@
                     </ul>
                 </li>
                 {#                {% endif %}#}
-                <li><a href="{{ url_for('validate_offers') }}"><span><i
-                        class="fa fa-exchange"></i> Change Password</span>
+                <li><a href="{{ url_for('vendor_change_password') }}"><span><i
+                        class="fa fa-exchange"></i> Change Pin</span>
                 </a></li>
                 <li><a href="{{ url_for('vendor_logout') }}"> <i class="fa fa-lock"></i> <span>Log Out</span> </a>
                 </li>

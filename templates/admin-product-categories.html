@@ -13,7 +13,7 @@
     <section class="content-header" style="width: 93%; margin-left: 5.6%; padding-left: 0; ">
         <h2>Categories</h2>
         <ol class="breadcrumb">
-            <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="{{ url_for('alan_code') }}"><i class="fa fa-dashboard"></i> Home</a></li>
             <li class="active">Categories</li>
         </ol>
     </section>
@@ -94,7 +94,7 @@
 
                 {#            edit btn#}
                 <button type="button" id="editButton" class="btn btn-info btn-sm"
-                ><i class="fa fa-edit"></i> Change Status
+                ><i class="fa fa-edit"></i> Edit Category
                 </button>
             </div>
             {#            edit modal#}
@@ -160,15 +160,15 @@
     </div>
 
     {#    <br>#}
-    <div class="content-top-1 box box-success">
-        <div class="box-body">
-            <br>
-            <form action="{{ url_for('text_msg') }}" method="post">
-                <input type="number" name="phone" id="" value="254713562964">
-                <button type="submit">Submit</button>
-            </form>
-        </div>
-    </div>
+    {#    <div class="content-top-1 box box-success">#}
+    {#        <div class="box-body">#}
+    {#            <br>#}
+    {#            <form action="{{ url_for('text_msg') }}" method="post">#}
+    {#                <input type="number" name="phone" id="" value="254713562964">#}
+    {#                <button type="submit">Submit</button>#}
+    {#            </form>#}
+    {#        </div>#}
+    {#    </div>#}
 
     <script>
         $(document).ready(function () {

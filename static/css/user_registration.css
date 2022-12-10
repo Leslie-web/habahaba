@@ -19,4 +19,29 @@ body {
   padding-right: 10em;
 }
 
+@media all and (max-width: 600px) {
+  .details_container {
+    padding: 2em;
+    width: 80vw;
+  }
+}
+@media all and (max-width: 480px) {
+  .details_container {
+    margin: 0;
+    padding: 1em;
+    border: none;
+    box-shadow: none;
+  }
+  .form_heading h3 {
+    font-size: 30px;
+    font-weight: 600;
+  }
+}
+@media all and (max-width: 380px) {
+  .details_container {
+    padding: 0;
+    margin: 0;
+  }
+}
+
 /*# sourceMappingURL=user_registration.css.map */

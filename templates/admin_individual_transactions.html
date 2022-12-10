@@ -71,7 +71,7 @@
                     destroy: true,
                     responsive: false,
                     "ajax": {
-                        url: '/admin-transactions-json/',
+                        url: '/individual-json/',
                         type: 'get'
                     },
                     "order": [[2, "desc"]],
@@ -87,13 +87,12 @@
                     lengthChange: true,
                     "rowCallback": function (nRow, aData) {
                         {#$('td', nRow).eq(4).html(`<a href="/${encodeURIComponent(btoa(aData[5]))}" class="btn btn-sm btn-default">View History</a>`)#}
-                        {#$('td', nRow).eq(4).html(`<a href="/individual/${aData[4]}" class="btn btn-sm btn-default">View History</a>`)#}
                         $('td', nRow).eq(4).html(`
-                                                <form action="/individual/" method="post">
-                                                    <input type="hidden" name="client_id" value="${aData[4]}" >
-                                                    <button type="submit" class="btn btn-primary">View History</button>
-                                                </form>
-                        `)
+                        <form action="" method="post">
+                            <input type="hidden" name="client_id" value="${aData[4]}" >
+                            <button type="submit" class="btn btn-primary">View History</button>
+                        </form>
+`)
                         {#$('td', nRow).eq(2).html('<label class="label label-default">'+ aData[2] +'</label>'); #}
                         {#if(aData[3]>0)#}
                         {#;#}

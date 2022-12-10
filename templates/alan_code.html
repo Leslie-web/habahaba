@@ -54,6 +54,15 @@
 </head>
 
 <body class="promotions-dark sidebar-mini fixed layout-boxed">
+<style>
+    .farmers {
+        transition: 300ms ease;
+    }
+
+    .farmers:hover {
+        background-color: rgb(0 0 0 / 0.5);
+    }
+</style>
 <div class="wrapper">
 
     <header class="main-header  no-print">
@@ -72,7 +81,7 @@
                 <section class="content-header" style="width: 93%; margin-left: 5.6%; padding-left: 0; ">
                     <h2>Dashboard</h2>
                     <ol class="breadcrumb">
-                        <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+                        <li><a href="{{ url_for('alan_code') }}"><i class="fa fa-dashboard"></i> Home</a></li>
                         <li class="active">Admin Dashboard</li>
                     </ol>
                 </section>
@@ -105,7 +114,7 @@
                 </li>
                 {#                VENDOR DETAILS#}
                 <li class="header">
-                    <center>Vendor Details</center>
+                    <center>Products & Offers</center>
                 </li>
                 <li><a href="{{ url_for('product_validation') }}"><span><i
                         class="fa fa-gift"></i> Vendor Products</span></a>
@@ -115,9 +124,9 @@
 
 
                 {#                products#}
-                <li class="header">
-                    <center>Products</center>
-                </li>
+                {#                <li class="header">#}
+                {#                    <center>Products</center>#}
+                {#                </li>#}
 
                 <li><a href="{{ url_for('admin_product_categories') }}"><span><i
                         class="fa fa-th-list"></i> Product Categories</span></a>
@@ -142,7 +151,7 @@
                     <a href="#"><i class="fa fa-file-o"></i> <span>Reports</span><i
                             class="fa fa-angle-down pull-right"></i></a>
                     <ul class="treeview-menu">
-                        <li><a href="{{ url_for('admin_vendor_reports') }}"><span>Vendor Report</span> </a></li>
+                        <li><a href="{{ url_for('admin_customer_summary') }}"><span>Customer Summary</span> </a></li>
                         <li><a href="#"><span>Customer History</span> </a></li>
                     </ul>
                 </li>
@@ -152,15 +161,15 @@
                 </li>
 
                 <li class="treeview">
-                    <a href="#"><i class="fa fa-users"></i> <span>Onboarding</span><i
+                    <a href="#"><i class="fa fa-users"></i> <span>Create User</span><i
                             class="fa fa-angle-down pull-right"></i></a>
                     <ul class="treeview-menu">
-                        <li><a href="{{ url_for('vendor_onboarding') }}"><span>Vendor</span> </a></li>
+                        <li><a href="{{ url_for('admin_create_user') }}"><span>Create User</span> </a></li>
                         {#                        <li><a href="{{ url_for('admin_onboarding_users') }}"><span>User</span> </a></li>#}
                     </ul>
                 </li>
-                <li><a href="{{ url_for('validate_offers') }}"><span><i
-                        class="fa fa-exchange"></i> Change Password</span>
+                <li><a href="{{ url_for('admin_change_password') }}"><span><i
+                        class="fa fa-exchange"></i> Change Pin</span>
                 </a></li>
                 <li><a href="{{ url_for('admin_logout') }}"> <i class="fa fa-lock"></i> <span>Log Out</span> </a></li>
             </ul>
@@ -182,7 +191,7 @@
 
                         <a href="{{ url_for('admin_view_users') }}">
                             <div class="col-lg-3">
-                                <div class="info-box bg-orange">
+                                <div class="info-box bg-orange farmers">
                                     <span class="info-box-icon"><i class="fa fa-users"></i></span>
                                     <div class="info-box-content">
                                         <span class="info-box-text">Registered <br> Farmers</span>
@@ -198,7 +207,7 @@
                                 <div class="info-box bg-navy-active">
                                     <span class="info-box-icon"><i class="fa fa-user"></i></span>
                                     <div class="info-box-content">
-                                        <span class="info-box-text"> Vendors <br> </span>
+                                        <span class="info-box-text"> Vendor <br>List </span>
                                         <br>
                                         <span class="info-box-number" id="redeemed">{{ vendors|count }}</span>
                                     </div>
@@ -211,7 +220,7 @@
                                 <div class="info-box bg-purple">
                                     <span class="info-box-icon"><i class="fa fa-gift"></i></span>
                                     <div class="info-box-content">
-                                        <span class="info-box-text">Vendor <br> Products</span>
+                                        <span class="info-box-text">Active <br> Products</span>
                                         <br>
                                         <span class="info-box-number" id="stpoints">{{ products|count }}</span>
                                     </div>
@@ -224,7 +233,7 @@
                                 <div class="info-box bg-green">
                                     <span class="info-box-icon"><i class="fa fa-tags"></i></span>
                                     <div class="info-box-content">
-                                        <span class="info-box-text">Vendor <br> Offers</span>
+                                        <span class="info-box-text">Running <br> Offers</span>
                                         <br>
                                         <span class="info-box-number" id="scpoints">{{ offers|count }}</span>
                                     </div>

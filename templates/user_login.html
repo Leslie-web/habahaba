@@ -20,6 +20,7 @@
     <meta name="apple-web-app-status-bar" content="#00b0ff">
 </head>
 <body>
+{{ this_day }}
 <form action="{{ url_for('user_login') }}" method="post">
     <div class="details_container">
         {% include 'includes/_flashmsg.html' %}
