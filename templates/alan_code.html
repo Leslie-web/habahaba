@@ -54,13 +54,95 @@
 </head>
 
 <body class="promotions-dark sidebar-mini fixed layout-boxed">
+<div id="preloader" style="
+  background: white url('/static/_public/images/preloader15.gif') no-repeat center center;
+  height: 100vh;
+  width: 100%;
+  position: fixed;
+  z-index: 100;
+
+"></div>
 <style>
     .farmers {
         transition: 300ms ease;
     }
 
     .farmers:hover {
-        background-color: rgb(0 0 0 / 0.5);
+        filter: brightness(90%);
+
+    }
+
+    .bs-callout {
+        padding: 20px;
+        margin: 20px 0;
+        border: 1px solid #eee;
+        border-right-width: 5px;
+        border-radius: 3px;
+    }
+
+    .bs-callout h4 {
+        margin-top: 0;
+        margin-bottom: 5px;
+    }
+
+    .bs-callout p:last-child {
+        margin-bottom: 0;
+    }
+
+    .bs-callout code {
+        border-radius: 3px;
+    }
+
+    .bs-callout + .bs-callout {
+        margin-top: -5px;
+    }
+
+    .bs-callout-default {
+        border-left-color: #777;
+    }
+
+    .bs-callout-default h4 {
+        color: #777;
+    }
+
+    .bs-callout-primary {
+        border-left-color: #428bca;
+    }
+
+    .bs-callout-primary h4 {
+        color: #428bca;
+    }
+
+    .bs-callout-success {
+        border-right-color: green;
+    }
+
+    .bs-callout-success h4 {
+        color: #5cb85c;
+    }
+
+    .bs-callout-danger {
+        border-left-color: #d9534f;
+    }
+
+    .bs-callout-danger h4 {
+        color: #d9534f;
+    }
+
+    .bs-callout-warning {
+        border-left-color: #f0ad4e;
+    }
+
+    .bs-callout-warning h4 {
+        color: #f0ad4e;
+    }
+
+    .bs-callout-info {
+        border-left-color: #5bc0de;
+    }
+
+    .bs-callout-info h4 {
+        color: #5bc0de;
     }
 </style>
 <div class="wrapper">
@@ -69,8 +151,10 @@
         <a href="{{ url_for('alan_code') }}" class="logo">
             <span class="logo-mini"><img src="/static/_public/images/maize_cob.png"
                                          style="height:50px !important"></span>
-            <span class="logo-lg"><img src="/static/_public/images/maize_cob.png"
-                                       style="height:48px !important;"></span>
+            <span class="logo-lg">
+                <img src="/static/_public/images/maize_cob.png"
+                     style="height:48px !important;">
+            </span>
         </a>
         <!-- fixed-top navbar-static-top no-print -->
         <nav class="navbar" role="navigation">
@@ -150,8 +234,9 @@
                 <li class="treeview">
                     <a href="#"><i class="fa fa-file-o"></i> <span>Reports</span><i
                             class="fa fa-angle-down pull-right"></i></a>
-                    <ul class="treeview-menu" id="admin_reports">
+                    <ul class="treeview-menu bs-callout bs-callout-success" id="admin_reports">
                         {#                        <li><a href="{{ url_for('a_categories_reports') }}"><span>Categories Report</span> </a></li>#}
+                        <li><a href="{{ url_for('a_audit_report') }}"><span>Audit Report</span> </a></li>
                         <li><a href="{{ url_for('a_campaign_report') }}"><span>Campaign Report</span> </a></li>
                         <li><a href="{{ url_for('a_campaign_summary') }}"><span>Campaign Summary</span> </a></li>
                         <li><a href="{{ url_for('a_crop_summary') }}"><span>Crop Summary</span> </a></li>
@@ -200,7 +285,7 @@
 
                         <a href="{{ url_for('admin_view_users') }}">
                             <div class="col-lg-3">
-                                <div class="info-box bg-orange farmers">
+                                <div class="info-box bg-orange farmers ">
                                     <span class="info-box-icon"><i class="fa fa-users"></i></span>
                                     <div class="info-box-content">
                                         <span class="info-box-text">Registered <br> Farmers</span>
@@ -305,6 +390,14 @@
 <script type="text/javascript" src="/static/_public/js/mburu.js"></script>
 <script type="text/javascript" src="/static/js/chart-area-demo.js"></script>
 <script type="text/javascript" src="/static/js/Chart.min.js"></script>
+{#PRELOADER SCRIPT#}
+<script>
+    //preloader
+    let preloader = document.getElementById('preloader')
+    window.addEventListener('load', function () {
+        preloader.style.display = "none"
+    })
+</script>
 <script>
     {#$(document).ready(function () {#}
     {#    $('select').select2();#}

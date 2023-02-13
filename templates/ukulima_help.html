@@ -1,0 +1,192 @@
+{% extends 'ukulima.html' %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Help</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/materialize.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/ukulima.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/m_icons.css') }}">
+    <link rel="manifest" href="../static/js/manifest.json">
+
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/jquery-3.6.1.min.js') }}"></script>
+    <!--IOS support-->
+    <link rel="apple-touch-icon" href="../static/images/pngwing.com.png">
+    <meta name="apple-mobile-web-app-status-bar" content="#00b0ff">
+
+    {#    GSAP#}
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/gsap.min.js') }}" defer></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/ukulima_animations.js') }}" defer></script>
+
+</head>
+<body>
+{% block navs %}
+    {#navbar#}
+    <nav class="nav-wrapper green lighten-2 {#hide-on-med-and-down#} hide-on-med-and-down">
+        <a href="#" class="sidenav-trigger" data-target="mobile_links">
+            <i class="material-icons">menu</i>
+        </a>
+        <a href="{{ url_for('ukulima') }}" class="brand-logo" style="margin-left: 0.5em">Habahaba Ukulima</a>
+        <ul class="right hide-on-med-and-down">
+            <li><a href="{{ url_for('ukulima') }}">Ukulima Wallet</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="{{ url_for('user_logout') }}" style="margin-right: 0.5em">Logout</a></li>
+        </ul>
+    </nav>
+    {#<a href="#" class="sidenav-trigger btn transparent hide-on-med-and-up" data-target="mobile_links">#}
+    {#    <i class="material-icons">menu</i>#}
+    {#</a>#}
+    <ul class="sidenav" id="mobile_links">
+        <div class="nav_container"
+             style="height: 100vw; display: flex; flex-direction: column; justify-content: space-between">
+            <ul class="top">
+                <li><a href="{{ url_for('ukulima') }}">Ukulima Wallet</a></li>
+                <li><a href="#">Services</a></li>
+                <li><a href="#">About</a></li>
+            </ul>
+            <ul class="logout">
+                <li><a href="{{ url_for('user_logout') }}">Logout</a></li>
+            </ul>
+        </div>
+    </ul>
+
+{% endblock %}
+
+{% block body %}
+    <style>
+        @media all and (max-width: 620px) {
+            .content_container {
+                width: 100%;
+            }
+
+        }
+
+        @media all and (max-width: 768px) {
+            .content_container {
+                width: 100dvw;
+            }
+        }
+
+        @media all and (max-width: 1060px) {
+            .content_container {
+                width: 90%;
+                margin: auto;
+                padding: 1em;
+            }
+        }
+
+        @media all and (max-width: 1200px) {
+            .content_container {
+                width: 80%;
+                margin: auto;
+                padding: 1em;
+            }
+        }
+
+        @media all and (max-width: 1700px) {
+            .content_container {
+                width: 80%;
+                margin: auto;
+                padding: 1em;
+            }
+        }
+
+        @media all and (max-width: 2000px) {
+            .content_container {
+                width: 80%;
+                margin: auto;
+                padding: 1em;
+            }
+        }
+    </style>
+    <a href="{{ url_for('ukulima') }}"
+       class="btn-floating waves-effect waves-light {#blue lighten-3#} hide-on-large-only"
+       id="back_button" style="
+       background-color: transparent;
+       font-size: 25px;
+       display: grid;
+       place-items: center;
+   ">
+        <ion-icon name="arrow-back-outline" class="back_icon"></ion-icon>
+    </a>
+    <br>
+    <div class="icon_container center" style="font-size: 7rem">
+        <ion-icon name="chatbubbles-outline"></ion-icon>
+    </div>
+    <div class="feedback center">
+        <h3>Feedback</h3>
+    </div>
+    <div class="content_container  white black-text">
+        <form action="{{ url_for('ukulima_help') }}" method="post">
+            <br>
+            {#            <div class="row names" style="display: flex; flex-wrap: wrap">#}
+            {#            first name#}
+            {#                <div class="input-field col s6 first_name">#}
+            {#                    <input placeholder="First Name" id="f_name" type="text" class="validate">#}
+            {#                    <label for="f_name">First Name</label>#}
+            {#                </div>#}
+            {##}
+            {#                last name#}
+            {#                <div class="input-field col s6 last_name">#}
+            {#                    <input id="last_name" type="text" class="validate" placeholder="First Name">#}
+            {#                    <label for="last_name">Last Name</label>#}
+            {#                </div>#}
+            {#            </div>#}
+            <div class="row">
+                {#                names#}
+                <div class="input-field col s12">
+                    <input id="username" type="text" name="username" class="validate" placeholder="e.g. John Doe">
+                    <label for="username">Enter your first and last name:</label>
+                </div>
+            </div>
+
+            {#            phone no#}
+            <div class="row">
+                <div class="input-field col s12">
+                    <input id="phone_no" type="number" name="phone_no" class="validate" placeholder="e.g. 0712345678">
+                    <label for="phone_no">Enter your phone number:</label>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="input-field col s12">
+                    <select name="category" id="category">
+                        <option value="" selected disabled>Please select an option</option>
+                        <option value="Report a broblem">Report a problem</option>
+                        <option value="Give feedback">Give feedback</option>
+                    </select>
+                    <label for="category">Please select an option</label>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="input-field col s12">
+                    <textarea name="more_info" id="more_info" cols="30" rows="10"></textarea>
+                    <label for="more_info">More information:</label>
+                </div>
+            </div>
+
+            <div class="row center">
+                <button class="btn green lighten-2 waves-dark waves-effect" type="submit">Submit</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            {#form inputs#}
+            M.updateTextFields();
+
+            {#form select #}
+            $('select').formSelect();
+        });
+
+    </script>
+{% endblock %}
+</body>
+</html>

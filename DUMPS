@@ -604,3 +604,344 @@ $.ajax({
                 <button type="submit" class="btn waves-light waves-effect">Confirm</button>
             </div>
         </div>
+
+
+[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[ /ukulima-funds/ ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+# vendor_phone = request.form['vendor_phone']
+        # vendor_crop = request.form['vendor_crop']
+        # vendor_commission = request.form['commission']
+        # selected_crop = request.form['selected_crop']
+        #
+        # saving_target = request.form['saving_target']
+        # amount_sent = request.form['amount_sent']
+        #
+        # # client details
+        # payment_id = request.form['payment_id']
+        # client_name = request.form['client_name']
+        # # client_email = request.form['client_email']
+        # client_phone = request.form['client_phone']
+        # value_entered = request.form['payment']
+        # former_value = request.form['amount_sent']
+        # amount = int(value_entered) + int(previous_value['amount_sent'])
+        # amount = int(value_entered) + int(former_value)
+        #
+        # commission = int(value_entered) * (int(vendor_commission) / 100)
+        # payment = int(value_entered) - commission
+
+        # client_vendor_crop = f"{vendor_id} {client_id} {vendor_crop}"
+
+        # if float(amount) > (float(saving_target) - float(amount_sent)):
+        # if float(amount) > float(saving_target):
+        #     flash('Amount entered surpasses the target', 'orange lighten-2 white-text')
+        #     return redirect(url_for('ukulima_funds'))
+
+            else:
+        print('Leslie')
+        # mpesa_express(client_phone, value_entered, selected_crop)
+        # fetching the redeemable amount
+        # cur = mysql.connection.cursor()
+        # cur.execute(
+        #     f"SELECT * FROM habahaba_trial.payments_table WHERE payment_id = '{payment_id}' ")
+        # redeemable = cur.fetchone()
+        # cur.close()
+
+        # redeemable_amount = int(value_entered) + int(redeemable['redeemable_amount'])
+        #
+        # payment_amount = float(redeemable['amount_sent']) + float(value_entered)
+
+        # cur = mysql.connection.cursor()
+        # cur.execute("""UPDATE habahaba_trial.payments_table
+        # SET amount_sent=%s, date_sent=%s, time_sent=%s, date_and_time=%s, redeemable_amount=%s
+        # WHERE payment_id=%s""", (
+        #     payment_amount, today, now, right_now, redeemable_amount, payment_id
+        # ))
+        # mysql.connection.commit()
+        # cur.close()
+
+        # add payment to transaction table
+        # try:
+        # cur = mysql.connection.cursor()
+        # cur.execute("INSERT INTO habahaba_trial.payment_transactions (vendor_id,"
+        #             " org_name, sender_id, sender_name, "
+        #             "sender_phone, amount_sent, date_and_time, saving_target, payment_for,"
+        #             " date_counter, amount_saved_daily, category ) "
+        #             "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) ", (
+        #                 vendor_id, vendor_org, client_id, client_name,
+        #                 client_phone, amount, right_now, saving_target, selected_crop,
+        #                 date_counter, value_entered, category
+        #             ))
+        # mysql.connection.commit()
+        # cur.close()
+
+        # except (MySQLdb.Error, MySQLdb.Warning) as e:
+        #     flash("Payment failed, please reload the page and try again.", "red lighten-2")
+        #     return redirect(url_for('ukulima_funds'))
+
+        # try:
+        # inserting into commissions table
+        # cur = mysql.connection.cursor()
+        # cur.execute(f"""
+        # INSERT INTO habahaba_trial.commission (vendor_id, client_id, vendor_name, sender_name,
+        # item_name, amount_sent, commission_percentage, vendor_amount, commission, category, date_paid)
+        #  VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        # """, (
+        #     vendor_id, client_id, redeemable['org_name'], client_name, selected_crop, value_entered,
+        #     vendor_commission, payment, commission, category, today
+        # ))
+        # mysql.connection.commit()
+        # cur.close()
+
+[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[  /ukulima-funds/ from *server*  ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+# # vendor details
+        # vendor_id = request.form['vendor_id']
+        # vendor_name = request.form['vendor_name']
+        # # vendor_email = request.form['vendor_email']
+        # vendor_phone = request.form['vendor_phone']
+        # vendor_org = request.form['vendor_org']
+        # vendor_crop = request.form['vendor_crop']
+        # vendor_commission = request.form['commission']
+        # category = request.form['category']
+        # selected_crop = request.form['selected_crop']
+        #
+        # # crop_name = request.form['payment_for']
+        #
+        # saving_target = request.form['saving_target']
+        # amount_sent = request.form['amount_sent']
+        #
+        # # client details
+        # payment_id = request.form['payment_id']
+        # client_id = request.form['client_id']
+        # client_name = request.form['client_name']
+        # # client_email = request.form['client_email']
+        # client_phone = request.form['client_phone']
+        # value_entered = request.form['payment']
+        # former_value = request.form['amount_sent']
+        # # amount = int(value_entered) + int(previous_value['amount_sent'])
+        # amount = int(value_entered) + int(former_value)
+        #
+        # commission = int(value_entered) * (int(vendor_commission) / 100)
+        # payment = int(value_entered) - commission
+        #
+        # client_vendor_crop = f"{vendor_id} {client_id} {vendor_crop}"
+        # date_counter = f"{this_month} {this_year}"
+        #
+        # # if float(amount) > (float(saving_target) - float(amount_sent)):
+        # if float(amount) > float(saving_target):
+        #     flash('Amount entered surpasses the target', 'orange lighten-2 white-text')
+        #     return redirect(url_for('ukulima_funds'))
+        # else:
+        #     mpesa_express(client_phone, value_entered, selected_crop, vendor_org, category, vendor_commission,
+        #                   vendor_id, client_id, client_name, amount, right_now, saving_target, date_counter
+        #                   )
+        #     return redirect(url_for('ukulima_funds'))
+
+        [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[  /redemption/ ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+
+        # new_values
+        payment_id = request.form['payment_id']
+        client_id = request.form['client_id']
+        client_name = request.form['client_name']
+        client_phone = request.form['client_phone']
+        vendor_id = request.form['vendor_id']
+        vendor_org = request.form['vendor_org']
+        item_redeemed = request.form['item_redeemed']
+        amount_to_redeem = request.form['amount_to_redeem']
+        redeemable_amount = request.form['redeemable_amount']
+        amountRedeemed = request.form['amount_redeemed']
+        quantity_redeemed = request.form['quantity_redeemed']
+        quantity_per_acre = request.form['quantity_per_acre']
+
+        client_vendor_crop = f"{client_id} {vendor_id} {item_redeemed}"
+
+        cur = mysql.connection.cursor()
+        cur.execute(f"SELECT * FROM habahaba_trial.payments_table WHERE client_vendor_crop = '{client_vendor_crop}'")
+        redemption_details = cur.fetchone()
+        cur.close()
+
+        cur = mysql.connection.cursor()
+        cur.execute(f"SELECT category FROM habahaba_trial.payments_table WHERE payment_id = '{payment_id}'")
+        payment_category = cur.fetchone()
+        cur.close()
+        my_category = payment_category['category']
+
+        if amount_to_redeem <= redeemable_amount:
+            # amount_redeemed = redemption_details['amount_redeemed'] + int(amount_to_redeem)
+            # quantity_to_redeem = int(amount_to_redeem) / int(redemption_details['quantity_per_acre'])
+            # quantity_redeemed = (int(amount_to_redeem) / int(redemption_details['quantity_per_acre'])
+            #                      + redemption_details['quantity_redeemed'])
+            # redeemable = int(redemption_details['redeemable_amount']) - int(amount_to_redeem)
+
+            amount_redeemed = int(amountRedeemed) + int(amount_to_redeem)
+            quantity_to_redeem = round(float(int(amount_to_redeem) / int(quantity_per_acre)), 2)
+            quantity_redeemed = round(float((int(amount_to_redeem) / int(quantity_per_acre)) + int(quantity_redeemed)),
+                                      2)
+            redeemable = int(redeemable_amount) - int(amount_to_redeem)
+            # inserting into redemption table
+            cur = mysql.connection.cursor()
+            cur.execute(
+                "INSERT INTO habahaba_trial.redemption (vendor_id, vendor_org, client_id, client_name, client_phone,"
+                " payment_for, amount_redeemed, date_redeemed, time_redeemed, quantity_redeemed, category)"
+                " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (
+                    vendor_id, vendor_org, client_id, client_name, client_phone, item_redeemed, amount_to_redeem, today,
+                    current_time, quantity_redeemed, my_category
+                ))
+            mysql.connection.commit()
+            cur.close()
+
+            # update payments table
+            cur = mysql.connection.cursor()
+            cur.execute("""UPDATE habahaba_trial.payments_table
+            SET amount_redeemed=%s, quantity_redeemed=%s, redeemable_amount=%s, redemption_date=%s
+            WHERE payment_id=%s
+            """, (
+                amount_redeemed, quantity_redeemed, redeemable, today, payment_id
+            ))
+            mysql.connection.commit()
+            cur.close()
+            flash(f'Redeemed {quantity_to_redeem}Kgs of {item_redeemed} Successfully', 'green lighten-2')
+            return redirect(url_for('redemption'))
+        else:
+            flash(f'You can redeem a maximum of {redemption_details["redeemable_amount"]} KGs of {item_redeemed}')
+            return redirect(url_for('redemption'))
+
+
+            [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[ /redemption/ ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+                    # new_values
+        payment_id = request.form['payment_id']
+        client_id = request.form['client_id']
+        client_name = request.form['client_name']
+        client_phone = request.form['client_phone']
+        vendor_id = request.form['vendor_id']
+        vendor_org = request.form['vendor_org']
+        item_redeemed = request.form['item_redeemed']
+        amount_to_redeem = request.form['amount_to_redeem']
+        redeemable_amount = request.form['redeemable_amount']
+        amountRedeemed = request.form['amount_redeemed']
+        quantity_redeemed = request.form['quantity_redeemed']
+        quantity_per_acre = request.form['quantity_per_acre']
+
+        client_vendor_crop = f"{client_id} {vendor_id} {item_redeemed}"
+
+        cur = mysql.connection.cursor()
+        cur.execute(f"SELECT * FROM habahaba_trial.payments_table WHERE client_vendor_crop = '{client_vendor_crop}'")
+        redemption_details = cur.fetchone()
+        cur.close()
+
+        cur = mysql.connection.cursor()
+        cur.execute(f"SELECT category FROM habahaba_trial.payments_table WHERE payment_id = '{payment_id}'")
+        payment_category = cur.fetchone()
+        cur.close()
+        my_category = payment_category['category']
+
+        # if amount_to_redeem <= redeemable_amount:
+        #     # amount_redeemed = redemption_details['amount_redeemed'] + int(amount_to_redeem)
+        #     # quantity_to_redeem = int(amount_to_redeem) / int(redemption_details['quantity_per_acre'])
+        #     # quantity_redeemed = (int(amount_to_redeem) / int(redemption_details['quantity_per_acre'])
+        #     #                      + redemption_details['quantity_redeemed'])
+        #     # redeemable = int(redemption_details['redeemable_amount']) - int(amount_to_redeem)
+        #
+        #     amount_redeemed = int(amountRedeemed) + int(amount_to_redeem)
+        #     quantity_to_redeem = round(float(int(amount_to_redeem) / int(quantity_per_acre)), 2)
+        #     quantity_redeemed = round(float((int(amount_to_redeem) / int(quantity_per_acre)) + int(quantity_redeemed)),
+        #                               2)
+        #     redeemable = int(redeemable_amount) - int(amount_to_redeem)
+        #     # inserting into redemption table
+        #     cur = mysql.connection.cursor()
+        #     cur.execute(
+        #         "INSERT INTO habahaba_trial.redemption (vendor_id, vendor_org, client_id, client_name, client_phone,"
+        #         " payment_for, amount_redeemed, date_redeemed, time_redeemed, quantity_redeemed, category)"
+        #         " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (
+        #             vendor_id, vendor_org, client_id, client_name, client_phone, item_redeemed, amount_to_redeem, today,
+        #             current_time, quantity_redeemed, my_category
+        #         ))
+        #     mysql.connection.commit()
+        #     cur.close()
+        #
+        #     # update payments table
+        #     cur = mysql.connection.cursor()
+        #     cur.execute("""UPDATE habahaba_trial.payments_table
+        #     SET amount_redeemed=%s, quantity_redeemed=%s, redeemable_amount=%s, redemption_date=%s
+        #     WHERE payment_id=%s
+        #     """, (
+        #         amount_redeemed, quantity_redeemed, redeemable, today, payment_id
+        #     ))
+        #     mysql.connection.commit()
+        #     cur.close()
+        #     flash(f'Redeemed {quantity_to_redeem}Kgs of {item_redeemed} Successfully', 'green lighten-2')
+        #     return redirect(url_for('redemption'))
+        # else:
+        #     flash(f'You can redeem a maximum of {redemption_details["redeemable_amount"]} KGs of {item_redeemed}')
+        #     return redirect(url_for('redemption'))
+
+            # time the user sends the money
+    today = date.today()
+    right_now = datetime.now()
+    current_time = right_now.strftime("%H:%M:%S")
+
+            {{{{{{{{{{{{{{{{{{{{{{{{{{{{{ /ukulima_redemption.html (script)/ }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+            {#$.ajax({#}
+            {#    url: '/redeemable-items-json/',#}
+            {#    method: 'get',#}
+            {#    success: function (data) {#}
+            {#        data = JSON.parse(data)#}
+            {#console.log(data)#}
+            {#        let vendor_id = ``#}
+            {#        let vendor_org = ``#}
+            {#        let client_id = ``#}
+            {#        let client_name = ``#}
+            {#        let client_phone = ``#}
+            {#        let redeemable_item = ``#}
+            {#        let amount_redeemed = ``#}
+            {#        let quantity_redeemed = ``#}
+            {#        let redeemable_amount = ``#}
+            {#        let quantity_per_acre = ``#}
+            {#        let payment_id = ``#}
+            {##}
+            {#        data.map(#}
+            {#            item => {#}
+            {#                console.log(item)#}
+            {#                if ($('#redeemable_item').val() === item.payment_for) {#}
+            {#console.log(item)#}
+            {#                    client_id = `${item.sender_id}`#}
+            {#                    client_name = item.sender_name#}
+            {#                    client_phone = item.sender_phone#}
+            {#                    vendor_id = item.vendor_id#}
+            {#                    vendor_org = item.org_name#}
+            {#                    redeemable_amount = item.redeemable_amount#}
+            {#                    amount_redeemed = item.amount_redeemed#}
+            {#quantity_redeemed = item.quantity_redeemed#}
+            {#                    redeemable_item = item.payment_for#}
+            {#                    quantity_per_acre = item.quantity_per_acre#}
+            {#                    quantity_redeemed = item.quantity_redeemed#}
+            {#                    payment_id = item.payment_id#}
+            {#                }#}
+            {#            }#}
+            {#        )#}
+            {#        $('.org_name').html(`<b>Organization:</b> ${vendor_org}`)#}
+            {#$('.amount_redeemed').html(`<b>Amount redeemed:</b> Ksh ${amount_redeemed} (${})`)#}
+            {#        if (amount_redeemed === 0) {#}
+            {#            $('.amount_redeemed').html(`<b>Amount redeemed:</b> Ksh 0 (0 Kgs)`)#}
+            {#        } else if (amount_redeemed > 0) {#}
+            {#            $('.quantity_redeemed').html(`<b>Amount redeemed:</b> Ksh ${amount_redeemed} (${((amount_redeemed / quantity_redeemed)).toFixed(3)} Kgs)`)#}
+            {#        }#}
+            {#        if (quantity_redeemed === 0) {#}
+            {#            $('.redeemable_amount').html(`<b>Redeemable amount:</b> Ksh 0`)#}
+            {#        } else {#}
+            {#            $('.redeemable_amount').html(`<b>Redeemable amount:</b> Ksh ${redeemable_amount} (${((redeemable_amount / quantity_redeemed)).toFixed(3)} Kgs)`)#}
+            {#$('#redeemable_amount').val(` ${redeemable_amount} (${redeemable_amount / quantity_redeemed}`)#}
+            {#        }#}
+            {##}
+            {#        $('#client_id').val(client_id)#}
+            {#        $('#client_name').val(client_name)#}
+            {#        $('#client_phone').val(client_phone)#}
+            {#        $('#vendor_id').val(vendor_id)#}
+            {#        $('#vendor_org').val(vendor_org)#}
+            {#        $('#redeemable_amount').val(redeemable_amount)#}
+            {#        $('#item_redeemed').val(redeemable_item)#}
+            {#        $('#quantity_per_acre').val(quantity_per_acre)#}
+            {#        $('#amount_redeemed').val(amount_redeemed)#}
+            {#        $('#quantity_redeemed').val(quantity_redeemed)#}
+            {#        $('#payment_id').val(payment_id)#}
+            {##}
+            {#    }#}
+            // });

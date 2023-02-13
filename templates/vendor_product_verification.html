@@ -78,6 +78,8 @@
                             </div>
                         </div>
 
+                        <input type="hidden" name="category_id" id="category_id" hidden="hidden">
+
                         <div class="{#rows#} form-group row" style="display: flex">
                             <label for="unit" class="col-sm-1 col-form-label"
                                    style="text-align: left; margin-left: -1em">Unit:</label>
@@ -172,6 +174,26 @@
                     });
                 }
             });
+            $('#category').change(function () {
+                $.ajax({
+                    url: '/categories-json/',
+                    type: 'get',
+                    success: function (data) {
+                        data = JSON.parse(data)
+                        let category_id = ''
+                        let category = $('#category').val()
+
+                        data.map(
+                            item => {
+                                if (category === item.category_name) {
+                                    category_id = item.category_id
+                                }
+                            }
+                        );
+                        $('#category_id').val(category_id);
+                    }
+                });
+            });
             $.ajax({
                 url: '/counties-json/',
                 method: 'get',
@@ -191,7 +213,6 @@
 
                     data.map(
                         item => {
-                            {#console.log(item)#}
                             boxes += `
                             <div class="counties_container" style="display: flex;">
                                 <div class="counties_label" style="width: 10em;">

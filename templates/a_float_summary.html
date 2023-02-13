@@ -89,6 +89,14 @@
                 // });
                 {#buttons.container().appendTo($('div.right.aligned.eight.column:eq(0)', table.table().container()));#}
             });
+            $.ajax({
+                url: '/vendor-summary-test-json/',
+                type: 'get',
+                success: function (data) {
+                    data = JSON.parse(data)
+                    console.log(data)
+                }
+            })
 
             $.ajax({
                 url: '/float-summary-chart/',

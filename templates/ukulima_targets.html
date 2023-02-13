@@ -114,51 +114,50 @@
                     </div>
 
                     <div class="collapsible-body black-text ">
-                        <form action="{{ url_for('redemption_orders') }}" method="post">
-                            {#                            client details#}
-                            <label for="defaults"></label>
-                            <input type="number" name="client_id" id="defaults" value="{{ partner['sender_id'] }}"
-                                   readonly hidden>
-                            <input type="text" name="client_name" id="defaults" value="{{ partner['sender_name'] }}"
-                                   readonly hidden>
-                            <input type="text" name="client_email" id="defaults" value="{{ partner['sender_email'] }}"
-                                   readonly hidden>
-                            <input type="number" name="client_phone" id="defaults" value="{{ partner['sender_phone'] }}"
-                                   readonly hidden>
-                            {#                            vendor details#}
-                            <input type="number" name="vendor_id" id="defaults" value="{{ partner['vendor_id'] }}"
-                                   readonly hidden>
-                            <input type="text" name="vendor_name" id="defaults" value="{{ partner['vendor_name'] }}"
-                                   readonly hidden>
-                            <input type="text" name="vendor_org" id="defaults" value="{{ partner['org_name'] }}"
-                                   readonly hidden>
-                            {#                            payment details#}
-                            <input type="text" name="payment_for" id="defaults" value="{{ partner['payment_for'] }}"
-                                   readonly hidden>
-                            <input type="number" name="amount_paid" id="defaults" value="{{ partner['amount_sent'] }}"
-                                   readonly hidden>
-                            <input type="number" name="payment_id" id="defaults" value="{{ partner['payment_id'] }}"
-                                   readonly hidden>
-
-                            <div class="redeem_btn" style="display: flex; justify-content: center;">
-                                <div class="black-text">
-                                    {% for value in joint_values %}
-                                        {% if partner['payment_for'] == value['vendor_crop'] %}
-                                            {#                                            Green#}
-                                            <input type="number" name="partnership_id" id="defaults"
-                                                   value="{{ value['partnership_id'] }}" readonly hidden>
-                                        {% endif %}
-
-                                    {% endfor %}
-                                    {#        {{ joint_values }}#}
-                                </div>
-                                <button type="submit" class="btn green waves-effect"
-                                        style="border-radius: 30px; width: 8em;">
-                                    Redeem
-                                </button>
-                            </div>
-
-                        </form>
+                        {#                        <form action="{{ url_for('redemption_orders') }}" method="post">#}
+                        {#                            client details#}
+                        {#                            <label for="defaults"></label>#}
+                        {#                            <input type="number" name="client_id" id="defaults" value="{{ partner['sender_id'] }}"#}
+                        {#                                   readonly hidden>#}
+                        {#                            <input type="text" name="client_name" id="defaults" value="{{ partner['sender_name'] }}"#}
+                        {#                                   readonly hidden>#}
+                        {#                            <input type="text" name="client_email" id="defaults" value="{{ partner['sender_email'] }}"#}
+                        {#                                   readonly hidden>#}
+                        {#                            <input type="number" name="client_phone" id="defaults" value="{{ partner['sender_phone'] }}"#}
+                        {#                                   readonly hidden>#}
+                        {#                            vendor details#}
+                        {#                            <input type="number" name="vendor_id" id="defaults" value="{{ partner['vendor_id'] }}"#}
+                        {#                                   readonly hidden>#}
+                        {#                            <input type="text" name="vendor_name" id="defaults" value="{{ partner['vendor_name'] }}"#}
+                        {#                                   readonly hidden>#}
+                        {#                            <input type="text" name="vendor_org" id="defaults" value="{{ partner['org_name'] }}"#}
+                        {#                                   readonly hidden>#}
+                        {#                            payment details#}
+                        {#                            <input type="text" name="payment_for" id="defaults" value="{{ partner['payment_for'] }}"#}
+                        {#                                   readonly hidden>#}
+                        {#                            <input type="number" name="amount_paid" id="defaults" value="{{ partner['amount_sent'] }}"#}
+                        {#                                   readonly hidden>#}
+                        {#                            <input type="number" name="payment_id" id="defaults" value="{{ partner['payment_id'] }}"#}
+                        {#                                   readonly hidden>#}
+                        {##}
+                        {#                            <div class="redeem_btn" style="display: flex; justify-content: center;">#}
+                        {#                                <div class="black-text">#}
+                        {#                                    {% for value in joint_values %}#}
+                        {#                                        {% if partner['payment_for'] == value['vendor_crop'] %}#}
+                        {#                                            Green#}
+                        {#                                            <input type="number" name="partnership_id" id="defaults"#}
+                        {#                                                   value="{{ value['partnership_id'] }}" readonly hidden>#}
+                        {#                                        {% endif %}#}
+                        {##}
+                        {#                                    {% endfor %}#}
+                        {#                                </div>#}
+                        {#                                <button type="submit" class="btn green waves-effect"#}
+                        {#                                        style="border-radius: 30px; width: 8em;">#}
+                        {#                                    Redeem#}
+                        {#                                </button>#}
+                        {#                            </div>#}
+                        {##}
+                        {#                        </form>#}
                     </div>
                 </li>
             {% elif partner['amount_sent'] < partner['saving_target'] %}
@@ -248,37 +247,39 @@
 
 
     $(document).ready(function () {
-        $('.modal_btn').click(function () {
-            $('#size_of_land').on('input ', function () {
-                let this_var = document.getElementById('payment_required').value
-                {#console.log(this_var)#}
-                $('#payment_required').val(
-                    ($('#quantity_per_acre').val() * $('#size_of_land').val()) * $('#price_per_kg').val()
-                )
-            });
-        })
+            $('.modal_btn').click(function () {
+                $('#size_of_land').on('input ', function () {
+                    let this_var = document.getElementById('payment_required').value
+                    {#console.log(this_var)#}
+                    $('#payment_required').val(
+                        ($('#quantity_per_acre').val() * $('#size_of_land').val()) * $('#price_per_kg').val()
+                    )
+                });
+            })
 
 
-        //Collapsible
-        $('.collapsible').collapsible();
+            //Collapsible
+            $('.collapsible').collapsible();
 
-        //Dropdown
-        $('select').formSelect()
+            //Dropdown
+            $('select').formSelect()
 
-        //data tables
-        $('#myTable').dataTable({
-            searchable: true,
-        })
+            //data tables
+            $('#myTable').dataTable({
+                searchable: true,
+            })
 
-        //dataTables
-        $('#partner_list').dataTable({
-            searchable: true
-        })
+            //dataTables
+            $('#partner_list').dataTable({
+                searchable: true
+            })
 
-        //partnership_id
-        {#$('#partnership_id').hide()#}
+            //partnership_id
+            {#$('#partnership_id').hide()#}
 
-    });
+        }
+    )
+    ;
 
     //regular inputs
     M.updateTextFields();

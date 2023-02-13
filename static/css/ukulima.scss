@@ -1,6 +1,7 @@
-html{
+html {
   scroll-behavior: smooth;
 }
+
 body {
   background-image: url("../images/plant.jpg");
   background-position: center;
@@ -40,12 +41,11 @@ body {
   width: 100vw;
   padding-right: 2em;
   padding-left: 2em;
-}
 
-.section2 {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
+  //overflow-x: hidden;
   gap: 1em;
 }
 
@@ -71,7 +71,7 @@ body {
   &:hover {
     cursor: pointer;
     //background-color: rgb(0 0 0 / 0.5);
-          background-color: rgba(68, 201, 50, 0.5);
+    background-color: rgba(68, 201, 50, 0.5);
     color: white;
 
     .target_description {
@@ -217,23 +217,23 @@ footer {
     gap: 1em;
   }
   .target_container {
-    width: 22em;
-    height: 16em;
-    //border: 1px solid white;
-    background-color: rgb(255 255 255 / 0.8);
-    color: black;
-    box-shadow: 0 0 10px -2px white;
-    border-radius: 20px;
-    display: grid;
-    padding: 1em;
-    grid-template-columns: 3fr 1px 2fr;
-    transition: 300ms ease-out;
-
-    .divider {
-      width: 1px;
-      height: 11em;
-      border: 1px solid black;
-    }
+    //width: 22em;
+    //height: 16em;
+    ////border: 1px solid white;
+    //background-color: rgb(255 255 255 / 0.8);
+    //color: black;
+    //box-shadow: 0 0 10px -2px white;
+    //border-radius: 20px;
+    //display: grid;
+    //padding: 1em;
+    //grid-template-columns: 3fr 1px 2fr;
+    //transition: 300ms ease-out;
+    //
+    //.divider {
+    //  width: 1px;
+    //  height: 11em;
+    //  border: 1px solid black;
+    //}
 
     &:hover {
       cursor: pointer;
@@ -275,7 +275,7 @@ footer {
       align-items: center;
     }
   }
-  footer{
+  footer {
     background-color: transparent;
   }
 
@@ -291,6 +291,7 @@ footer {
     background-blend-mode: multiply;
     //background-attachment: fixed;
     color: white;
+    width: 100%;
 
   }
   .section2 {
@@ -298,10 +299,11 @@ footer {
       margin-bottom: 1em;
     }
   }
-  footer{
+  footer {
     background-color: transparent;
     margin-top: 5vh;
-    .socials{
+
+    .socials {
       margin-top: 5vh;
     }
   }

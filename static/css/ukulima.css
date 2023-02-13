@@ -38,9 +38,6 @@ body {
   width: 100vw;
   padding-right: 2em;
   padding-left: 2em;
-}
-
-.section2 {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
@@ -190,23 +187,6 @@ footer .socials .socials_icons .twitter:hover {
     flex-wrap: wrap;
     gap: 1em;
   }
-  .target_container {
-    width: 22em;
-    height: 16em;
-    background-color: rgba(255, 255, 255, 0.8);
-    color: black;
-    box-shadow: 0 0 10px -2px white;
-    border-radius: 20px;
-    display: grid;
-    padding: 1em;
-    grid-template-columns: 3fr 1px 2fr;
-    transition: 300ms ease-out;
-  }
-  .target_container .divider {
-    width: 1px;
-    height: 11em;
-    border: 1px solid black;
-  }
   .target_container:hover {
     cursor: pointer;
     background-color: rgba(68, 201, 50, 0.5);
@@ -253,6 +233,7 @@ footer .socials .socials_icons .twitter:hover {
     background-color: rgba(0, 0, 0, 0.5);
     background-blend-mode: multiply;
     color: white;
+    width: 100%;
   }
   .section2 a {
     margin-bottom: 1em;

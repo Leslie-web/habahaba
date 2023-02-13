@@ -8,6 +8,8 @@
 {#        {% endfor %}#}
 {#    {% endif %}#}
 {#{% endwith %}#}
+<script type="text/javascript" src="{{ url_for('static', filename='/js/jquery-3.6.1.min.js') }}"></script>
+
 {% with messages = get_flashed_messages(with_categories=true) %}
     <!-- Categories: success (green), info (blue), warning (yellow), danger (red) -->
     {% if messages %}

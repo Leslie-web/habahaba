@@ -29,11 +29,17 @@
                 <thead>
                 <tr>
                     <th></th>
-                    <th>Customer Name</th>
-                    <th>Amount Saved</th>
+                    <th>Farmer Name</th>
+                    <th>Item Redeemed</th>
+                    <th>Category</th>
                     <th>Saving Target</th>
-                    <th>Amount Redeemed</th>
+                    <th>Amount Redeemed (in KSh)</th>
+                    <th>Quantity Redeemed (in KGs / L)</th>
                     <th>Date Redeemed</th>
+                    {#                    <th></th>#}
+                    {#                    <th>Farmer Name</th>#}
+                    {#                    <th>Item Redeemed</th>#}
+                    {#                    <th>Quantity Redeemed (in KGs / L)</th>#}
                 </tr>
                 </thead>
             </table>
@@ -43,6 +49,14 @@
     <script>
         //datatables
         $(document).ready(function () {
+            $.ajax({
+                url: '/redemption-summary-test-json/',
+                type: 'get',
+                success: function (data) {
+                    data = JSON.parse(data)
+                    console.log(data)
+                }
+            })
             {#$('#myTable').DataTable();#}
             let table = $('#redemptionSummaryTable').DataTable({
                 destroy: true,
@@ -71,7 +85,8 @@
                 "rowCallback": function (nRow, aData) {
                     {#removing the values on a checkbox#}
                     $('td', nRow).eq(0).html('');
-
+                    {#moment().format("MMM Do YY");#}
+                    $('td', nRow).eq(7).html(moment(aData[7]).format("MMM Do YY"));
                 }
             });
             let buttons = new $.fn.dataTable.Buttons(table, {

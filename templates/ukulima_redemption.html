@@ -78,14 +78,14 @@
                 <li class="tab col s6"><a href="#test-swipe-2">Redemption History</a></li>
             </ul>
 
-            <div class="col s12 white black-text" id="test-swipe-1" style="padding: 2em;">
+            <div class="col s12 white black-text redeemItemContainer" id="test-swipe-1" style="padding: 2em;">
 
-                <div class="redeemItem" style="padding-left: 7%; padding-right: 7%;">
+                <div class="redeemItem" style="padding-left: 2%; padding-right: 2%;">
                     <label for="redeemable_item">Redeemable Item:</label>
                     <select name="redeemable_item" id="redeemable_item">
                         <option value="" selected disabled>Please choose an item to redeem</option>
                         {% for item in items %}
-                            <option value="{{ item.payment_for }}">{{ item.payment_for }}</option>
+                            <option value="{{ item.crop_name }}">{{ item.crop_name }}</option>
                         {% endfor %}
                     </select>
                     <div class="redeemable_content" hidden="hidden">
@@ -99,29 +99,37 @@
 
                         <form action="{{ url_for('redemption') }}" method="post">
                             <input type="number" name="client_id" id="client_id" readonly hidden="hidden">
-                            <input type="text" name="client_name" id="client_name" readonly hidden="hidden">
-                            <input type="text" name="client_phone" id="client_phone" readonly hidden="hidden">
+                            {#                            <input type="text" name="client_name" id="client_name" readonly hidden=hidden" >#}
+                            {#                            <input type="text" name="client_phone" id="client_phone" readonly hidden=hidden" >#}
                             <input type="number" name="vendor_id" id="vendor_id" readonly hidden="hidden">
                             <input type="text" name="vendor_org" id="vendor_org" readonly hidden="hidden">
+                            {#                            <input type="number" name="quantity_redeemed" id="quantity_redeemed" readonly hidden=hidden"#}
+                            {#                            >#}
+                            <input type="number" name="quantity_per_acre" id="quantity_per_acre" readonly
+                                   hidden="hidden"
+                            >
+                            {#                <label for="redeemable_amount"></label>#}
+                            {#                <input type="number" name="redeemable_amount" id="redeemable_amount" readonly hidden=hidden" >#}
+                            {#                <label for="amount_redeemed"></label>#}
+                            {#                <input type="number" name="amount_redeemed" id="amount_redeemed" readonly hidden=hidden" >#}
+                            {#                <label for="quantity_redeemed"></label>#}
+                            {#                <input type="number" name="quantity_redeemed" id="quantity_redeemed" readonly hidden=hidden" >#}
+                            <input type="text" name="item_redeemed" id="item_redeemed" readonly hidden="hidden">
+                            <input type="number" name="redeemable_quantity" id="redeemable_quantity" readonly
+                                   hidden="hidden"
+                            >
+                            <input type="number" name="saving_target" id="saving_target" readonly hidden="hidden">
+                            <input type="number" name="amount_redeemed" id="amount_redeemed" readonly hidden="hidden">
                             <input type="number" name="quantity_redeemed" id="quantity_redeemed" readonly
                                    hidden="hidden">
-                            <input type="number" name="quantity_per_acre" id="quantity_per_acre" readonly
-                                   hidden="hidden">
-                            {#                <label for="redeemable_amount"></label>#}
-                            {#                <input type="number" name="redeemable_amount" id="redeemable_amount" readonly hidden="hidden">#}
-                            {#                <label for="amount_redeemed"></label>#}
-                            {#                <input type="number" name="amount_redeemed" id="amount_redeemed" readonly hidden="hidden">#}
-                            {#                <label for="quantity_redeemed"></label>#}
-                            {#                <input type="number" name="quantity_redeemed" id="quantity_redeemed" readonly hidden="hidden">#}
-                            <input type="text" name="item_redeemed" id="item_redeemed" readonly hidden="hidden">
-                            <input type="number" name="redeemable_amount" id="redeemable_amount" readonly
-                                   hidden="hidden">
-                            {#                    <input type="number" name="amount_redeemed" id="amount_redeemed" readonly hidden="hidden">#}
-                            <input type="number" name="payment_id" id="payment_id" readonly hidden="hidden">
-                            {#                <input type="number" name="client_id" id="client_id" readonly>#}
+                            <input type="number" name="transaction_id" id="transaction_id" readonly hidden="hidden">
+                            <input type="number" name="price_per_kg" id="price_per_kg" readonly hidden="hidden">
+                            <input type="number" name="material_id" id="material_id" readonly hidden="hidden">
+                            {#                <input type="number" name="client_id" id="client_id" readonly hidden=hidden">#}
                             <div class="input-field">
-                                <label for="amount_to_redeem">Amount to redeem (in Ksh):</label>
-                                <input type="number" name="amount_to_redeem" id="amount_to_redeem" class="validate"
+                                <label for="quantity_to_redeem">Enter the quantity you wish to redeem (in KGs /
+                                    L):</label>
+                                <input type="number" name="quantity_to_redeem" id="quantity_to_redeem" class="validate"
                                        min="0"
                                        required>
                             </div>
@@ -153,19 +161,6 @@
 </div>
 <div class="section3">
 
-    {#    <div class="col s12 white black-text" id="test-swipe-2"#}
-    {#         style="padding: 5em; border: 0;">#}
-    {#        <table class="ui celled table col s12 striped" width="100%" id="redemptionHistory">#}
-    {#            <thead>#}
-    {#            <tr>#}
-    {#                <th>Organization</th>#}
-    {#                <th>Item Bought</th>#}
-    {#                <th>Quantity Redeemed</th>#}
-    {#                <th>Date Redeemed</th>#}
-    {#            </tr>#}
-    {#            </thead>#}
-    {#        </table>#}
-    {#    </div>#}
 </div>
 {#[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[JAVASCRIPT]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]#}
 {#ionicons#}
@@ -188,70 +183,98 @@
             $('.redeemable_content').show(300)
             $.ajax({
                 url: '/redeemable-items-json/',
-                method: 'get',
+                type: 'get',
                 success: function (data) {
                     data = JSON.parse(data)
                     {#console.log(data)#}
+
+                    let transaction_id = ``
+                    let org_name = ``
+                    let payment_for = ``
+                    let saving_target = ``
+                    let sender_id = ``
                     let vendor_id = ``
-                    let vendor_org = ``
-                    let client_id = ``
-                    let client_name = ``
-                    let client_phone = ``
-                    let redeemable_item = ``
-                    let amount_redeemed = ``
-                    let quantity_redeemed = ``
-                    let redeemable_amount = ``
                     let quantity_per_acre = ``
-                    let payment_id = ``
+                    let price_per_kg = ``
+                    let amount_saved_daily = ``
+
+                    let redeemable_quantity = ``
+                    let quantity_redeemed = ``
+                    let material_id = ``
+                    let amount_redeemed = ``
 
                     data.map(
                         item => {
-                            console.log(item)
-                            if ($('#redeemable_item').val() === item.payment_for) {
-                                {#console.log(item)#}
-                                client_id = `${item.sender_id}`
-                                client_name = item.sender_name
-                                client_phone = item.sender_phone
+                            if ($('#redeemable_item').val() === item.crop_name) {
+                                console.log(item)
+                                transaction_id = item.transaction_id
+                                org_name = item.org_name
+                                payment_for = item.payment_for
+                                saving_target = item.saving_target
+                                sender_id = item.sender_id
                                 vendor_id = item.vendor_id
-                                vendor_org = item.org_name
-                                redeemable_amount = item.redeemable_amount
-                                amount_redeemed = item.amount_redeemed
-                                {#quantity_redeemed = item.quantity_redeemed#}
-                                redeemable_item = item.payment_for
                                 quantity_per_acre = item.quantity_per_acre
+                                price_per_kg = item.price_per_kg
+                                amount_saved_daily = item.amount_saved_daily
+
+                                redeemable_quantity = (saving_target / price_per_kg) - item.amount_redeemed
                                 quantity_redeemed = item.quantity_redeemed
-                                payment_id = item.payment_id
+                                material_id = item.material_id
+                                amount_redeemed = item.amount_redeemed
+                                {#console.log(redeemable_quantity)#}
+                                {#console.log(amount_redeemed)#}
                             }
                         }
-                    )
-                    $('.org_name').html(`<b>Organization:</b> ${vendor_org}`)
-                    {#$('.amount_redeemed').html(`<b>Amount redeemed:</b> Ksh ${amount_redeemed} (${})`)#}
-                    if (amount_redeemed === 0) {
-                        $('.amount_redeemed').html(`<b>Amount redeemed:</b> Ksh 0 (0 Kgs)`)
-                    } else if (amount_redeemed > 0) {
-                        $('.quantity_redeemed').html(`<b>Amount redeemed:</b> Ksh ${amount_redeemed} (${((amount_redeemed / quantity_redeemed)).toFixed(3)} Kgs)`)
-                    }
-                    if (quantity_redeemed === 0) {
-                        $('.redeemable_amount').html(`<b>Redeemable amount:</b> Ksh 0`)
-                    } else {
-                        $('.redeemable_amount').html(`<b>Redeemable amount:</b> Ksh ${redeemable_amount} (${((redeemable_amount / quantity_redeemed)).toFixed(3)} Kgs)`)
-                        {#$('#redeemable_amount').val(` ${redeemable_amount} (${redeemable_amount / quantity_redeemed}`)#}
-                    }
+                    );
+                    $('.org_name').html(`<b>Organization:</b> ${org_name}`);
+                    {#$('.redeemable_amount').html(`<b>Redeemable Quantity:</b> ${redeemable_quantity} KGs / L`);#}
+                    {#$('.quantity_redeemed').html(`<b>Quantity Redeemed:</b> ${quantity_redeemed} KGs / L`);#}
 
-                    $('#client_id').val(client_id)
-                    $('#client_name').val(client_name)
-                    $('#client_phone').val(client_phone)
-                    $('#vendor_id').val(vendor_id)
-                    $('#vendor_org').val(vendor_org)
-                    $('#redeemable_amount').val(redeemable_amount)
-                    $('#item_redeemed').val(redeemable_item)
-                    $('#quantity_per_acre').val(quantity_per_acre)
-                    $('#amount_redeemed').val(amount_redeemed)
-                    $('#quantity_redeemed').val(quantity_redeemed)
-                    $('#payment_id').val(payment_id)
+                    $('#client_id').val(sender_id);
+                    $('#vendor_id').val(vendor_id);
+                    $('#vendor_org').val(org_name);
+                    $('#quantity_per_acre').val(quantity_per_acre);
+                    $('#redeemable_quantity').val(redeemable_quantity);
+                    $('#transaction_id').val(transaction_id);
+                    $('#item_redeemed').val($('#redeemable_item').val());
+                    $('#material_id').val(material_id);
+                    $('#price_per_kg').val(price_per_kg);
+                    {#$('#amount_redeemed').val(amount_redeemed);#}
+                    {#$('#quantity_redeemed').val(quantity_redeemed);#}
+                    $('#saving_target').val(saving_target);
+
 
                 }
             });
+
+            $.ajax({
+                url: '/redeemable-quantities-json/',
+                type: 'get',
+                success: function (data) {
+                    data = JSON.parse(data)
+                    let amount_redeemed = ''
+                    let quantity_redeemed = ''
+                    let saving_target = ''
+                    data.map(
+                        item => {
+                            console.log(item)
+                            if ($('#redeemable_item').val() === item.crop_name) {
+                                console.log(item)
+
+                                amount_redeemed = item.amount_redeemed
+                                quantity_redeemed = item.quantity_redeemed
+                            }
+                        }
+                    )
+                    saving_target = (Math.floor($('#saving_target').val() / $('#price_per_kg').val())).toFixed(2)
+                    $('.quantity_redeemed').html(`<b>Quantity Redeemed:</b> ${(quantity_redeemed).toFixed(2)} KGs / L`);
+                    $('.redeemable_amount').html(`<b>Redeemable Quantity:</b> ${(saving_target - quantity_redeemed).toFixed(2)} KGs / L`);
+
+                    $('#amount_redeemed').val(amount_redeemed);
+                    $('#quantity_redeemed').val(quantity_redeemed);
+                }
+            });
+
         });
 
         // redemption history
@@ -303,7 +326,8 @@
         //modal
         $('.modal').modal();
 
-    });
+    })
+    ;
 
 
     //collapsible

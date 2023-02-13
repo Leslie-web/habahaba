@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" style="scroll-behavior: smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
@@ -17,7 +17,7 @@
     <link rel="apple-touch-icon" href="../static/images/pngwing.com.png">
     <meta name="apple-web-app-status-bar" content="#00b0ff">
 </head>
-<body>
+<body style="transition: 300ms ease">
 
 <style>
     .progress_bar {
@@ -130,7 +130,7 @@
     <ion-icon name="arrow-back-outline" class="back_icon"></ion-icon>
 </a>
 
-<div class="section1">
+<div class="section1" style="transition: 300ms ease">
     {#    <h2 style="text-align: center">Funds</h2>#}
     <h2 style="text-align: center">Deposit</h2>
     <div class="row" id="icon_container">
@@ -144,16 +144,19 @@
 </div>
 <br>
 {% block content %}
-
-    <div class="row">
+    {#    {{ client_crops }}#}
+    <div class="row" id="flashMessage" style="transition: 300ms ease">
         {% include 'includes/_flashmsg.html' %}
+    </div>
+    <div class="transaction_flash_msg">
+
     </div>
     {#    <ul class="tabs" id="tabs-swipe-demo">#}
     {#        <li><a href="#test-swipe-1">Slide 1</a></li>#}
     {#        <li><a href="#test-swipe-2">Slide 2</a></li>#}
     {#    </ul>#}
 
-    <div class="section3 white black-text" style="height: auto">
+    <div class="section3 white black-text" style="height: auto; transition: 300ms ease">
         <label for="item"></label>
         <select name="item" id="item">
             <option value="" selected disabled>Please select an item to pay for</option>
@@ -164,58 +167,83 @@
         <div class="trialSelect">
 
         </div>
-
         <form action="" method="post" hidden id="paymentForm" style="text-align: center;">
-            {#            PROGRESS BAR BELOW#}
-            <div class="center_progress_bar" style="display: flex; justify-content: center">
-                <div class="progress_bar">
-                    <div class="progress_header" style="display: flex; justify-content: center">
-                        <h5>Payment Progress</h5>
-                    </div>
-                    <div class="circular_progress">
-                        <span class="progress_value">0%</span>
-                    </div>
-                    <span class="texts" id="texts"><b id="x"></b> out of <b id="y"></b></span>
+            <div class="inputs">
+                <input type="number" name="client_id" id="client_id" readonly hidden="hidden">
+                <input type="number" name="vendor_id" id="vendor_id" readonly hidden="hidden">
+                <input type="number" name="material_id" id="material_id" readonly hidden="hidden">
+                <input type="text" name="vendor_org" id="vendor_org" readonly hidden="hidden">
+                <input type="text" name="saving_target" id="saving_target" readonly hidden="hidden">
+                <input type="text" name="category" id="category" readonly hidden="hidden">
+                <input type="text" name="item_purchased" id="item_purchased" readonly hidden="hidden">
+                <input type="text" name="total_paid" id="total_paid" readonly hidden="hidden">
+
+                <div class="input-field col s12 white-text">
+                    <label for="Phone_number">Phone Number</label>
+                    <input type="number" name="Phone_number" id="Phone_number" class="required" min="0" required>
+                </div>
+
+                <div class="input-field col s12 white-text">
+                    <label for="payment">Payment Amount</label>
+                    <input type="number" name="payment" id="payment" class="required" min="0" required>
+                </div>
+                <div class="submitBtn" style="display: flex; justify-content: center">
+                    <button class="btn waves-effect waves-light" type="submit">Pay</button>
                 </div>
             </div>
-            {#            PROGRESS BAR ABOVE #}
-
-            {#            FORM VALUES#}
-            <div class="inputs" style="display: none;">
-                <input type="number" name="vendor_id" id="vendor_id" readonly hidden="hidden">
-                <input type="text" name="vendor_name" id="vendor_name" readonly hidden="hidden">
-                {#            <input type="text" name="vendor_email" id="vendor_email" readonly hidden="hidden" ">#}
-                <input type="text" name="vendor_phone" id="vendor_phone" readonly hidden="hidden">
-                <input type="text" name="vendor_org" id="vendor_org" readonly hidden="hidden">
-                {#            <input type="text" name="payment_method" id="payment_method" readonly hidden="hidden" ">#}
-                {#            <input type="text" name="acc_number" id="acc_number" readonly hidden="hidden" ">#}
-                <input type="text" name="vendor_crop" id="vendor_crop" readonly hidden="hidden">
-                {#            <input type="text" name="payment_for" id="payment_for" readonly hidden="hidden" ">#}
-                <input type="number" name="saving_target" id="saving_target" readonly hidden="hidden">
-                <input type="number" name="client_id" id="client_id" readonly hidden="hidden">
-                <input type="text" name="client_name" id="client_name" readonly hidden="hidden">
-                {#            <input type="text" name="client_email" id="client_email" readonly hidden="hidden" ">#}
-                <input type="text" name="client_phone" id="client_phone" readonly hidden="hidden">
-                <input type="number" name="amount_sent" id="amount_sent" readonly hidden="hidden">
-                <input type="number" name="commission" id="commission" readonly hidden="hidden">
-                <input type="text" name="selected_crop" id="selected_crop" readonly hidden="hidden">
-
-            </div>
-            <h3 id="orgName"></h3>
-            <h3 id="amountBalance"></h3>
-            <label for="paymentId"></label>
-            <input type="number" name="payment_id" id="paymentId" class="pay" readonly hidden="hidden">
-            <input type="text" name="category" id="category" readonly hidden="hidden">
-
-            <div class="input-field col s12 white-text">
-
-                <label for="payment">Payment Amount</label>
-                <input type="number" name="payment" id="payment" class="required" min="0" required>
-            </div>
-            <div class="submitBtn" style="display: flex; justify-content: center">
-                <button class="btn waves-effect waves-light" type="submit">Pay</button>
-            </div>
         </form>
+
+        {#        <form action="" method="post" hidden id="paymentForm" style="text-align: center;">#}
+        {#            PROGRESS BAR BELOW#}
+        {#            <div class="center_progress_bar" style="display: flex; justify-content: center">#}
+        {#                <div class="progress_bar">#}
+        {#                    <div class="progress_header" style="display: flex; justify-content: center">#}
+        {#                        <h5>Payment Progress</h5>#}
+        {#                    </div>#}
+        {#                    <div class="circular_progress">#}
+        {#                        <span class="progress_value">0%</span>#}
+        {#                    </div>#}
+        {#                    <span class="texts" id="texts"><b id="x"></b> out of <b id="y"></b></span>#}
+        {#                </div>#}
+        {#            </div>#}
+        {#            PROGRESS BAR ABOVE #}
+        {##}
+        {#            FORM VALUES#}
+        {#            <div class="inputs" style="display: none;">#}
+        {#                <input type="number" name="vendor_id" id="vendor_id" readonly hidden="hidden">#}
+        {#                <input type="text" name="vendor_name" id="vendor_name" readonly hidden="hidden">#}
+        {#            <input type="text" name="vendor_email" id="vendor_email" readonly hidden="hidden" ">#}
+        {#                <input type="text" name="vendor_phone" id="vendor_phone" readonly hidden="hidden">#}
+        {#                <input type="text" name="vendor_org" id="vendor_org" readonly hidden="hidden">#}
+        {#            <input type="text" name="payment_method" id="payment_method" readonly hidden="hidden" ">#}
+        {#            <input type="text" name="acc_number" id="acc_number" readonly hidden="hidden" ">#}
+        {#                <input type="text" name="vendor_crop" id="vendor_crop" readonly hidden="hidden">#}
+        {#            <input type="text" name="payment_for" id="payment_for" readonly hidden="hidden" ">#}
+        {#                <input type="number" name="saving_target" id="saving_target" readonly hidden="hidden">#}
+        {#                <input type="number" name="client_id" id="client_id" readonly hidden="hidden">#}
+        {#                <input type="text" name="client_name" id="client_name" readonly hidden="hidden">#}
+        {#            <input type="text" name="client_email" id="client_email" readonly hidden="hidden" ">#}
+        {#                <input type="text" name="client_phone" id="client_phone" readonly hidden="hidden">#}
+        {#                <input type="number" name="amount_sent" id="amount_sent" readonly hidden="hidden">#}
+        {#                <input type="number" name="commission" id="commission" readonly hidden="hidden">#}
+        {#                <input type="text" name="selected_crop" id="selected_crop" readonly hidden="hidden">#}
+        {##}
+        {#            </div>#}
+        {#            <h3 id="orgName"></h3>#}
+        {#            <h3 id="amountBalance"></h3>#}
+        {#            <label for="paymentId"></label>#}
+        {#            <input type="number" name="payment_id" id="paymentId" class="pay" readonly hidden="hidden">#}
+        {#            <input type="text" name="category" id="category" readonly hidden="hidden">#}
+        {##}
+        {#            <div class="input-field col s12 white-text">#}
+        {##}
+        {#                <label for="payment">Payment Amount</label>#}
+        {#                <input type="number" name="payment" id="payment" class="required" min="0" required>#}
+        {#            </div>#}
+        {#            <div class="submitBtn" style="display: flex; justify-content: center">#}
+        {#                <button class="btn waves-effect waves-light" type="submit">Pay</button>#}
+        {#            </div>#}
+        {#        </form>#}
     </div>
 {% endblock %}
 
@@ -236,6 +264,8 @@
         //sidenav
         $('.sidenav').sidenav();
 
+        $('#flashMessage').fadeOut(6000);
+
         //Modal
         $('.modal').modal();
 
@@ -248,152 +278,180 @@
         $('#item').change(function () {
             $.ajax({
                 url: '/ukulima-funds-json/',
-                type: 'post',
+                type: 'get',
                 success: function (data) {
                     data = JSON.parse(data)
-                    {#console.log(data)#}
-                    let partners = `<h3> </h3>`
-                    let payment_id = ``
-                    let org_names = `<h3></h3>`
-                    let amount_balances = `<h3></h3>`
-                    let xValue = ``
-                    let yValue = ``
-                    {#let target = ((item.amount_sent) / (item.saving_target)) * 100#}
-                    let vendor_id = ``
-                    let vendor_name = ``
-                    let vendor_phone = ``
-                    let vendor_org = ``
-                    let vendor_crop = ``
-                    let categories = ``
                     let client_id = ``
-                    let client_name = ``
-                    let client_phone = ``
-                    let amount_sent = ``
-                    let savingTarget = ``
-                    let commission = ``
+                    let vendor_id = ``
+                    let vendor_org = ``
+                    let saving_target = ``
+                    let category = ``
+                    let item_selected = $('#item').val();
+                    let total_paid = ``
+                    let material_id = ``
 
                     data.map(
                         item => {
-                            console.log(item)
-                            {#let target = ((item.amount_sent) / (item.saving_target)) * 100#}
-                            {#vendor_id = `${item.vendor_id}`#}
-                            {#vendor_name = `${item.vendor_name}`#}
-                            {#let vendor_email = ``#}
-                            {#vendor_phone = `${item.vendor_phone}`#}
-                            {#vendor_org = `${item.org_name}`#}
-                            {#let payment_method = ``#}
-                            {#let acc_no = ``#}
-                            {#vendor_crop = `${item.payment_for}`#}
-                            {#categories = `${item.category}`#}
-                            {#client_id = `${item.sender_id}`#}
-                            {#client_name = `${item.sender_name}`#}
-                            {#commission = `${item.commission}`#}
-                            {#client_phone = `${item.sender_phone}`#}
-                            {#amount_sent = `${item.amount_sent}`#}
-                            {#payment_id = `${item.payment_id}`#}
-                            {#let amount_sent = ``#}
-                            {#console.log(item)#}
-
-                            if ($('#item').val() === item.payment_for) {
-                                let target = ((item.amount_sent) / (item.saving_target)) * 100
+                            {#console.log(data)#}
+                            if ($('#item').val() === item.crop_name) {
+                                console.log(item)
+                                client_id = `${item.client_id}`
                                 vendor_id = `${item.vendor_id}`
-                                vendor_name = `${item.vendor_name}`
-                                {#let vendor_email = ``#}
-                                vendor_phone = `${item.vendor_phone}`
-                                vendor_org = `${item.org_name}`
-                                {#let payment_method = ``#}
-                                {#let acc_no = ``#}
-                                vendor_crop = `${item.payment_for}`
-                                categories = `${item.category}`
-                                client_id = `${item.sender_id}`
-                                client_name = `${item.sender_name}`
-                                commission = `${item.commission}`
-                                client_phone = `${item.sender_phone}`
-                                amount_sent = `${item.amount_sent}`
-                                {#payment_id = `${item.payment_id}`#}
-                                {#let amount_sent = ``#}
-
-                                let saving_target = `${item.saving_target}`
-                                let amount_paid = `${item.amount_sent}`
-                                org_names += `
-                                <h6><b>Organisation: ${item.org_name}</b></h6>
-                            `
-                                amount_balances += `
-                                <h6><b>Balance: Ksh ${item.saving_target - item.amount_sent}</b> </h6>
-                               `
-                                amount_sent = `${item.amount_sent}`
-                                payment_id += `${item.payment_id}`
-
-                                {# PROGRESS BAR#}
-                                let circular_progress = document.querySelector('.circular_progress'),
-                                    progress_value = document.querySelector('.progress_value')
-
-                                let values = ((item.amount_sent) / (item.saving_target)) * 100
-
-                                if (item.amount_sent === 0) {
-                                    values = 1
-                                }
-
-                                let progressStartValue = 0,
-                                    progress_end_value = parseInt(values),
-                                    speed = 100;
-
-                                let progress = setInterval(() => {
-                                    progressStartValue++;
-                                    {#progress_value.textContent = progressStartValue + "%"#}
-                                    if (item.amount_sent === 0) {
-                                        progress_value.textContent = "0%"
-                                    } else {
-                                        progress_value.textContent = progressStartValue + "%"
-                                    }
-
-                                    circular_progress.style.background = `conic-gradient(#0d6efd ${progressStartValue * 3.6}deg, white 0deg)`
-                                    if (progressStartValue === progress_end_value) {
-                                        clearInterval(progress)
-                                    }
-                                    {#console.log(progressStartValue);#}
-                                }, speed);
-
-                                xValue = `${item.current_quantity} KGs`
-                                yValue = `${item.target_quantity} KGs`
-                                savingTarget = `${item.saving_target}`
-
-                                {#console.log(item)#}
+                                vendor_org = `${item.vendor_org}`
+                                saving_target = `${item.saving_target}`
+                                category = `${item.item_category}`
+                                total_paid = `${item.total_paid}`
+                                material_id = `${item.material_id}`
                             }
                         }
-                        // }
-                    );
-
-                    $('#paymentForm').show(300);
-                    $('#orgName').html(org_names);
-                    $('#amountBalance').html(amount_balances);
-                    $('#x').html(xValue)
-                    $('#y').html(yValue)
-                    $('.pay').val(payment_id);
-
-                    $('#vendor_id').val(vendor_id)
-                    $('#vendor_name').val(vendor_name)
-                    $('#vendor_phone').val(vendor_phone)
-                    $('#vendor_org').val(vendor_org)
-                    $('#vendor_crop').val(vendor_crop)
-                    $('#saving_target').val(savingTarget)
+                    )
+                    $('#paymentForm').show(300)
                     $('#client_id').val(client_id)
-                    $('#client_name').val(client_name)
-                    $('#client_phone').val(client_phone)
-                    $('#amount_sent').val(amount_sent)
-                    $('#category').val(categories)
-                    $('#commission').val(commission)
-                    $('#selected_crop').val($('#item').val())
-
-
-                    {#$('#vendor_id').val(vendor_id)#}
+                    $('#vendor_id').val(vendor_id)
+                    $('#vendor_org').val(vendor_org)
+                    $('#saving_target').val(saving_target)
+                    $('#category').val(category)
+                    $('#item_purchased').val(item_selected)
+                    $('#total_paid').val(total_paid)
+                    $('#material_id').val(material_id)
                 }
             });
-            //});
+        });
 
-        })
+        {#$('#item').change(function () {#}
+        {#    $.ajax({#}
+        {#        url: '/ukulima-funds-json/',#}
+        {#        type: 'post',#}
+        {#        success: function (data) {#}
+        {#            data = JSON.parse(data)#}
+        {#console.log(data)#}
+        {#            let partners = `<h3> </h3>`#}
+        {#            let payment_id = ``#}
+        {#            let org_names = `<h3></h3>`#}
+        {#            let amount_balances = `<h3></h3>`#}
+        {#            let xValue = ``#}
+        {#            let yValue = ``#}
+        {#let target = ((item.amount_sent) / (item.saving_target)) * 100#}
+        {#            let vendor_id = ``#}
+        {#            let vendor_name = ``#}
+        {#            let vendor_phone = ``#}
+        {#            let vendor_org = ``#}
+        {#            let vendor_crop = ``#}
+        {#            let categories = ``#}
+        {#            let client_id = ``#}
+        {#            let client_name = ``#}
+        {#            let client_phone = ``#}
+        {#            let amount_sent = ``#}
+        {#            let savingTarget = ``#}
+        {#            let commission = ``#}
+        {##}
+        {#            data.map(#}
+        {#                item => {#}
+        {#console.log(item)#}
+        {#                    if ($('#item').val() === item.payment_for) {#}
+        {#                        console.log(data)#}
+        {#                        let target = ((item.amount_sent) / (item.saving_target)) * 100#}
+        {#                        vendor_id = `${item.vendor_id}`#}
+        {#                        vendor_name = `${item.vendor_name}`#}
+        {#let vendor_email = ``#}
+        {#                        vendor_phone = `${item.vendor_phone}`#}
+        {#                        vendor_org = `${item.org_name}`#}
+        {#let payment_method = ``#}
+        {#let acc_no = ``#}
+        {#                        vendor_crop = `${item.payment_for}`#}
+        {#                        categories = `${item.Categories}`#}
+        {#                        client_id = `${item.sender_id}`#}
+        {#                        client_name = `${item.sender_name}`#}
+        {#                        commission = `${item.commission}`#}
+        {#                        client_phone = `${item.sender_phone}`#}
+        {#                        amount_sent = `${item.amount_sent}`#}
+        {#payment_id = `${item.payment_id}`#}
+        {#let amount_sent = ``#}
+        {##}
+        {#                        let saving_target = `${item.saving_target}`#}
+        {#                        let amount_paid = `${item.amount_sent}`#}
+        {#                        org_names += `#}
+        {#                        <h6><b>Organisation: ${item.org_name}</b></h6>#}
+        {#                    `#}
+        {#                        amount_balances += `#}
+        {#                        <h6><b>Balance: Ksh ${item.saving_target - item.amount_sent}</b> </h6>#}
+        {#                       `#}
+        {#                        amount_sent = `${item.amount_sent}`#}
+        {#                        payment_id += `${item.payment_id}`#}
+        {##}
+        {# PROGRESS BAR#}
+        {#                        let circular_progress = document.querySelector('.circular_progress'),#}
+        {#                            progress_value = document.querySelector('.progress_value')#}
+        {##}
+        {#                        let my_value = ((item.amount_sent) / (item.saving_target)) * 100#}
+        {#                        let values = Math.floor(my_value)#}
+        {#                        console.log(Math.floor(item.amount_sent))#}
+        {##}
+        {#                        if (Math.floor(item.amount_sent) === 1) {#}
+        {#                            values = 1#}
+        {#                            progress_value = "0%"#}
+        {#                            console.log(Math.floor(item.amount_sent))#}
+        {#                        }#}
+        {##}
+        {#                        let progressStartValue = 0,#}
+        {#                            progress_end_value = values,#}
+        {#                            speed = 100;#}
+        {##}
+        {#                        let progress = setInterval(() => {#}
+        {#                            progressStartValue++;#}
+        {#progress_value.textContent = progressStartValue + "%"#}
+        {#                            if (item.amount_sent === 0) {#}
+        {#                                progress_value.textContent = "0%"#}
+        {#                            } else {#}
+        {#                                progress_value.textContent = progressStartValue + "%"#}
+        {#                            }#}
+        {##}
+        {#                            circular_progress.style.background = `conic-gradient(#0d6efd ${progressStartValue * 3.6}deg, white 0deg)`#}
+        {#                            if (progressStartValue === progress_end_value) {#}
+        {#                                clearInterval(progress)#}
+        {#                            }#}
+        {#console.log(progressStartValue);#}
+        {#                        }, speed);#}
+        {##}
+        {#                        xValue = `${item.current_quantity} KGs  / L`#}
+        {#                        yValue = `${item.target_quantity} KGs / L`#}
+        {#                        savingTarget = `${item.saving_target}`#}
+        {##}
+        {#console.log(item)#}
+        {#                    }#}
+        {#                }#}
+        {#                // }#}
+        {#            );#}
+        {##}
+        {#            $('#paymentForm').show(300);#}
+        {#            $('#orgName').html(org_names);#}
+        {#            $('#amountBalance').html(amount_balances);#}
+        {#            $('#x').html(xValue)#}
+        {#            $('#y').html(yValue)#}
+        {#            $('.pay').val(payment_id);#}
+        {##}
+        {#            $('#vendor_id').val(vendor_id)#}
+        {#            $('#vendor_name').val(vendor_name)#}
+        {#            $('#vendor_phone').val(vendor_phone)#}
+        {#            $('#vendor_org').val(vendor_org)#}
+        {#            $('#vendor_crop').val(vendor_crop)#}
+        {#            $('#saving_target').val(savingTarget)#}
+        {#            $('#client_id').val(client_id)#}
+        {#            $('#client_name').val(client_name)#}
+        {#            $('#client_phone').val(client_phone)#}
+        {#            $('#amount_sent').val(amount_sent)#}
+        {#            $('#category').val(categories)#}
+        {#            $('#commission').val(commission)#}
+        {#            $('#selected_crop').val($('#item').val())#}
+        {##}
+        {##}
+        {#$('#vendor_id').val(vendor_id)#}
+        {#        }#}
+        {#    });#}
+        {#    //});#}
+
+        // })
     })
-    ;
     //collapsible
     document.addEventListener('DOMContentLoaded', function () {
         let elems = document.querySelectorAll('.collapsible');

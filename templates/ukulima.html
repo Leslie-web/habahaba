@@ -21,8 +21,17 @@
     <script type="text/javascript" src="{{ url_for('static', filename='/js/ukulima_animations.js') }}" defer></script>
 </head>
 <body>
+<style>
+    @media all and (max-width: 640px) {
+        body {
+        {#width: 100vw;#} height: 100%;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+    }
+</style>
 <div id="preloader" style="
-  background: white url('/static/_public/images/Line-Preloader.gif') no-repeat center center;
+  background: white url('/static/_public/images/preloader11.gif') no-repeat center center;
   height: 100vh;
   width: 100%;
   position: fixed;
@@ -93,16 +102,29 @@ height: 60%;
             <h5 style="text-align: center;">Saved Items:</h5>
             <div class="carousel" id="items_carousel" style="max-height: 15em;">
                 {% for item in user_items %}
-                    {% if session['user_id']|string in item['sender_id'] %}
+                    {#                    <ul>#}
+                    {#                        <li>{{ user_items }}</li>#}
+                    {#                    </ul>#}
+                    {% if session['user_id']|string != item['sender_id'] %}
                         <a href="#one!" class="carousel-item" style="max-height: 8em">
                             <div class="item_one black-text"
-                                 style="background-color: rgb(255 255 255 / 0.8); padding: 0.1em 1em;border-radius: 30px; text-align: center;">
+                                 style="background-color: rgb(255 255 255 / 0.8); padding: 0.1em 1em;border-radius: 30px; text-align: center;"
+                                 id="items_container">
                                 <h4>{{ item['payment_for'] }}</h4>
                                 <p>{{ "%.2f"| format(item['amount_sent'] / item['price_per_kg']) }} KGs</p>
                             </div>
                         </a>
                     {% else %}
                         No items available
+                        {#                        <style>#}
+                        {#                            #items_container {#}
+                        {#                                max-height: 1px;#}
+                        {#                            }#}
+                        {##}
+                        {#                            #items_carousel {#}
+                        {#                                max-height: 2em;#}
+                        {#                            }#}
+                        {#                        </style>#}
                     {% endif %}
                 {% endfor %}
 
@@ -245,6 +267,18 @@ height: 60%;
             </div>
         </a>
 
+        <div class="fixed-action-btn">
+            <a class="btn-floating btn-large green lighten-1">
+                <i class="large material-icons">mode_edit</i>
+            </a>
+            <ul>
+                <li><a href="{{ url_for('ukulima_help') }}" class="btn-floating btn-large red"><i
+                        class="material-icons">error</i></a></li>
+                {#                <li><a class="btn-floating yellow darken-1"><i class="material-icons">format_quote</i></a></li>#}
+                {#                <li><a class="btn-floating green"><i class="material-icons">publish</i></a></li>#}
+                {#                <li><a class="btn-floating blue"><i class="material-icons">attach_file</i></a></li>#}
+            </ul>
+        </div>
     </div>
 
     <footer>
@@ -324,26 +358,27 @@ height: 60%;
     }
     //sidenav
     $(document).ready(function () {
+        $('.fixed-action-btn').floatingActionButton();
         {#let phone_no = '0745698745';#}
         {#let password = '1234';#}
 
-        fetch('/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                phone_no: '0745698745',
-                password: '1234'
-            })
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.access_token) {
-                    let access_token = data.access_token;
-                    console.log(access_token)
-                }
-            });
+        {#fetch('/', {#}
+        {#    method: 'POST',#}
+        {#    headers: {#}
+        {#        'Content-Type': 'application/json'#}
+        {#    },#}
+        {#    body: JSON.stringify({#}
+        {#        phone_no: '0745698745',#}
+        {#        password: '1234'#}
+        {#    })#}
+        // })
+        {#    .then(response => response.json())#}
+        {#    .then(data => {#}
+        {#        if (data.access_token) {#}
+        {#            let access_token = data.access_token;#}
+        {#            console.log(access_token)#}
+        {#        }#}
+        {#    });#}
         $('.sidenav').sidenav();
 
         //modal

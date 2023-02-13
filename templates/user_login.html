@@ -22,6 +22,20 @@
 </head>
 <body>
 <style>
+    .details_container {
+        border-radius: 15px;
+        width: 40dvw;
+        margin-top: 0;
+        padding-top: 0;
+    }
+
+    .image_bg {
+        width: 600px;
+        height: 300px;
+        background: url('/static/_public/images/habahaba6bg.png') no-repeat center;
+        background-size: contain;
+    }
+
     @media all and (max-width: 650px) {
         body {
             display: flex;
@@ -39,6 +53,14 @@
         h3 {
             text-decoration: underline;
         }
+
+        .image_bg {
+            width: 400px;
+            height: 300px;
+            background: url('/static/_public/images/habahaba6bg.png') no-repeat center;
+            background-size: contain;
+
+        }
     }
 </style>
 
@@ -48,7 +70,11 @@
             {% include 'includes/_flashmsg.html' %}
         </div>
         <center>
-            <h1 id="background_gradient">Login</h1>
+            {#            <h1 id="background_gradient">Login</h1>#}
+            {#            <img src="/static/_public/images/habahaba6bg.png" alt="Haba haba" id="image_icon">#}
+            <div class="image_bg">
+
+            </div>
         </center>
         {#    Email address#}
         <div class="row">
@@ -82,33 +108,35 @@
 {#link to app.js for service worker#}
 <script src="../static/js/app.js"></script>
 <script>
-    localStorage.setItem('some-nested-array', JSON.stringify(['this', ['is'], ['an', ['item']]]))
+    {#localStorage.setItem('some-nested-array', JSON.stringify(['this', ['is'], ['an', ['item']]]))#}
 
-    $(document).ready(function () {
-        //regular inputs
-        M.updateTextFields();
+    //$(document).ready(function () {
+    //regular inputs
+    M.updateTextFields();
 
-        {#$.ajax({#}
-        {#    url: '/user-login/',#}
-        {#    type: 'POST',#}
-        {#    data: {#}
-        {#        phone_no: "0745632145",#}
-        {#        password: "1234"#}
-        {#    },#}
-        {#    success: function (data) {#}
-        {#        console.log('data')#}
-        {#        if (data.token) {#}
-        {#            let token = data.token#}
-        {#            console.log(token)#}
-        {#            localStorage.setItem('token', token)#}
-        {#            const stored_token = localStorage.getItem(token)#}
-        {#            console.log(stored_token)#}
-        {#        } else {#}
-        {#            console.log('token not found')#}
-        {#        }#}
-        {#    }#}
-        // });
+    $.ajax({
+        {#url: '/user-login/',#}
+        url: '/',
+        type: 'GET',
+        {#data: {#}
+        {#    phone_no: "0745632145",#}
+        {#    password: "1234"#}
+        // },
+        success: function (data) {
+            console.log('data')
+            if (data.token) {
+                let token = data.token
+                console.log(token)
+                localStorage.setItem('token', token)
+                const stored_token = localStorage.getItem(token)
+                console.log(stored_token)
+                window.location.replace({{url_for('ukulima')}});
+            } else {
+                console.log('token not found')
+            }
+        }
     });
+    //});
 
 
     //stop auto reload on submit

@@ -78,22 +78,23 @@
 
                     <br>
 
-                    <div class="input-field col s12">
-                        <div class="rows" style="display: flex;">
-                            <label for="offer_type" class="col-sm-1" style="width: 9em; padding: 0">Type of
-                                offer:</label>
-                            <div class="col-sm-5">
-                                <select name="offer_type" id="offer_type" class="form-control offer_type" required>
-                                    <option value="" selected disabled>Please select an offer type</option>
-                                    <option value="Discount">Discount</option>
-                                    <option value="Promotion">Promotion</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
+                    {#                    <div class="input-field col s12">#}
+                    {#                        <div class="rows" style="display: flex;">#}
+                    {#                            <label for="offer_type" class="col-sm-1" style="width: 9em; padding: 0">Type of#}
+                    {#                                offer:</label>#}
+                    {#                            <div class="col-sm-5">#}
+                    {#                                <select name="offer_type" id="offer_type" class="form-control offer_type" required>#}
+                    {#                                    <option value="" selected disabled>Please select an offer type</option>#}
+                    {#                                    <option value="Discount">Discount</option>#}
+                    {#                                    <option value="Promotion">Promotion</option>#}
+                    {#                                </select>#}
+                    {#                            </div>#}
+                    {#                        </div>#}
+                    {#                    </div>#}
                     <br>
                 </div>
-                <div class="discount" hidden="hidden">
+                {#            hidden = "hidden" was at class discount#}
+                <div class="discount">
                     <div class="row">
                         <div class="input-field col s5">
                             <div class="form-group row">
@@ -132,21 +133,21 @@
                     <br>
                 </div>
 
-                <div class="promotions" hidden="hidden">
-                    <div class="row">
-                        <div class="input-field col s5">
-                            <div class="form-group row">
-                                <label for="valid_untils" class="col-sm-1 col-form-label">Valid Until:</label>
-                                <div class="col-sm-5">
-                                    <input type="date" class="form-control" id="valid_untils" name="valid_untils"
-                                           required>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                {#                <div class="promotions" hidden="hidden">#}
+                {#                    <div class="row">#}
+                {#                        <div class="input-field col s5">#}
+                {#                            <div class="form-group row">#}
+                {#                                <label for="valid_untils" class="col-sm-1 col-form-label">Valid Until:</label>#}
+                {#                                <div class="col-sm-5">#}
+                {#                                    <input type="date" class="form-control" id="valid_untils" name="valid_untils"#}
+                {#                                           required>#}
+                {#                                </div>#}
+                {#                            </div>#}
+                {#                        </div>#}
+                {#                    </div>#}
+                {#                </div>#}
 
-                <div class="regions_available" hidden="hidden">
+                <div class="regions_available">
                     <fieldset class="col-sm-6">
                         <legend>Regions where offers will be available</legend>
                         <div class="col-md-6">
@@ -164,7 +165,7 @@
                 <div class="rows" class="col-sm-6" style="display: flex;">
                     {#                <button type="submit" class="btn waves-effect waves-light green lighten-2">Submit</button>#}
                     <button type="submit" class="btn btn-outline-success"
-                            style="outline: 1px solid green; margin-left: 20vw" id="submit_btn">
+                            style="outline: 1px solid green; margin-left: 20vw" id="submit_button">
                         Submit
                     </button>
                 </div>
@@ -186,17 +187,17 @@
     <script>
         //making sure a checkbox is checked and prevent form submission
         $(document).ready(function () {
-            $('#submit_btn').click(function () {
-                if ($('#Nairobi').prop('checked') === false && $('#Mombasa').prop('checked') === false &&
-                    $('#Kisumu').prop('checked') === false && $('#Eldoret').prop('checked') === false) {
-                    alert('Please check a checkbox')
-
-                    //prevent form submission
-                    $('form').click(function (event) {
-                        event.preventDefault()
-                    });
-                }
-            });
+            {#$('#submit_btn').click(function () {#}
+            {#    if ($('#Nairobi').prop('checked') === false && $('#Mombasa').prop('checked') === false &&#}
+            {#        $('#Kisumu').prop('checked') === false && $('#Eldoret').prop('checked') === false) {#}
+            {#        alert('Please check a checkbox')#}
+            {##}
+            {#        //prevent form submission#}
+            {#        $('form').click(function (event) {#}
+            {#            event.preventDefault()#}
+            {#        });#}
+            {#    }#}
+            // });
 
             $('#offer_name').change(function () {
                 // loading material id when select box changes
@@ -223,11 +224,11 @@
             $('#offer_type').change(function () {
                 if ($('.offer_type').val() === 'Discount') {
                     $('.discount').show(300)
-                    $('.promotions').hide(300)
+                    {#$('.promotions').hide(300)#}
                     $('.regions_available').show(300)
                 } else if ($('#offer_type').val() !== 'Discount') {
                     $('.discount').hide(300)
-                    $('.promotions').show(300)
+                    {#$('.promotions').show(300)#}
                     $('.regions_available').show(300)
                 }
             });
@@ -294,10 +295,6 @@ margin-right: 1em; " >
             });
         });
 
-        //datatables
-        $(document).ready(function () {
-            $('#example').DataTable();
-        });
     </script>
 {% endblock %}
 </body>

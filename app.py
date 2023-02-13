@@ -10,8 +10,6 @@ import jwt
 import csv
 
 from requests.auth import HTTPBasicAuth
-from cryptography.hazmat.primitives.asymmetric import rsa, padding
-from cryptography.hazmat.primitives import serialization, hashes
 
 from flask import *
 from flask_mysqldb import MySQL
@@ -22,12 +20,20 @@ from datetime import date, datetime, timedelta
 # import datetime
 
 from counties import counties
+from machine_learning_model.machine_learning_main import ml
+from user_login.user_login import farmer_login
+
+# from admin_portal.admin_portals import admin_stuff
 
 # ngrok
 # from flask_ngrok import run_with_ngrok
 
 app = Flask(__name__)
 # run_with_ngrok(app)
+
+app.register_blueprint(ml)
+app.register_blueprint(farmer_login)
+# app.register_blueprint(admin_stuff)
 
 mysql = MySQL()
 app.secret_key = 'erxycutvhkbjlnk'
@@ -69,20 +75,9 @@ def pages_not_found(e):
     return render_template('vendor_page_not_found.html'), 404
 
 
-# @app.before_request
-# def check_url_exist():
-#     if request.path not in app.url_map.iter_rules():
-#         return render_template('vendor_page_not_found.html'), 404
-
-# @app.before_request
-# def check_url_exist():
-#     for rule in app.url_map.iter_rules():
-#         if request.path == rule.rule:
-#             print(f'http://127.0.0.1:5000{rule}')
-#
-#             return redirect(f'http://127.0.0.1:5000{rule}')
-#
-#     return render_template('vendor_page_not_found.html'), 404
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template('502_error_page.html'), 500
 
 
 # BLOCK ADMIN ROUTES
@@ -213,10 +208,8 @@ def admin_registration():
 
 # admin login
 @app.route('/admin-login/', methods=['POST', 'GET'])
-# @not_admin_logged_in
 def admin_login():
     if request.method == 'POST':
-        # email = request.form['email']
         phone_no = request.form['phone_no']
         password_candidate = request.form['password']
 
@@ -232,10 +225,7 @@ def admin_login():
             l_name = data['l_name']
             phone_no = data['phone_no']
 
-            # admin_var = 'admin_logged_in'
-
             if bcrypt.checkpw(password_candidate.encode('utf-8'), password.encode('utf-8')):
-                # if sha256_crypt.verify(password_candidate, password):
                 session['admin_logged_in'] = True
                 session['admin_id'] = uid
                 session['email'] = email
@@ -243,66 +233,21 @@ def admin_login():
                 session['l_name'] = l_name
                 session['phone_no'] = phone_no
 
-                login_time = datetime.utcnow()
-                message = f'{f_name} {l_name} logged in'
-                success_status = 1
-
-                cur = mysql.connection.cursor()
-                cur.execute(f"""
-                INSERT INTO habahaba_trial.audit_report (audit_report.admin_id, audit_report.action_performed, audit_report.action_time, audit_report.success) 
-                VALUES (%s, %s, %s, %s)
-                """, (
-                    uid, message, login_time, success_status
-                ))
-                mysql.connection.commit()
-
-                auth = request.application
-                private_key = rsa.generate_private_key(
-                    public_exponent=65537,
-                    key_size=2048
-                )
-                public_key = private_key.public_key()
-
-                private_pem = private_key.private_bytes(
-                    encoding=serialization.Encoding.PEM,
-                    format=serialization.PrivateFormat.PKCS8,
-                    encryption_algorithm=serialization.NoEncryption()
-                )
-                public_pem = public_key.public_bytes(
-                    encoding=serialization.Encoding.PEM,
-                    format=serialization.PublicFormat.SubjectPublicKeyInfo
-                )
-                # print(public_pem)
-                # print(private_pem)
-
-                payload = {
-                    'admin_id': data['admin_id'],
-                    'f_name': f_name,
-                    'l_name': l_name,
-                    'phone_no': phone_no,
-                    # 'exp': str(datetime.datetime.utcnow() + timedelta(seconds=120)),
-                }
-                # jwt_token = jwt.encode(payload, app.config['JWT_SECRET_KEY'], algorithm='HS256')
-                # print(jwt_token)
-                # return jwt.decode(jwt_token, algorithms='HS256')
-                encoded = jwt.encode(
-                    payload,
-                    private_pem,
-                    algorithm='RS256',
-                )
-                token = jwt.encode(payload, app.config['JWT_SECRET_KEY'])
-                print(token)
-                print(request.headers.get("Content-type"))
-
-                # print(encoded)
-                # print(jwt.decode(encoded, 'qwerty', algorithms='HS256'))
-                # decoded = jwt.decode(encoded, public_pem, algorithms=['RS256'])
-
-                # print(decoded)
-
                 x = '1'
 
                 cur.execute("UPDATE habahaba_trial.admin SET online=%s WHERE admin_id=%s", (x, uid))
+
+                success = 'Login success'
+                login_time = datetime.utcnow()
+                action_performed = f'{f_name} {l_name} logged in'
+
+                cur.execute(f"""
+                INSERT INTO habahaba_trial.audit_report (admin_id, action_performed, action_time, success)
+                VALUES (%s, %s, %s, %s)
+                """, (
+                    uid, action_performed, login_time, success
+                ))
+                mysql.connection.commit()
 
                 return redirect(url_for('alan_code'))
             else:
@@ -329,6 +274,11 @@ def admin_change_password():
         current_pin = request.form['current_pin']
         new_pin = request.form['new_pin']
         confirm_pin = request.form['confirm_pin']
+
+        if current_pin or new_pin != int:
+            flash("Your pin should only contain numbers", "danger")
+            return redirect(url_for('admin_change_password'))
+
         if bcrypt.checkpw(current_pin.encode('utf-8'), pin.encode('utf-8')):
             if confirm_pin == new_pin:
                 new_pin_value = bcrypt.hashpw(new_pin.encode('utf_8'), bcrypt.gensalt())
@@ -362,9 +312,24 @@ def admin_logout():
         cur = mysql.connection.cursor()
         uid = session['admin_id']
         f_name = session['f_name']
+        l_name = session['l_name']
         x = '0'
         cur.execute("UPDATE habahaba_trial.admin SET online=%s WHERE admin_id=%s ", (x, uid))
+
+        success = 'Logged out successfully'
+        logout_time = datetime.utcnow()
+        action_performed = f'{f_name} {l_name} logged out'
+
+        cur.execute(f"""
+        INSERT INTO habahaba_trial.audit_report (admin_id, action_performed, action_time, success)
+        VALUES (%s, %s, %s, %s)
+                        """, (
+            uid, action_performed, logout_time, success
+        ))
+        mysql.connection.commit()
+
         session.clear()
+        cur.close()
         flash(f'You are now logged out {f_name}', 'danger')
         return redirect(url_for('admin_login'))
     return redirect(url_for('admin_login'))
@@ -373,13 +338,9 @@ def admin_logout():
 # admin home page
 @app.route('/admin-home/', methods=['POST', 'GET'])
 @is_admin_logged_in
-# @token_required
 def alan_code():
     authorization_header = request.headers.get('Authorization')
 
-    # if not authorization_header:
-    #     return {'error', 'Authorization header is missing'}, 401
-    # all users
     cur = mysql.connection.cursor()
     cur.execute("SELECT * FROM habahaba_trial.users")
     users = cur.fetchall()
@@ -405,28 +366,27 @@ def alan_code():
 
     # transactions
     # vendor - user transactions
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM habahaba_trial.payments_table")
-    payments = cur.fetchall()
-    cur.close()
+    # cur = mysql.connection.cursor()
+    # cur.execute("SELECT * FROM habahaba_trial.payments_table")
+    # payments = cur.fetchall()
+    # cur.close()
 
     # transactions
     cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM habahaba_trial.payment_transactions")
+    cur.execute("SELECT * FROM habahaba_trial.payment_transactions WHERE transaction_status=1")
     transactions = cur.fetchall()
     cur.close()
     return render_template('alan_code.html', users=users, vendors=vendors, products=products,
-                           offers=offers, payments=payments, transactions=transactions,
-
+                           offers=offers, transactions=transactions
                            )
 
 
 @app.route('/categories-report/', methods=['GET'])
 def a_categories_reports():
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT category FROM habahaba_trial.payments_table")
-    categories = cur.fetchall()
-    cur.close()
+    # cur = mysql.connection.cursor()
+    # cur.execute("SELECT category FROM habahaba_trial.payments_table")
+    # categories = cur.fetchall()
+    # cur.close()
     return render_template('a_category_reports.html')
 
 
@@ -465,11 +425,38 @@ def admin_vendor_setup():
                 vendor_status
             ))
             mysql.connection.commit()
+
+            action_performed = f'{f_name} {l_name} set up {organization_name} successfully'
+            action_time = datetime.utcnow()
+            success = f'Setup Vendor success'
+
+            cur.execute(f"""
+            INSERT INTO habahaba_trial.audit_report (admin_id, action_performed, action_time, success) 
+            VALUES (%s, %s, %s, %s)
+                                            """, (
+                session['admin_id'], action_performed, action_time, success
+            ))
+            mysql.connection.commit()
             cur.close()
+            flash("Vendor has been set up successfully", "success")
+            return redirect(url_for('admin_vendor_setup'))
         except (MySQLdb.Error, MySQLdb.Warning) as e:
+            action_performed = f'{f_name} {l_name} failed to set up Vendor'
+            action_time = datetime.utcnow()
+            success = f'Vendor Setup Failed'
+            additional_info = f"{e}"
+
+            cur = mysql.connection.cursor()
+            cur.execute(f"""
+            INSERT INTO habahaba_trial.audit_report (admin_id, action_performed, action_time, success, additional_details) 
+            VALUES (%s, %s, %s, %s, %s)
+                                                        """, (
+                session['admin_id'], action_performed, action_time, success, additional_info
+            ))
+            mysql.connection.commit()
+            cur.close()
             flash("Error setting up Vendor!", "warning")
-        flash("Vendor has been set up successfully", "success")
-        return redirect(url_for('admin_vendor_setup'))
+            return redirect(url_for('admin_vendor_setup'))
         # except (MySQLdb.Error, MySQLdb.Warning) as e:
         #     print(e)
         #     flash('Duplicate entry entered, please try again', 'warning')
@@ -544,10 +531,37 @@ def vendor_onboarding():
 
             vendor_text_msg(phone_no, password)
 
+            success = 'Onboarded a Vendor successfully'
+            action_time = datetime.utcnow()
+            action_performed = f"{session['f_name']} {session['l_name']} onboarded {general_industry}"
+
+            cur = mysql.connection.cursor()
+            cur.execute(f"""
+                    INSERT INTO habahaba_trial.audit_report (admin_id, action_performed, action_time, success) 
+                    VALUES (%s, %s, %s, %s)
+                                    """, (
+                session['admin_id'], action_performed, action_time, success
+            ))
+            mysql.connection.commit()
+            cur.close()
+
             flash("Vendor added successfully. Please setup the vendor at Vendor Setup", "success")
             return redirect(url_for('vendor_onboarding'))
         except (MySQLdb.Error, MySQLdb.Warning) as e:
-            print(MySQLdb.Error(e))
+            # print(MySQLdb.Error(e))
+            success = f'{e}'
+            action_time = datetime.utcnow()
+            action_performed = f"{session['f_name']} {session['l_name']} failed to onboard a Vendor"
+
+            cur = mysql.connection.cursor()
+            cur.execute(f"""
+            INSERT INTO habahaba_trial.audit_report (admin_id, action_performed, action_time, success) 
+            VALUES (%s, %s, %s, %s)
+                                                """, (
+                session['admin_id'], action_performed, action_time, success
+            ))
+            mysql.connection.commit()
+            cur.close()
             flash("This organization is already registered, please enter a different one", "danger")
             return redirect(url_for('vendor_onboarding'))
     return render_template('admin_onboard_vendors.html', today=today)
@@ -568,17 +582,11 @@ def categories_column():
 @app.route('/transactions/', methods=['POST', 'GET'])
 @is_admin_logged_in
 def admin_transactions():
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT vendor_id, org_name, sender_id, sender_name, sender_phone, amount_sent, date_sent, "
-                " saving_target, payment_for, amount_redeemed, quantity_redeemed "
-                " FROM habahaba_trial.payment_transactions")
-    transactions = cur.fetchall()
-    cur.close()
     if request.method == 'POST':
         client_id = request.form['client_id']
         cur = mysql.connection.cursor
         return redirect(url_for('admin_individual_transactions'))
-    return render_template('admin_transactions.html', transactions=transactions)
+    return render_template('admin_transactions.html')
 
 
 # ADMIN HOMEPAGE
@@ -685,8 +693,9 @@ def a_redemption_summary():
 def a_redemptions_summary_json():
     cur = mysql.connection.cursor()
     cur.execute(f"""
-    SELECT client_name, client_name, vendor_org, category, amount_redeemed, DATE(date_redeemed), redemption_location
-     FROM habahaba_trial.redemption
+    SELECT f_name, concat_ws(' ', f_name, l_name), vendor_org, category, amount_redeemed, DATE(date_redeemed), redemption_location
+     FROM habahaba_trial.redemption 
+     RIGHT JOIN habahaba_trial.users ON client_id = user_id WHERE amount_redeemed != 'null'
     """)
     redemptions_summary = cur.fetchall()
     cur.close()
@@ -697,6 +706,25 @@ def a_redemptions_summary_json():
 @is_admin_logged_in
 def a_vendor_summary():
     return render_template('a_vendor_summary.html')
+
+
+@app.route('/audit-report-json/', methods=['GET'])
+@is_admin_logged_in
+def a_audit_report_json():
+    cur = mysql.connection.cursor()
+    cur.execute("""
+    SELECT  audit_id, action_performed, action_performed, action_time, success, additional_details, admin_id, vendor_id, sender_id
+     FROM habahaba_trial.audit_report
+    """)
+    audit = cur.fetchall()
+    cur.close()
+    return datatable(audit)
+
+
+@app.route('/audit-report/', methods=['GET'])
+@is_admin_logged_in
+def a_audit_report():
+    return render_template('a_audit_report.html')
 
 
 @app.route('/balance-summary/', methods=['GET'])
@@ -718,14 +746,39 @@ def a_farm_scale():
     return render_template('a_farm_scale.html')
 
 
+# @app.route('/farm-scale-test-json/', methods=['GET'])
+# @is_admin_logged_in
+# def a_farm_scale_test_json():
+#     cur = mysql.connection.cursor()
+#     cur.execute(f"""
+#     SELECT max(concat_ws(' ', f_name, l_name)) as sender_name, max(saving_target / (partnership.quantity_per_acre * partnership.price_per_kg)),
+#     max(crop_name) as crop_name, max(partnership_id) as partnership_id
+#     FROM habahaba_trial.partnership
+#     RIGHT JOIN habahaba_trial.users ON client_id=user_id
+#     RIGHT JOIN habahaba_trial.materials ON item_id=material_id
+#     GROUP BY crop_name
+#     """)
+#     item = cur.fetchall()
+#     cur.close()
+#     return json.dumps(item)
+
+
 @app.route('/farm-scale-json/', methods=['GET'])
 @is_admin_logged_in
 def a_farm_scale_json():
     cur = mysql.connection.cursor()
-    cur.execute("""
-    SELECT sender_name, (saving_target / (quantity_per_acre * payments_table.price_per_kg)),
-     payment_for, payment_id FROM habahaba_trial.payments_table
-    """)
+    # cur.execute("""
+    # SELECT sender_name, (saving_target / (quantity_per_acre * payments_table.price_per_kg)),
+    #  payment_for, payment_id FROM habahaba_trial.payments_table
+    # """)
+    cur.execute(f"""
+        SELECT max(concat_ws(' ', f_name, l_name)) as sender_name, max(saving_target / (partnership.quantity_per_acre * partnership.price_per_kg)),
+        max(crop_name) as crop_name, max(partnership_id) as partnership_id 
+        FROM habahaba_trial.partnership
+        RIGHT JOIN habahaba_trial.users ON client_id=user_id
+        RIGHT JOIN habahaba_trial.materials ON item_id=material_id WHERE partnership_id != 'null'
+        GROUP BY crop_name
+        """)
     farm_scale = cur.fetchall()
     cur.close()
     return datatable(farm_scale)
@@ -737,15 +790,43 @@ def a_crop_summary():
     return render_template('a_crop_summary.html')
 
 
+# @app.route('/crop-summary-test-json/', methods=['GET'])
+# @is_admin_logged_in
+# def a_crop_summary_test_json():
+#     cur = mysql.connection.cursor()
+#     cur.execute(f"""
+#     SELECT max(concat_ws(' ', f_name, l_name)) as sender_name, max(crop_name) as payment_for,
+#     max(format(saving_target / (partnership.quantity_per_acre * partnership.price_per_kg), 2)) as land_size,
+#     max(vendor_org) as vendor_org, max(vendor_org) as vendor_org, max(partnership_id) as partnership_id
+#     FROM habahaba_trial.partnership
+#     RIGHT JOIN habahaba_trial.materials ON item_id=material_id
+#     RIGHT JOIN habahaba_trial.users ON client_id=user_id
+#     GROUP BY crop_name
+#     """)
+#     item = cur.fetchall()
+#     cur.close()
+#     return json.dumps(item)
+
+
 @app.route('/crop-summary-json/', methods=['GET'])
 @is_admin_logged_in
 def a_crop_summary_json():
     cur = mysql.connection.cursor()
-    cur.execute("""
-    SELECT sender_name, payment_for, 
-    format(saving_target / (quantity_per_acre * payments_table.price_per_kg), 2), org_name, org_name, payment_id
-    FROM habahaba_trial.payments_table
-    """)
+    # cur.execute("""
+    # SELECT sender_name, payment_for,
+    # format(saving_target / (quantity_per_acre * payments_table.price_per_kg), 2), org_name, org_name, payment_id
+    # FROM habahaba_trial.payments_table
+    # """)
+    cur.execute(f"""
+        SELECT max(concat_ws(' ', f_name, l_name)) as sender_name, max(crop_name) as payment_for,
+        max(format(saving_target / (partnership.quantity_per_acre * partnership.price_per_kg), 2)) as land_size,
+        max(vendor_org) as vendor_org, max(vendor_org) as vendor_org, max(partnership_id) as partnership_id
+        FROM habahaba_trial.partnership
+        RIGHT JOIN habahaba_trial.materials ON item_id=material_id 
+        RIGHT JOIN habahaba_trial.users ON client_id=user_id
+        GROUP BY crop_name, concat_ws(' ', f_name, l_name), 
+        format(saving_target / (partnership.quantity_per_acre * partnership.price_per_kg), 2)
+        """)
     crop_summary = cur.fetchall()
     cur.close()
     return datatable(crop_summary)
@@ -757,13 +838,34 @@ def a_saving_summary():
     return render_template('a_saving_summary.html')
 
 
+# @app.route('/saving-summary-test-json/', methods=['GET'])
+# @is_admin_logged_in
+# def a_saving_summary_test_json():
+#     cur = mysql.connection.cursor()
+#     cur.execute(f"""
+#     SELECT max(transaction_id) as transaction_id, max(concat_ws(' ', f_name, l_name)) as sender_name,
+#     sum(amount_saved_daily) as amount_saved_daily, max(category) as category
+#     FROM habahaba_trial.payment_transactions RIGHT JOIN habahaba_trial.users ON sender_id=user_id
+#     """)
+#     item = cur.fetchall()
+#     cur.close()
+#     return json.dumps(item)
+
+
 @app.route('/saving-summary-json/', methods=['GET'])
 @is_admin_logged_in
 def a_saving_summary_json():
     cur = mysql.connection.cursor()
-    cur.execute("""
-    SELECT payment_id, sender_name, amount_sent, category FROM habahaba_trial.payments_table
-    """)
+    # cur.execute("""
+    # SELECT payment_id, sender_name, amount_sent, category FROM habahaba_trial.payments_table
+    # """)
+    cur.execute(f"""
+        SELECT max(transaction_id) as transaction_id, max(concat_ws(' ', f_name, l_name)) as sender_name,
+        sum(amount_saved_daily) as amount_saved_daily, max(category) as category  
+        FROM habahaba_trial.payment_transactions RIGHT JOIN habahaba_trial.users ON sender_id=user_id 
+        WHERE transaction_status = 1
+        GROUP BY sender_name
+        """)
     saving_summary = cur.fetchall()
     cur.close()
     return datatable(saving_summary)
@@ -797,40 +899,152 @@ def a_vendor_insight():
     return render_template('a_vendor_insight.html')
 
 
+# @app.route('/vendor-insight-test-json/', methods=['GET'])
+# def a_vendor_insight_test_json():
+#     # (format((sum(saving_target) / (sum(price_per_kg) * sum(quantity_per_acre))), 2)) as calc2
+#     cur = mysql.connection.cursor()
+#     cur.execute(f"""
+#     SELECT max(vendor_org) as org_name, max(category) as category, (count(category)) as calc1,
+#     (sum(size_of_land)) as land_size
+#      FROM habahaba_trial.partnership
+#      RIGHT JOIN habahaba_trial.users ON client_id=user_id WHERE user_id=client_id GROUP BY category, client_id
+#     """)
+#     item = cur.fetchall()
+#     cur.close()
+#     return json.dumps(item)
+
+
 @app.route('/vendor-insight-json/', methods=['GET'])
 def a_vendor_insight_json():
     cur = mysql.connection.cursor()
-    cur.execute(f"""SELECT max(org_name), max(category), ((count(*) / avg(sender_id)) * 100), 
-        format((sum(saving_target) / (sum(price_per_kg) * sum(quantity_per_acre))), 2)
-        FROM habahaba_trial.payments_table GROUP BY category, org_name""")
+    # format(((count(*) / avg(client_id)) * 100), 2)
+    # cur.execute(f"""SELECT max(org_name), max(category), ((count(*) / avg(sender_id)) * 100),
+    #     format((sum(saving_target) / (sum(price_per_kg) * sum(quantity_per_acre))), 2)
+    #     FROM habahaba_trial.payments_table GROUP BY category, org_name""")
+    cur.execute(f"""
+        SELECT max(vendor_org) as org_name, max(category) as category, format(((count(category) / avg(client_id)) * 100), 2) as calc1,
+        (sum(size_of_land)) as land_size
+         FROM habahaba_trial.partnership 
+         RIGHT JOIN habahaba_trial.users ON client_id=user_id WHERE user_id=client_id GROUP BY vendor_org 
+    """)
     vendor_insight = cur.fetchall()
     cur.close()
 
     return datatable(vendor_insight)
 
 
+@app.route('/vendor-summary-test-json/', methods=['GET'])
+@is_admin_logged_in
+def a_vendor_summary_test_json():
+    cur = mysql.connection.cursor()
+    cur.execute(f"""
+    SELECT max(payment_transactions.org_name) as org_name, max(category) as category, sum(amount_saved_daily) as amount_sent,
+    max(date_registered) as date_registered FROM habahaba_trial.payment_transactions 
+    RIGHT JOIN habahaba_trial.vendors ON payment_transactions.vendor_id=vendors.vendor_id
+    GROUP BY category
+    """)
+    item = cur.fetchall()
+    return json.dumps(item)
+
+
 @app.route('/vendor-summary-json/', methods=['GET'])
 @is_admin_logged_in
 def a_vendor_summary_json():
     cur = mysql.connection.cursor()
-    cur.execute(
-        f"""SELECT max(payments_table.org_name), max(category), sum(amount_sent) , max(date_registered)
-        FROM habahaba_trial.payments_table INNER JOIN habahaba_trial.vendors ON payments_table.vendor_id = vendors.vendor_id
-         group by category, payments_table.org_name""")
+    # cur.execute(
+    #     f"""SELECT max(payments_table.org_name), max(category), sum(amount_sent) , max(date_registered)
+    #     FROM habahaba_trial.payments_table INNER JOIN habahaba_trial.vendors ON payments_table.vendor_id = vendors.vendor_id
+    #      group by category, payments_table.org_name""")
+    cur.execute(f"""
+        SELECT max(payment_transactions.org_name) as org_name, max(category) as category, sum(amount_saved_daily) as amount_sent,
+        max(date_registered) as date_registered FROM habahaba_trial.payment_transactions 
+        RIGHT JOIN habahaba_trial.vendors ON payment_transactions.vendor_id=vendors.vendor_id
+        WHERE transaction_status = 1
+        GROUP BY category
+        """)
     vendor_summary = cur.fetchall()
     return datatable(vendor_summary)
+
+
+@app.route('/float-summary-test-chart/', methods=['GET'])
+def float_summary_test_chart():
+    cur = mysql.connection.cursor()
+    cur.execute(f"""
+    SELECT sum(redemption.quantity_redeemed) as quantity_redeemed, sum(amount_saved_daily) as amount_sent,
+    sum(redemption.amount_redeemed) as amount_redeemed, sum((payment_transactions.saving_target / materials.price_per_kg) - redemption.amount_redeemed) as balance, count(*)
+    FROM habahaba_trial.payment_transactions
+    RIGHT JOIN habahaba_trial.redemption ON payment_transactions.payment_for=redemption.payment_for AND payment_transactions.vendor_id=redemption.vendor_id
+    RIGHT JOIN habahaba_trial.materials ON payment_transactions.payment_for=material_id
+    WHERE payment_transactions.vendor_id = {session['vendor_id']} AND transaction_status=1
+    """)
+    item = cur.fetchall()
+    cur.close()
+
+    cur = mysql.connection.cursor()
+    cur.execute(f"""
+    SELECT sum(amount_saved_daily) as amount_saved FROM habahaba_trial.payment_transactions WHERE vendor_id={session['vendor_id']}
+    AND transaction_status=1
+     """)
+    amount_sent_daily = cur.fetchall()
+    cur.close()
+
+    cur = mysql.connection.cursor()
+    cur.execute(f"""
+    SELECT sum(quantity_redeemed) as quantity_redeemed, sum(amount_redeemed) as amount_redeemed
+     FROM habahaba_trial.redemption WHERE vendor_id={session['vendor_id']}
+    """)
+    redemption_details = cur.fetchall()
+    cur.close()
+
+    amount_sent = amount_sent_daily[0]['amount_saved']
+    amount_redeemed = redemption_details[0]['amount_redeemed']
+    quantity_redeemed = redemption_details[0]['quantity_redeemed']
+
+    final_value = [{
+        'amount_sent': amount_sent,
+        'amount_redeemed': amount_redeemed,
+        'balance': int(amount_sent) - int(amount_redeemed)
+    }]
+
+    return json.dumps(final_value)
 
 
 @app.route('/float-summary-chart/', methods=['GET'])
 def float_summary_chart():
     cur = mysql.connection.cursor()
     cur.execute(
-        "SELECT sum(quantity_redeemed) as quantity_redeemed, sum(amount_sent) as amount_sent ,"
-        " sum(amount_redeemed) as amount_redeemed, sum(saving_target - payments_table.amount_redeemed) as balance "
-        "FROM habahaba_trial.payments_table")
+        f"""SELECT sum(quantity_redeemed) as quantity_redeemed, sum(amount_sent) as amount_sent ,
+        sum(amount_redeemed) as amount_redeemed, sum(saving_target - payments_table.amount_redeemed) as balance 
+        FROM habahaba_trial.payments_table WHERE vendor_id= '{session['vendor_id']}' """)
     summary_chart = cur.fetchall()
     cur.close()
-    return json.dumps(summary_chart)
+
+    cur = mysql.connection.cursor()
+    cur.execute(f"""
+    SELECT sum(amount_saved_daily) as amount_saved FROM habahaba_trial.payment_transactions WHERE vendor_id={session['vendor_id']}
+    AND transaction_status=1
+     """)
+    amount_sent_daily = cur.fetchall()
+    cur.close()
+
+    cur = mysql.connection.cursor()
+    cur.execute(f"""
+    SELECT sum(quantity_redeemed) as quantity_redeemed, sum(amount_redeemed) as amount_redeemed
+     FROM habahaba_trial.redemption WHERE vendor_id={session['vendor_id']}
+    """)
+    redemption_details = cur.fetchall()
+    cur.close()
+
+    amount_sent = amount_sent_daily[0]['amount_saved']
+    amount_redeemed = redemption_details[0]['amount_redeemed']
+    quantity_redeemed = redemption_details[0]['quantity_redeemed']
+
+    final_value = [{
+        'amount_sent': amount_sent,
+        'amount_redeemed': amount_redeemed,
+        'balance': int(amount_sent) - int(amount_redeemed)
+    }]
+    return json.dumps(final_value)
 
 
 # ADMIN PRODUCT VALIDATION
@@ -1098,17 +1312,49 @@ def admin_customer_summary():
 #     cur.execute("DELETE FROM habahaba_trial.materials WHERE material_id=%s" % id_data)
 #     mysql.connection.commit()
 #     return redirect(url_for('category'))
+
+# @app.route('/customer-summary-test-json/', methods=['POST', 'GET'])
+# @is_admin_logged_in
+# def customer_summary_test_json():
+#     cur = mysql.connection.cursor()
+#     cur.execute(f"""
+#     SELECT max(transaction_id) as transaction_id, max(concat_ws(' ', f_name, l_name)) as farmer_name,
+#     max(location_of_land) as land_location, max(format((partnership.saving_target / (partnership.quantity_per_acre * partnership.price_per_kg)), 2)) as calc1,
+#     max(format((partnership.saving_target / (partnership.quantity_per_acre * partnership.price_per_kg)), 2)) as calc2,
+#     max(payment_transactions.org_name) as org_name, max(payment_transactions.category) as category, sum(amount_saved_daily) as amount_saved,
+#     max(format(((amount_saved_daily / payment_transactions.saving_target) * 100), 2)) as calc3
+#     FROM habahaba_trial.payment_transactions
+#     RIGHT JOIN habahaba_trial.partnership ON payment_for=item_id
+#     RIGHT JOIN habahaba_trial.users ON sender_id = user_id
+#     RIGHT JOIN habahaba_trial.materials ON payment_for=material_id WHERE transaction_status = 1 GROUP BY payment_for
+#     """)
+#     items = cur.fetchall()
+#     cur.close()
+#     return json.dumps(items)
+
+
 @app.route('/customer-summary-json/', methods=['POST', 'GET'])
 @is_admin_logged_in
 def customer_summary_json():
     cur = mysql.connection.cursor()
+    # cur.execute(f"""
+    # SELECT payment_id, sender_name, location_of_land,
+    #  format((payments_table.saving_target / (quantity_per_acre * payments_table.price_per_kg)), 2),
+    #  format((payments_table.saving_target / (quantity_per_acre * payments_table.price_per_kg)), 2),
+    #  org_name, category, amount_sent, format(((amount_sent / saving_target) * 100), 2) FROM habahaba_trial.payments_table
+    # INNER JOIN habahaba_trial.users ON sender_id = user_id
+    # """)
     cur.execute(f"""
-    SELECT payment_id, sender_name, location_of_land,
-     format((payments_table.saving_target / (quantity_per_acre * payments_table.price_per_kg)), 2),
-     format((payments_table.saving_target / (quantity_per_acre * payments_table.price_per_kg)), 2),
-     org_name, category, amount_sent, format(((amount_sent / saving_target) * 100), 2) FROM habahaba_trial.payments_table 
-    INNER JOIN habahaba_trial.users ON sender_id = user_id
-    """)
+        SELECT max(transaction_id) as transaction_id, max(concat_ws(' ', f_name, l_name)) as farmer_name, 
+        max(location_of_land) as land_location, max(format((partnership.saving_target / (partnership.quantity_per_acre * partnership.price_per_kg)), 2)) as calc1,
+        max(format((partnership.saving_target / (partnership.quantity_per_acre * partnership.price_per_kg)), 2)) as calc2,
+        max(payment_transactions.org_name) as org_name, max(payment_transactions.category) as category, sum(amount_saved_daily) as amount_saved,
+        max(format(((amount_saved_daily / payment_transactions.saving_target) * 100), 2)) as calc3
+        FROM habahaba_trial.payment_transactions 
+        RIGHT JOIN habahaba_trial.partnership ON payment_for=item_id  
+        RIGHT JOIN habahaba_trial.users ON sender_id = user_id
+        RIGHT JOIN habahaba_trial.materials ON payment_for=material_id WHERE transaction_status = 1 GROUP BY payment_for
+        """)
     user_details = cur.fetchall()
     cur.close()
     return datatable(user_details)
@@ -1119,7 +1365,7 @@ def customer_summary_json():
 def admin_vendor_reports_json():
     cur = mysql.connection.cursor()
     cur.execute(
-        "SELECT vendor_id, vendor_name, org_name, sender_id, sender_name, amount_sent, saving_target,"
+        "SELECT vendor_id,  org_name, sender_id, sender_name, amount_sent, saving_target,"
         " payment_for FROM habahaba_trial.payment_transactions")
     transactions = cur.fetchall()
     cur.close()
@@ -1131,8 +1377,11 @@ def admin_vendor_reports_json():
 def admin_transactions_json():
     cur = mysql.connection.cursor()
     cur.execute(
-        "SELECT max(sender_name), sender_phone, max(org_name), sum(amount_sent), max(sender_id),"
-        " max(payment_for), max(transaction_id) FROM habahaba_trial.payment_transactions group by sender_phone")
+        "SELECT max(concat_ws(' ', f_name, l_name)) as sender_name, max(phone_no) as sender_phone, "
+        "max(org_name), sum(amount_saved_daily), max(sender_id),"
+        " max(payment_for), max(transaction_id) FROM habahaba_trial.payment_transactions"
+        " RIGHT JOIN habahaba_trial.users ON sender_id=user_id"
+        " WHERE transaction_status=1 AND amount_saved_daily !=0 group by org_name, concat_ws(' ', f_name, l_name), payment_for, phone_no")
     transactions = cur.fetchall()
     cur.close()
     # return datatable(transactions)
@@ -1160,7 +1409,7 @@ def admin_individual_transactions_jsons(client_id):
 
     cur = mysql.connection.cursor()
     cur.execute(f"""
-    SELECT sender_name, sender_phone, vendor_name, amount_saved_daily 
+    SELECT sender_name, sender_phone, org_name, amount_saved_daily 
     FROM habahaba_trial.payment_transactions WHERE sender_id = '{client_id}'
     """)
     clients = cur.fetchall()
@@ -1178,7 +1427,7 @@ def admin_individual_transactions():
 
         cur = mysql.connection.cursor()
         cur.execute(f"""
-        SELECT sender_name, sender_phone, vendor_name, amount_saved_daily 
+        SELECT sender_name, sender_phone, org_name, amount_saved_daily 
         FROM habahaba_trial.payment_transactions WHERE sender_id = '18'
         """)
         clients = cur.fetchall()
@@ -1253,6 +1502,18 @@ def vendor_login():
                 x = '1'
 
                 cur.execute("UPDATE habahaba_trial.vendors SET online=%s WHERE vendor_id=%s", (x, uid))
+
+                action_performed = f'{f_name} {l_name} logged in'
+                login_time = datetime.utcnow()
+                success = 'Login success'
+
+                cur.execute(f"""
+                                INSERT INTO habahaba_trial.audit_report (vendor_id, action_performed, action_time, success) 
+                                VALUES (%s, %s, %s, %s)
+                                """, (
+                    uid, action_performed, login_time, success
+                ))
+                mysql.connection.commit()
                 return redirect(url_for('vendor_home'))
             else:
                 flash('Incorrect password, please try again', 'danger')
@@ -1296,6 +1557,9 @@ def vendor_change_password():
         new_pin = request.form['new_pin']
         confirm_pin = request.form['confirm_pin']
 
+        if current_pin or new_pin != int:
+            flash("Your pin should only contain numbers", "danger")
+            return redirect(url_for('vendor_change_password'))
         if bcrypt.checkpw(current_pin.encode('utf-8'), pin.encode('utf-8')):
             if confirm_pin == new_pin:
                 new_pin_value = bcrypt.hashpw(new_pin.encode('utf-8'), bcrypt.gensalt())
@@ -1333,6 +1597,18 @@ def vendor_logout():
         l_name = session['l_name']
         x = '0'
         cur.execute("UPDATE habahaba_trial.vendors SET online=%s WHERE vendor_id=%s ", (x, uid))
+
+        success = 'Logged out successfully'
+        logout_time = datetime.utcnow()
+        action_performed = f'{f_name} {l_name} logged out'
+
+        cur.execute(f"""
+                INSERT INTO habahaba_trial.audit_report (vendor_id, action_performed, action_time, success) 
+                VALUES (%s, %s, %s, %s)
+                                """, (
+            uid, action_performed, logout_time, success
+        ))
+        mysql.connection.commit()
         cur.close()
 
         session.clear()
@@ -1368,8 +1644,8 @@ def vendor_home():
 
     # clients
     cur = mysql.connection.cursor()
-    cur.execute(f"SELECT max(client_name) FROM habahaba_trial.partnership WHERE vendor_id = '{session['vendor_id']}' "
-                f"GROUP BY client_name")
+    cur.execute(f"SELECT max(client_id) FROM habahaba_trial.partnership WHERE vendor_id = '{session['vendor_id']}' "
+                f"GROUP BY client_id")
     users = cur.fetchall()
     cur.close()
 
@@ -1380,7 +1656,6 @@ def vendor_home():
     cur.close()
 
     # offers
-    # names = f"{session['f_name']} {session['l_name']}"
     cur = mysql.connection.cursor()
     cur.execute(
         f"SELECT * FROM habahaba_trial.offers WHERE vendor_id = '{session['vendor_id']}' AND org_name = '{session['org_name']}'")
@@ -1451,15 +1726,55 @@ def vendor_add_account():
             cur.close()
             vendor_text_msg(phone_no, password)
 
+            action_performed = f"{session['f_name']} {session['l_name']} added a user successfully"
+            time_performed = datetime.utcnow()
+            success = f'User if account type:{account_type} added successfully'
+            additional_info = f"User: {f_name} {l_name}, phone number: {phone_no}"
+
+            cur = mysql.connection.cursor()
+            cur.execute(f"""
+            INSERT INTO habahaba_trial.audit_report (vendor_id, action_performed, action_time, success, additional_details) 
+            VALUES (%s, %s, %s, %s, %s)
+                                                                """, (
+                session['vendor_id'], action_performed, time_performed, success, additional_info
+            ))
+            mysql.connection.commit()
+            cur.close()
             flash("New account added successfully", "success")
             return redirect(url_for('vendor_add_account'))
         except (MySQLdb.Error, MySQLdb.Warning) as e:
+            action_performed = f"{session['f_name']} {session['l_name']} tried adding a user"
+            time_performed = datetime.utcnow()
+            success = 'Failed to add user'
+            additional_info = f"{e}"
+
+            cur = mysql.connection.cursor()
+            cur.execute(f"""
+                        INSERT INTO habahaba_trial.audit_report (vendor_id, action_performed, action_time, success, additional_details) 
+                        VALUES (%s, %s, %s, %s, %s)
+            """, (
+                session['vendor_id'], action_performed, time_performed, success, additional_info
+            ))
+            mysql.connection.commit()
+            cur.close()
             flash("This phone number already exists, please enter another phone number", "warning")
     return render_template('vendor_add_account.html')
 
 
+@app.route('/categories-json/', methods=['GET'])
+@is_vendor_logged_in
+def v_categories_json():
+    cur = mysql.connection.cursor()
+    cur.execute(f"""
+    SELECT category_id, category_name FROM habahaba_trial.category
+    """)
+    category_id = cur.fetchall()
+    cur.close()
+    return json.dumps(category_id)
+
+
 # VENDOR PRODUCT VERIFICATION
-@app.route('/vendor-product-registration/', methods=['POST', 'GET'])
+@app.route('/product-setup/', methods=['POST', 'GET'])
 @is_vendor_logged_in
 def vendor_product_verification():
     cur = mysql.connection.cursor()
@@ -1478,6 +1793,7 @@ def vendor_product_verification():
         location = request.form['location']
         org_name = request.form['org_name']
         item_name = request.form['item_name']
+        category_id = request.form['category_id']
         vendor_crop_counter = f"{vendor_name} {item_name}"
 
         regions = request.form.getlist('region_available')
@@ -1492,24 +1808,53 @@ def vendor_product_verification():
             cur = mysql.connection.cursor()
             cur.execute("INSERT INTO habahaba_trial.materials(vendor_id, vendor_name, vendor_email, crop_name,"
                         " quantity_per_acre, price_per_kg, phone_no, location, org_name, vendor_crop_counter, category,"
-                        " region, material_status)"
-                        " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (
+                        " region, material_status, category_id)"
+                        " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (
                             vendor_id, vendor_name, vendor_email, item_name, quantity_per_acre, price_per_kg, phone_no,
-                            location,
-                            org_name, vendor_crop_counter, category, region, material_status
+                            location, org_name, vendor_crop_counter, category, region, material_status, category_id
                         ))
             mysql.connection.commit()
             cur.close()
             flash('Product submitted successfully', 'success')
+
+            action_performed = f"{session['f_name']} {session['l_name']} requested to add a product"
+            time_performed = datetime.utcnow()
+            success = 'Requested to add a product successfully'
+
+            cur = mysql.connection.cursor()
+            cur.execute(f"""
+            INSERT INTO habahaba_trial.audit_report (vendor_id, action_performed, action_time, success) 
+            VALUES (%s, %s, %s, %s)
+                                        """, (
+                session['vendor_id'], action_performed, time_performed, success
+            ))
+            mysql.connection.commit()
+            cur.close()
+
             return redirect(url_for('vendor_product_verification'))
         except (MySQLdb.Error, MySQLdb.Warning) as e:
+
+            action_performed = f"{session['f_name']} {session['l_name']} requested to add a product failed"
+            time_performed = datetime.utcnow()
+            success = 'Request to add product Failed'
+            additional_info = f"{e}"
+
+            cur = mysql.connection.cursor()
+            cur.execute(f"""
+                        INSERT INTO habahaba_trial.audit_report (vendor_id, action_performed, action_time, success, additional_details) 
+                        VALUES (%s, %s, %s, %s, %s)
+                                                    """, (
+                session['vendor_id'], action_performed, time_performed, success, additional_info
+            ))
+            mysql.connection.commit()
+            cur.close()
             flash('Product already exists', 'danger')
             return redirect(url_for('vendor_product_verification'))
     return render_template('vendor_product_verification.html', categories=categories)
 
 
 # VENDOR LIST
-@app.route('/client-list/', methods=['POST', 'GET'])
+@app.route('/clients-list/', methods=['POST', 'GET'])
 @is_vendor_logged_in
 def vendor_partners():
     cur = mysql.connection.cursor()
@@ -1536,9 +1881,7 @@ def vendor_user_onboarding():
         f_name = request.form['f_name']
         l_name = request.form['l_name']
         gender = request.form.get('gender')
-        # dob = request.form['dob']
         phone_no = request.form['phone_no']
-        id_no = request.form['id_no']
         email = request.form['email']
         land_location = request.form['land_location']
         size_of_land = request.form['size_of_land']
@@ -1550,19 +1893,46 @@ def vendor_user_onboarding():
             scale = 'Large Scale'
         try:
             cur = mysql.connection.cursor()
-            cur.execute("INSERT INTO habahaba_trial.users (f_name, l_name, gender, phone_no, id_no, email,"
+            cur.execute("INSERT INTO habahaba_trial.users (f_name, l_name, gender, phone_no, email,"
                         " password, date_registered, size_of_land, location_of_land, land_scale) "
-                        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
-                        (f_name, l_name, gender, phone_no, id_no, email, passwords, date_registered, size_of_land,
+                        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                        (f_name, l_name, gender, phone_no, email, passwords, date_registered, size_of_land,
                          land_location, scale))
+            mysql.connection.commit()
+
+            vendor_text_msg(phone_no, password)
+
+            action_performed = f"{session['f_name']} {session['l_name']} onboarded {f_name} {l_name}"
+            time_performed = datetime.utcnow()
+            success = "Successfully onboarded a farmer"
+
+            cur.execute(f"""
+                            INSERT INTO habahaba_trial.audit_report (vendor_id, action_performed, action_time, success) 
+                            VALUES (%s, %s, %s, %s)
+                            """, (
+                session['vendor_id'], action_performed, time_performed, success
+            ))
             mysql.connection.commit()
             cur.close()
 
-            vendor_text_msg(phone_no, password)
-            flash(f'User will receive their password on {phone_no} ', 'success')
+            flash(f'User will receive your password on {phone_no} ', 'success')
             return redirect(url_for('vendor_user_onboarding'))
         except (MySQLdb.Error, MySQLdb.Warning) as e:
-            flash('This email already exists, please try another one', 'danger')
+            action_performed = f"{session['f_name']} {session['l_name']} tried to onboard a user"
+            time_performed = datetime.utcnow()
+            success = "Failed to onboard a farmer."
+            additional_details = f"{e}"
+
+            cur = mysql.connection.cursor()
+            cur.execute(f"""
+            INSERT INTO habahaba_trial.audit_report (vendor_id, action_performed, action_time, success, additional_details) 
+            VALUES (%s, %s, %s, %s, %s)
+                                        """, (
+                session['vendor_id'], action_performed, time_performed, success, additional_details
+            ))
+            mysql.connection.commit()
+            cur.close()
+            flash('This use already exists, please try another one', 'danger')
             return redirect(url_for('vendor_user_onboarding'))
     return render_template('vendor_user_onboarding.html', county_list=county_list)
 
@@ -1601,7 +1971,7 @@ def chart_tutorial():
 def vendor_user_transactions():
     cur = mysql.connection.cursor()
     cur.execute(
-        f"SELECT sender_name, sender_email, sender_phone, amount_sent, saving_target, date_sent FROM"
+        f"SELECT sender_name, sender_phone, amount_sent, saving_target, date_and_time FROM"
         f" habahaba_trial.payment_transactions WHERE vendor_id = '{session['vendor_id']}'")
     transactions = cur.fetchall()
     cur.close()
@@ -1701,7 +2071,7 @@ def vendors_offer_list():
 
     if request.method == 'POST':
         vendor_name = request.form['vendor_name']
-        vendor_email = request.form['vendor_email']
+        # vendor_email = request.form['vendor_email']
         org_name = request.form['org_name']
         offer_name = request.form.get('offer_name')
         percentage_off = request.form['percentage_off']
@@ -1719,18 +2089,50 @@ def vendors_offer_list():
             flash('Please select a region where your offer will be available', 'warning')
             return redirect(url_for('vendors_offer_list'))
 
-        cur = mysql.connection.cursor()
-        cur.execute(
-            "INSERT INTO habahaba_trial.offers (vendor_name, vendor_id, vendor_email, org_name, offer_name, percentage_off"
-            ", valid_until, region_available, active_from, offer_status, campaign_name, material_ids) "
-            "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (
-                vendor_name, vendor_id, vendor_email, org_name, offer_name, percentage_off, valid_until, region, today,
-                offer_status, campaign_name, material_id
+        try:
+            cur = mysql.connection.cursor()
+            cur.execute(
+                "INSERT INTO habahaba_trial.offers (vendor_name, vendor_id,  org_name, offer_name, percentage_off"
+                ", valid_until, region_available, active_from, offer_status, campaign_name, material_ids) "
+                "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (
+                    vendor_name, vendor_id, org_name, offer_name, percentage_off, valid_until, region, today,
+                    offer_status, campaign_name, material_id
+                ))
+            mysql.connection.commit()
+            cur.close()
+
+            action_performed = f"{session['f_name']} {session['l_name']} requested to add a product"
+            time_performed = datetime.utcnow()
+            success = 'Requested to add an offer successfully'
+
+            cur = mysql.connection.cursor()
+            cur.execute(f"""
+            INSERT INTO habahaba_trial.audit_report (vendor_id, action_performed, action_time, success) 
+            VALUES (%s, %s, %s, %s)
+                                                                """, (
+                session['vendor_id'], action_performed, time_performed, success
             ))
-        mysql.connection.commit()
-        cur.close()
-        flash('Offer submitted successfully', 'success')
-        return redirect(url_for('vendors_offer_list'))
+            flash('Offer submitted successfully', 'success')
+            return redirect(url_for('vendors_offer_list'))
+
+        except(MySQLdb.Error, MySQLdb.Warning) as e:
+            action_performed = f"{session['f_name']} {session['l_name']} requested to add a product"
+            time_performed = datetime.utcnow()
+            success = 'Requested to add an offer Failed'
+            additional_info = f"{e}"
+
+            cur = mysql.connection.cursor()
+            cur.execute(f"""
+            INSERT INTO habahaba_trial.audit_report (vendor_id, action_performed, action_time, success, additional_details) 
+            VALUES (%s, %s, %s, %s, %s)
+                                                    """, (
+                session['vendor_id'], action_performed, time_performed, success, additional_info
+            ))
+            mysql.connection.commit()
+            cur.close()
+
+            flash("Failed to submit offer", "danger")
+            return redirect(url_for('vendor_offer_list'))
     return render_template('vendors-offers.html', products=products, offers=offers, counties=counties)
 
 
@@ -1744,12 +2146,82 @@ def v_float_summary():
 @is_vendor_logged_in
 def v_float_summary_json():
     cur = mysql.connection.cursor()
-    cur.execute(
-        f"SELECT sum(quantity_redeemed), sum(amount_sent), sum(amount_redeemed), sum(amount_sent - payments_table.amount_redeemed) "
-        f"FROM habahaba_trial.payments_table WHERE vendor_id = '{session['vendor_id']}' ")
+    # cur.execute(f"""
+    # SELECT sum(redemption.quantity_redeemed) as quantity_redeemed, sum(amount_saved_daily) as amount_saved,
+    # sum(redemption.amount_redeemed) as amount_redeemed, sum(amount_saved_daily - payment_transactions.amount_redeemed)
+    # FROM habahaba_trial.redemption RIGHT JOIN habahaba_trial.payment_transactions ON redemption.vendor_id = payment_transactions.vendor_id
+    # WHERE redemption.vendor_id = '{session['vendor_id']}'
+    # """)
+    # summary = cur.fetchall()
+    # cur.close()
+
+    cur = mysql.connection.cursor()
+    cur.execute(f"""
+    SELECT sum(amount_saved_daily) as amount_saved_daily FROM habahaba_trial.payment_transactions
+     WHERE vendor_id = {session['vendor_id']} AND transaction_status = 1
+    """)
+    amount_saved = cur.fetchall()
+
+    cur.execute(f"""
+    SELECT sum(amount_redeemed) as amount_redeemed, sum(quantity_redeemed) as quantity_redeemed
+     FROM habahaba_trial.redemption WHERE vendor_id = {session['vendor_id']}
+    """)
+    redemption_details = cur.fetchall()
+    cur.close()
+
+    amount_saved_daily = amount_saved[0]['amount_saved_daily']
+    amount_redeemed = redemption_details[0]['amount_redeemed']
+    quantity_redeemed = redemption_details[0]['quantity_redeemed']
+
+    final_value = [{
+        'quantities_redeemed': int(amount_saved_daily),
+        'amount_saved_daily': int(amount_saved_daily),
+        'amount_redeemed': amount_redeemed,
+        'balance': int(amount_saved_daily) - int(amount_redeemed)
+    }]
+
+    # print(final_value)
+
+    return datatable(final_value)
+
+
+@app.route('/free-trial/', methods=['GET'])
+@is_vendor_logged_in
+def free_trial():
+    cur = mysql.connection.cursor()
+    # cur.execute(f"""
+    #     SELECT sum(redemption.quantity_redeemed) as quantity_redeemed, sum(amount_saved_daily) as amount_saved_daily,
+    #     sum(redemption.amount_redeemed), sum(amount_saved_daily - redemption.amount_redeemed)
+    #       FROM habahaba_trial.payment_transactions
+    #       RIGHT JOIN habahaba_trial.redemption ON payment_transactions.vendor_id = redemption.vendor_id
+    #       WHERE payment_transactions.vendor_id = '{session['vendor_id']}' AND transaction_status = 1
+    #     """)
+
+    cur.execute(f"""
+    SELECT sum(amount_saved_daily) as amount_saved_daily FROM habahaba_trial.payment_transactions
+    """)
+    amount_saved_daily = cur.fetchall()
+    # print(amount_saved_daily[0]['amount_saved_daily'])
+    cur.execute(f"""
+        SELECT sum(amount_redeemed) as amount_redeemed FROM habahaba_trial.redemption
+        """)
+    amount_redeemed = cur.fetchall()
+    # print(amount_redeemed[0]['amount_redeemed'])
+    # value = {'amount_saved_daily': amount_saved_daily['amount_saved_daily'],
+    #          'amount_redeemed': amount_redeemed['amount_redeemed']}
+    value = {'amount_saved_daily': amount_saved_daily[0]['amount_saved_daily'],
+             'amount_redeemed': amount_redeemed[0]['amount_redeemed']}
+    # print(value)
+
+    cur.execute(f"""
+    SELECT SUM(amount_saved_daily) as amount_saved_daily, SUM(redemption.amount_redeemed) as amount_redeemed, 
+    SUM(redemption.quantity_redeemed) as quantity_redeemed , max(redemption.payment_for) as payment_for
+     FROM habahaba_trial.payment_transactions RIGHT JOIN habahaba_trial.redemption ON redemption.vendor_id = payment_transactions.vendor_id 
+    WHERE payment_transactions.vendor_id = '{session['vendor_id']}' GROUP BY redemption.payment_for
+    """)
     summary = cur.fetchall()
     cur.close()
-    return datatable(summary)
+    return json.dumps(summary)
 
 
 # [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[JSON FILES]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
@@ -1773,8 +2245,13 @@ def transactions_json():
 @is_vendor_logged_in
 def client_list_json():
     cur = mysql.connection.cursor()
-    cur.execute(f"SELECT client_name,client_name, client_email, client_phone, vendor_crop"
-                f" FROM habahaba_trial.partnership WHERE vendor_id = '{session['vendor_id']}' ")
+    cur.execute(f"""
+    SELECT user_id, CONCAT_WS(' ', f_name, l_name) as client_name, email as client_email, users.phone_no as client_phone, 
+    crop_name as vendor_crop
+     FROM habahaba_trial.partnership RIGHT JOIN habahaba_trial.users ON client_id=user_id
+      RIGHT JOIN habahaba_trial.materials on item_id=material_id
+     WHERE partnership.vendor_id = '{session['vendor_id']}'
+    """)
     users = cur.fetchall()
     cur.close()
     return datatable(users)
@@ -1784,9 +2261,14 @@ def client_list_json():
 @is_vendor_logged_in
 def vendor_partners_json():
     cur = mysql.connection.cursor()
-    cur.execute(
-        f"SELECT  max(client_name), max(client_phone), max(vendor_crop) FROM habahaba_trial.partnership"
-        f" WHERE vendor_id = '{session['vendor_id']}' GROUP BY client_name")
+    cur.execute(f"""
+    SELECT max(CONCAT_WS(' ', f_name, l_name)) as client_name, max(users.phone_no), max(crop_name) FROM habahaba_trial.partnership
+     RIGHT JOIN habahaba_trial.materials ON item_id=material_id RIGHT JOIN habahaba_trial.users ON user_id=client_id
+     WHERE materials.vendor_id = '{session['vendor_id']}' GROUP BY users.phone_no, crop_name
+    """)
+    # cur.execute(
+    #     f"SELECT  max(client_name), max(client_phone), max(vendor_crop) FROM habahaba_trial.partnership"
+    #     f" WHERE vendor_id = '{session['vendor_id']}' GROUP BY client_name")
     partners = cur.fetchall()
     cur.close()
     return datatable(partners)
@@ -1798,7 +2280,7 @@ def vendor_user_transactions_json():
     # sender_name, sender_email, sender_phone, amount_sent, saving_target, date_sent
     cur = mysql.connection.cursor()
     cur.execute(
-        f"SELECT sender_name, sender_email, sender_phone, amount_sent, saving_target, date_sent FROM"
+        f"SELECT sender_name, sender_phone, amount_sent, saving_target, date_and_time FROM"
         f" habahaba_trial.payment_transactions WHERE vendor_id = '{session['vendor_id']}'")
     transactions = cur.fetchall()
     cur.close()
@@ -1870,7 +2352,7 @@ def admin_categories_json():
 @app.route('/user-transactions-json/', methods=['GET'])
 def user_transactions_json():
     cur = mysql.connection.cursor()
-    cur.execute(f"SELECT sender_name, sender_email, sender_phone, amount_sent, saving_target, date_sent"
+    cur.execute(f"SELECT sender_name, sender_phone, amount_sent, saving_target, date_and_time"
                 f" FROM habahaba_trial.payment_transactions WHERE vendor_id = '{session['vendor_id']}'")
     transactions = cur.fetchall()
     cur.close()
@@ -2144,6 +2626,7 @@ def user_login():
         cur = mysql.connection.cursor()
         result = cur.execute("SELECT * FROM habahaba_trial.users WHERE phone_no=%s", [phone_no])
         print(result)
+
         if result > 0:
             data = cur.fetchone()
             password = data['password']
@@ -2190,6 +2673,18 @@ def user_login():
                 # print(the_response)
 
                 cur.execute("UPDATE habahaba_trial.users SET online=%s WHERE user_id=%s", (x, uid))
+                action_performed = f'{f_name} {l_name} logged in successfully'
+                login_time = datetime.utcnow()
+                success = f'Login success'
+
+                cur.execute(f"""
+                                INSERT INTO habahaba_trial.audit_report (sender_id, action_performed, action_time, success) 
+                                VALUES (%s, %s, %s, %s)
+                                """, (
+                    uid, action_performed, login_time, success
+                ))
+                mysql.connection.commit()
+
                 return redirect(url_for('ukulima'))
                 # return jsonify({'token': jwt_token})
             else:
@@ -2200,7 +2695,6 @@ def user_login():
             flash('This phone number is not registered', 'red lighten-2')
             cur.close()
             return render_template('user_login.html')
-            # return jsonify({'message': 'Failed to login: Username -Password pair do not match'})
     return render_template('user_login.html')
 
 
@@ -2212,12 +2706,16 @@ def user_change_password():
     user = cur.fetchone()
 
     pin = user['password']
-
     cur.close()
+
     if request.method == 'POST':
         current_pin = request.form['current_pin']
         new_pin = request.form['new_pin']
         confirm_pin = request.form['confirm_pin']
+
+        if current_pin or new_pin != int:
+            flash('Password should ony contain numbers', 'red lighten-2')
+            return redirect(url_for('user_change_password'))
 
         # passwords = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
@@ -2258,10 +2756,21 @@ def user_logout():
         cur = mysql.connection.cursor()
         uid = session['user_id']
         f_name = session['f_name']
-        # l_name = session['l_name']
+        l_name = session['l_name']
         x = '0'
         cur.execute("UPDATE habahaba_trial.users SET online=%s WHERE user_id=%s ", (x, uid))
 
+        success = 'Logged out successfully'
+        logout_time = datetime.utcnow()
+        action_performed = f'{f_name} {l_name} logged out'
+
+        cur.execute(f"""
+                INSERT INTO habahaba_trial.audit_report (sender_id, action_performed, action_time, success) 
+                VALUES (%s, %s, %s, %s)
+                                """, (
+            uid, action_performed, logout_time, success
+        ))
+        mysql.connection.commit()
         session.clear()
         flash(f'You are now logged out {f_name}', 'red lighten-2')
         return redirect(url_for('user_login'))
@@ -2272,6 +2781,22 @@ def user_logout():
 @app.route('/sw.js', methods=['GET'])
 def sw():
     return current_app.send_static_file('sw.js')
+
+
+# @app.route('/ukulima-targets-test-json/', methods=['GET'])
+# @is_user_logged_in
+# def targets_test_json():
+#     cur = mysql.connection.cursor()
+#     cur.execute(f"""
+#         SELECT max(crop_name) as payment_for, sum(amount_saved_daily) as amount_sent, max(payment_transactions.saving_target),
+#         max(payment_transactions.org_name) as org_name, max(partnership.price_per_kg) as price_per_kg
+#         FROM habahaba_trial.payment_transactions RIGHT JOIN habahaba_trial.partnership ON payment_for = item_id
+#         RIGHT JOIN habahaba_trial.materials ON payment_for = material_id
+#          WHERE sender_id = {session['user_id']}  GROUP BY payment_for
+#         """)
+#     items = cur.fetchall()
+#     cur.close()
+#     return json.dumps(items)
 
 
 # CLIENT LOGIN
@@ -2286,8 +2811,16 @@ def ukulima():
 
     # get the crops a user currently has
     cur = mysql.connection.cursor()
-    cur.execute(f"SELECT * FROM habahaba_trial.payments_table WHERE sender_id = '{session['user_id']}' ")
+    # cur.execute(f"SELECT * FROM habahaba_trial.payments_table WHERE sender_id = '{session['user_id']}' ")
+    cur.execute(f"""
+        SELECT max(crop_name) as payment_for, max(client_id) as sender_id,sum(amount_saved_daily) as amount_sent, max(payment_transactions.saving_target),
+        max(payment_transactions.org_name) as org_name, max(partnership.price_per_kg) as price_per_kg
+        FROM habahaba_trial.payment_transactions RIGHT JOIN habahaba_trial.partnership ON payment_for = item_id
+        RIGHT JOIN habahaba_trial.materials ON payment_for = material_id
+         WHERE sender_id = {session['user_id']}  GROUP BY payment_for, crop_name
+    """)
     user_items = cur.fetchall()
+    print(user_items)
     cur.close()
 
     if request.method == 'POST':
@@ -2329,6 +2862,48 @@ def ukulima():
     return render_template('ukulima.html', current_balance=current_balance, user_items=user_items)
 
 
+@app.route('/ukulima-help/', methods=['POST', 'GET'])
+@is_user_logged_in
+def ukulima_help():
+    if request.method == 'POST':
+        client_id = session['user_id']
+        username = request.form['username']
+        phone_no = request.form['phone_no']
+        category = request.form.get('category')
+        more_info = request.form['more_info']
+
+        try:
+            cur = mysql.connection.cursor()
+            cur.execute(f"""
+            INSERT INTO habahaba_trial.error_reports (client_id, client_name, client_phone, category, more_info) 
+            VALUES (%s, %s, %s, %s, %s)
+            """, (
+                client_id, username, phone_no, category, more_info
+            ))
+            mysql.connection.commit()
+            cur.close()
+            flash('Message sent successfully', 'green lighten-2')
+            return redirect(url_for('ukulima'))
+        except(MySQLdb.Warning, MySQLdb.Error) as e:
+            action_performed = 'Tried to send message from help'
+            action_time = datetime.utcnow()
+            success = 0
+
+            cur = mysql.connection.cursor()
+            cur.execute(f"""
+            INSERT INTO habahaba_trial.audit_report (sender_id, action_performed, action_time, success, additional_details) 
+            VALUES(%s, %s, %s, %s, %s)
+            """, (
+                client_id, action_performed, action_time, success, e
+            ))
+            mysql.connection.commit()
+            cur.close()
+
+            flash('System busy, please try again later.', 'red lighten-2')
+            return redirect(url_for('ukulima'))
+    return render_template('ukulima_help.html')
+
+
 @app.route('/login/')
 def index():
     return render_template('login.html')
@@ -2348,66 +2923,31 @@ def targets():
     all_members = cur.fetchall()
     cur.close()
 
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM habahaba_trial.payments_table "
-                "CROSS JOIN habahaba_trial.partnership p on payments_table.vendor_email = p.vendor_email")
-    joint_values = cur.fetchall()
-    cur.close()
-
     members_json = json.dumps(all_members)
 
     cur = mysql.connection.cursor()
-    cur.execute(
-        f"SELECT * FROM habahaba_trial.payments_table WHERE sender_id = '{session['user_id']}' ORDER BY payment_id DESC ")
+    # cur.execute(
+    #     f"SELECT * FROM habahaba_trial.payments_table WHERE sender_id = '{session['user_id']}' ORDER BY payment_id DESC ")
+    cur.execute(f"""
+            SELECT max(crop_name) as payment_for, sum(amount_saved_daily) as amount_sent, max(payment_transactions.saving_target) as saving_target, 
+            max(payment_transactions.org_name) as org_name, max(partnership.price_per_kg) as price_per_kg
+            FROM habahaba_trial.payment_transactions RIGHT JOIN habahaba_trial.partnership ON payment_for = item_id 
+            RIGHT JOIN habahaba_trial.materials ON payment_for = material_id
+             WHERE sender_id = {session['user_id']}  GROUP BY payment_for
+            """)
     partners = cur.fetchall()
     cur.close()
 
-    cur = mysql.connection.cursor()
-    cur.execute(f"SELECT * FROM habahaba_trial.partnership WHERE client_id = '{session['user_id']}'")
-    partnership_id = cur.fetchall()
-    cur.close()
+    # cur = mysql.connection.cursor()
+    # cur.execute(f"SELECT * FROM habahaba_trial.partnership WHERE client_id = '{session['user_id']}'")
+    # partnership_id = cur.fetchall()
+    # cur.close()
 
     this_month = datetime.now().month
     this_year = datetime.now().year
-
-    if request.method == 'POST':
-        # vendor details
-        vendor_id = request.form['vendor_id']
-        vendor_name = request.form['vendor_name']
-        vendor_email = request.form['vendor_email']
-        vendor_phone = request.form['vendor_phone']
-        crop_name = request.form['crop_name']
-        location = request.form['location']
-        payment_method = request.form['payment_method']
-        acc_number = request.form['acc_number']
-        vendor_org = request.form['vendor_org']
-        # client details
-        client_id = request.form['client_id']
-        client_name = request.form['client_name']
-        client_phone = request.form['client_phone']
-        client_email = request.form['client_email']
-        counter_column = f"{vendor_id} {client_id} {crop_name} {this_month} {this_year}"
-
-        try:
-            cur = mysql.connection.cursor()
-            cur.execute("INSERT INTO habahaba_trial.partnership(vendor_id, vendor_name, vendor_email, vendor_phone,"
-                        "vendor_org, vendor_crop, vendor_location, payment_method, acc_number, client_id,"
-                        "client_name, client_email, client_phone, counter_column) "
-                        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
-                        (
-                            vendor_id, vendor_name, vendor_email, vendor_phone, vendor_org, crop_name,
-                            location, payment_method, acc_number, client_id, client_name, client_email,
-                            client_phone, counter_column
-                        ))
-            mysql.connection.commit()
-            cur.close()
-            flash(f'{crop_name} Partner selected', 'green lighten-2')
-            return redirect(url_for('targets'))
-        except:
-            flash(f'{vendor_name} is already your partner for {crop_name}', 'yellow darken-3')
-            return redirect(url_for('targets'))
-    return render_template('ukulima_targets.html', vendors=vendors, all_members=all_members, partners=partners,
-                           members_json=members_json, joint_values=joint_values)
+    return render_template('ukulima_targets.html', vendors=vendors, all_members=all_members, partners=partners
+                           # members_json=members_json
+                           )
 
 
 @app.route('/partner-details/', methods=['POST', 'GET'])
@@ -2542,15 +3082,17 @@ def ukulima_offers_redirect():
 @is_user_logged_in
 def selected_offer_json():
     cur = mysql.connection.cursor()
-    cur.execute(f"SELECT offer_id FROM habahaba_trial.redirecting_table WHERE client_id = '{session['user_id']}'")
+    cur.execute(
+        f"SELECT offer_id FROM habahaba_trial.redirecting_table WHERE client_id = '{session['user_id']}' ORDER BY redirect_id DESC")
     offer_id = cur.fetchone()
     cur.close()
 
     cur = mysql.connection.cursor()
-    cur.execute(
-        f"""SELECT * FROM habahaba_trial.offers INNER JOIN habahaba_trial.materials ON habahaba_trial.offers.vendor_id = habahaba_trial.materials.vendor_id
-        WHERE habahaba_trial.offers.vendor_id = '{session['vendor_id']}' AND habahaba_trial.offers.offer_status = 'Accepted'
-        AND habahaba_trial.offers.offer_id = '{offer_id['offer_id']}' """)
+    cur.execute(f"""
+    SELECT material_id, materials.vendor_id, materials.vendor_name, materials.org_name, quantity_per_acre, price_per_kg,
+     offer_name, percentage_off, region_available, valid_until, offer_id FROM habahaba_trial.materials 
+    LEFT JOIN habahaba_trial.offers ON  materials.vendor_id = offers.vendor_id WHERE offer_id = {offer_id['offer_id']}
+    """)
     offer = cur.fetchone()
     cur.close()
     return json.dumps(offer)
@@ -2731,6 +3273,19 @@ def vendor_goods_offer_json():
     return json.dumps(offers)
 
 
+@app.route('/selected-items-json/', methods=['GET'])
+def selected_items():
+    cur = mysql.connection.cursor()
+    cur.execute(f"""
+    SELECT max(payment_transactions.org_name) as org_name, max(material_id) as material_id, max(crop_name) as crop_name
+    FROM habahaba_trial.payment_transactions RIGHT JOIN habahaba_trial.materials
+    ON payment_for=material_id WHERE sender_id= '{session['user_id']}' AND amount_sent < saving_target GROUP BY material_id
+    """)
+    stuff = cur.fetchall()
+    cur.close()
+    return json.dumps(stuff)
+
+
 @app.route('/ukulima-partners/', methods=['POST', 'GET'])
 @is_user_logged_in
 def ukulima_partners():
@@ -2747,8 +3302,18 @@ def ukulima_partners():
 
     cur = mysql.connection.cursor()
     cur.execute(
-        f"SELECT * FROM habahaba_trial.partnership WHERE client_id = '{session['user_id']}' ORDER BY partnership_id DESC ")
+        f"SELECT vendor_org, material_id, crop_name  FROM habahaba_trial.partnership "
+        f"RIGHT JOIN habahaba_trial.materials on item_id=material_id "
+        f" WHERE partnership.client_id = '{session['user_id']}' ORDER BY partnership_id DESC ")
     partnered_vendors = cur.fetchall()
+    cur.close()
+
+    cur = mysql.connection.cursor()
+    cur.execute(f"""
+    SELECT max(payment_transactions.org_name) as vendor_org, max(material_id), max(crop_name) FROM habahaba_trial.payment_transactions 
+    RIGHT JOIN habahaba_trial.materials ON material_id=item_purchased WHERE sender_id = '{session['user_id']}' GROUP BY material_id 
+    """)
+    stuff = cur.fetchall()
     cur.close()
 
     # offers
@@ -2842,14 +3407,9 @@ def selected_partner():
     client = cur.fetchone()
     cur.close()
 
-    # cur = mysql.connection.cursor()
-    # cur.execute(f"SELECT * FROM habahaba_trial.materials WHERE material_id = '{client['material_id']}' ")
-    # vendor_details = cur.fetchone()
-    # cur.close()
-
     cur = mysql.connection.cursor()
     cur.execute(f"SELECT * FROM habahaba_trial.materials "
-                f"INNER JOIN habahaba_trial.vendors ON materials.vendor_id = vendors.vendor_id "
+                f"RIGHT JOIN habahaba_trial.vendors ON materials.vendor_id = vendors.vendor_id "
                 f"WHERE material_id = '{client['material_id']}'")
     vendor_details = cur.fetchone()
     cur.close()
@@ -2859,28 +3419,29 @@ def selected_partner():
 
     if request.method == 'POST':
         # vendor details
+        item_id = request.form['item_id']
         vendor_id = request.form['vendor_id']
-        vendor_name = request.form['vendor_name']
-        vendor_email = request.form['vendor_email']
-        vendor_phone = request.form['vendor_phone']
         crop_name = request.form['crop_name']
-        location = request.form['location']
-        payment_method = request.form['payment_method']
-        acc_number = request.form['acc_number']
         vendor_org = request.form['vendor_org']
         save_until = request.form['save_until']
         category = request.form['category']
+        material_id = request.form['material_id']
 
         price_per_kg = request.form['price_per_kg']
         quantity_per_acre = request.form['quantity_per_acre']
 
         # client details
         client_id = request.form['client_id']
-        client_name = request.form['client_name']
-        client_phone = request.form['client_phone']
-        client_email = request.form['client_email']
         saving_target = request.form['payment_required']
         amount = 0
+
+        cur = mysql.connection.cursor()
+        cur.execute(f"""
+        SELECT category_id FROM habahaba_trial.category WHERE category.category_name = {category}
+        """)
+        cat_id = cur.fetchone()
+        category_id = cat_id['category_id']
+        cur.close()
 
         counter_column = f"{vendor_id} {client_id} {crop_name} {this_month} {this_year}"
         client_vendor_crop = f"{vendor_id} {client_id} {crop_name}"
@@ -2891,34 +3452,38 @@ def selected_partner():
         now = right_now.strftime("%H:%M:%S")
         try:
             cur = mysql.connection.cursor()
-            cur.execute("INSERT INTO habahaba_trial.partnership(vendor_id, vendor_name, vendor_email, vendor_phone,"
-                        "vendor_org, vendor_crop, vendor_location, payment_method, acc_number, client_id,"
-                        "client_name, client_email, client_phone, counter_column, saving_target, save_until, category) "
-                        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,%s, %s, %s, %s)",
-                        (
-                            vendor_id, vendor_name, vendor_email, vendor_phone, vendor_org, crop_name,
-                            location, payment_method, acc_number, client_id, client_name, client_email,
-                            client_phone, counter_column, saving_target, save_until, category
-                        ))
+            cur.execute(f"""
+            INSERT INTO habahaba_trial.partnership(item_id, vendor_id, vendor_org, category, client_id, saving_target,
+             save_until, price_per_kg, quantity_per_acre, category_id) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (
+                item_id, vendor_id, vendor_org, category, client_id, saving_target, save_until, price_per_kg,
+                quantity_per_acre, category_id
+            ))
             mysql.connection.commit()
             cur.close()
 
+            month_no = datetime.now().month
+            year = datetime.now().year
+            date_counter = f"{month_no} {year}"
+
+            amount_redeemed = 0
+            quantity_redeemed = 0
             cur = mysql.connection.cursor()
-            cur.execute("INSERT INTO habahaba_trial.payments_table (vendor_id, vendor_name, vendor_email,"
-                        "vendor_phone, org_name, sender_id, sender_name, sender_email, "
-                        "sender_phone, amount_sent, date_sent, time_sent, date_and_time, saving_target,"
-                        " payment_for, client_vendor_crop, quantity_per_acre, price_per_kg, redeemable_amount, category) "
-                        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) ", (
-                            vendor_id, vendor_name, vendor_email, vendor_phone, vendor_org,
-                            client_id, client_name, client_email, client_phone, amount, today, now, right_now,
-                            saving_target, crop_name, client_vendor_crop, quantity_per_acre, price_per_kg, amount,
-                            category
-                        ))
+            cur.execute(f"""
+            INSERT INTO habahaba_trial.payment_transactions (vendor_id, org_name, sender_id, amount_sent, date_and_time,
+             saving_target, payment_for, category, date_counter, amount_saved_daily, amount_redeemed, quantity_redeemed) 
+             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) 
+            """, (
+                vendor_id, vendor_org, client_id, amount, right_now, saving_target, material_id, category, date_counter,
+                amount, amount_redeemed, quantity_redeemed
+            ))
             mysql.connection.commit()
             cur.close()
+
             flash(f'{crop_name} Partner selected', 'green lighten-2')
             return redirect(url_for('ukulima_partners'))
-        except:
+
+        except(MySQLdb.Error, MySQLdb.Warning) as e:
             flash(f'You have already selected {vendor_org} for {crop_name}. Please select another item ',
                   'red lighten-2')
             return redirect(url_for('ukulima_partners'))
@@ -2932,8 +3497,8 @@ def ukulima_deposits_json():
     # amount deposited
     cur = mysql.connection.cursor()
     cur.execute(
-        f"SELECT org_name, amount_sent, date(date_and_time) as date_sent, payment_for, (category) as cat, amount_saved_daily,"
-        f" vendor_payment FROM habahaba_trial.payment_transactions WHERE sender_id = '{session['user_id']}' ")
+        f"SELECT org_name, amount_sent, date(date_and_time) as date_sent, payment_for, (category) as cat, amount_saved_daily"
+        f" FROM habahaba_trial.payment_transactions WHERE sender_id = '{session['user_id']}' ")
     deposits = cur.fetchall()
     cur.close()
     return json.dumps(deposits)
@@ -2966,11 +3531,48 @@ def ukulima_transactions():
 @is_vendor_logged_in
 def redemption_summary_json():
     cur = mysql.connection.cursor()
-    cur.execute(f"SELECT payment_id, sender_name, amount_sent, saving_target, amount_redeemed, redemption_date "
-                f"FROM habahaba_trial.payments_table WHERE vendor_id = '{session['vendor_id']}'")
-    redemptionSummary = cur.fetchall()
+    # cur.execute(f"SELECT payment_id, sender_name, amount_sent, saving_target, amount_redeemed, redemption_date "
+    #             f"FROM habahaba_trial.payments_table WHERE vendor_id = '{session['vendor_id']}'")
+    # cur.execute(f"""
+    #     SELECT distinct redemption_id, concat_ws(' ', f_name, l_name) as farmer_name, crop_name, (redemption.category) as category,
+    #     saving_target, amount_redeemed, quantity_redeemed, date_redeemed
+    #     FROM habahaba_trial.redemption RIGHT JOIN habahaba_trial.partnership ON item_id = payment_for AND
+    #     redemption.vendor_id = partnership.vendor_id AND redemption.client_id = partnership.client_id
+    #     RIGHT JOIN habahaba_trial.users ON redemption.client_id = user_id RIGHT JOIN habahaba_trial.materials
+    #     ON payment_for = material_id WHERE redemption.vendor_id = {session['vendor_id']} AND redemption.category != 'null'
+    #     """)
+    cur.execute(f"""
+    SELECT distinct redemption_id, concat_ws(' ', f_name, l_name) as farmer_name, crop_name, (redemption.category) as category,
+    saving_target, redemption.amount_redeemed, redemption.quantity_redeemed, date_redeemed FROM habahaba_trial.redemption
+    RIGHT JOIN habahaba_trial.users ON client_id=user_id
+    RIGHT JOIN habahaba_trial.materials ON payment_for=material_id
+    RIGHT JOIN habahaba_trial.payment_transactions ON redemption.payment_for=payment_transactions.payment_for AND 
+    redemption.vendor_id=payment_transactions.vendor_id WHERE redemption.vendor_id = {session['vendor_id']} AND redemption_id != 'null'
+    """)
+    redemption_summary = cur.fetchall()
     cur.close()
-    return datatable(redemptionSummary)
+    return datatable(redemption_summary)
+
+
+@app.route('/redemption-summary-test-json/', methods=['POST', 'GET'])
+@is_vendor_logged_in
+def redemption_summary_test_json():
+    cur = mysql.connection.cursor()
+    # cur.execute(f"""
+    # SELECT redemption_id, concat_ws(' ', f_name, l_name), redemption.amount_redeemed, date_redeemed FROM habahaba_trial.redemption
+    # RIGHT JOIN habahaba_trial.users ON client_id=user_id RIGHT JOIN habahaba_trial.payment_transactions ON redemption.vendor_id = redemption.vendor_id
+    # """)
+    cur.execute(f"""
+    SELECT distinct redemption_id, concat_ws(' ', f_name, l_name) as farmer_name, crop_name, (redemption.category) as category,
+    saving_target, amount_redeemed, quantity_redeemed, date_redeemed
+    FROM habahaba_trial.redemption RIGHT JOIN habahaba_trial.partnership ON item_id = payment_for AND 
+    redemption.vendor_id = partnership.vendor_id AND redemption.client_id = partnership.client_id 
+    RIGHT JOIN habahaba_trial.users ON redemption.client_id = user_id RIGHT JOIN habahaba_trial.materials 
+    ON payment_for = material_id WHERE redemption.vendor_id = {session['vendor_id']} AND redemption.category != 'null'
+    """)
+    redemption_summary = cur.fetchall()
+    cur.close()
+    return json.dumps(redemption_summary)
 
 
 @app.route('/redemption-summary/', methods=['POST', 'GET'])
@@ -2983,12 +3585,32 @@ def v_redemption_summary():
 @is_vendor_logged_in
 def v_savings_vs_achievement_summary_json():
     cur = mysql.connection.cursor()
-    cur.execute(f"""SELECT max(category), max(category) as category,count(*), sum(amount_sent), 
-    format(sum(amount_sent)/ sum(saving_target) * 100, 2) as achievment_rate
-     FROM habahaba_trial.payments_table WHERE vendor_id = {session['vendor_id']} GROUP BY category""")
+    # cur.execute(f"""SELECT max(category), max(category) as category,count(*), sum(amount_sent),
+    # format(sum(amount_sent)/ sum(saving_target) * 100, 2) as achievment_rate
+    #  FROM habahaba_trial.payments_table WHERE vendor_id = {session['vendor_id']} GROUP BY category""")
+
+    cur.execute(f"""
+    SELECT max(category) as categoty, max(category) as categoty, count(distinct sender_id), sum(amount_saved_daily) as amount_saved,
+    format(sum(amount_saved_daily) / sum(saving_target) * 100, 2) as achievment_rate 
+    FROM habahaba_trial.payment_transactions WHERE vendor_id= '{session['vendor_id']}' AND transaction_status = 1 GROUP BY category
+    """)
     savings_vs_achievement = cur.fetchall()
     cur.close()
     return datatable(savings_vs_achievement)
+
+
+@app.route('/savings-achievement-summary-test-json/', methods=['GET'])
+@is_vendor_logged_in
+def v_savings_vs_achievement_summary_test_json():
+    cur = mysql.connection.cursor()
+    cur.execute(f"""
+    SELECT max(category) as categoty, max(category) as categoty, count(*), sum(amount_saved_daily) as amount_saved,
+    format(sum(amount_saved_daily) / sum(saving_target) * 100, 2) as achievment_rate 
+    FROM habahaba_trial.payment_transactions WHERE vendor_id= '{session['vendor_id']}' GROUP BY category
+    """)
+    savings_vs_target = cur.fetchall()
+    cur.close()
+    return json.dumps(savings_vs_target)
 
 
 @app.route('/savings-achievement-summary/', methods=['POST', 'GET'])
@@ -3001,14 +3623,34 @@ def v_savings_vs_achievement_summary():
 @is_vendor_logged_in
 def v_saving_insight_json():
     cur = mysql.connection.cursor()
+    # cur.execute(f"""
+    # SELECT max(category), max(category), sum(amount_sent),
+    # format(avg(saving_target / (price_per_kg * payments_table.quantity_per_acre)), 2)
+    # FROM habahaba_trial.payments_table WHERE vendor_id = '{session['vendor_id']}' GROUP BY category
+    # """)
+    # vendor_savings_insight = cur.fetchall()
+
     cur.execute(f"""
-    SELECT max(category), max(category), sum(amount_sent), 
-    format(avg(saving_target / (price_per_kg * payments_table.quantity_per_acre)), 2) 
-    FROM habahaba_trial.payments_table WHERE vendor_id = '{session['vendor_id']}' GROUP BY category
-    """)
+        SELECT max(category_id) as category_id, max(materials.category) as category, sum(amount_saved_daily) as amount_saved,
+        format(avg(saving_target / (price_per_kg * materials.quantity_per_acre)), 2) FROM habahaba_trial.payment_transactions RIGHT JOIN habahaba_trial.materials
+         ON payment_for = material_id WHERE payment_transactions.vendor_id = '{session['vendor_id']}' AND transaction_status = 1
+        """)
     vendor_savings_insight = cur.fetchall()
     cur.close()
     return datatable(vendor_savings_insight)
+
+
+# @app.route('/saving-insight-test/', methods=['GET'])
+# def saving_insight_test():
+#     cur = mysql.connection.cursor()
+#     cur.execute(f"""
+#     SELECT max(category_id) as category_id, max(materials.category) as category, sum(amount_saved_daily) as amount_saved,
+#     format(avg(saving_target / (price_per_kg * materials.quantity_per_acre)), 2) FROM habahaba_trial.payment_transactions RIGHT JOIN habahaba_trial.materials
+#      ON payment_for = material_id WHERE payment_transactions.vendor_id = '{session['vendor_id']}'
+#     """)
+#     vendor_savings_insight = cur.fetchall()
+#     cur.close()
+#     return json.dumps(vendor_savings_insight)
 
 
 @app.route('/savings-insight/', methods=['POST', 'GET'])
@@ -3022,8 +3664,13 @@ def v_savings_insight():
 def saving_report_json():
     cur = mysql.connection.cursor()
     cur.execute(
-        f"SELECT transaction_id, sender_name, amount_saved_daily, amount_sent, category , payment_for  "
-        f"FROM habahaba_trial.payment_transactions ")
+        f"SELECT max(transaction_id) as transaction_id, max(concat_ws(' ', f_name, l_name)) as sender_name,"
+        f" sum(amount_saved_daily) as amount_saved, max(saving_target), max(payment_transactions.category) as category, max(crop_name) as payment_for  "
+        f"FROM habahaba_trial.payment_transactions "
+        f" RIGHT JOIN habahaba_trial.users ON sender_id=user_id "
+        f"RIGHT JOIN habahaba_trial.materials ON payment_for = material_id "
+        f"WHERE  payment_transactions.vendor_id = {session['vendor_id']} AND transaction_status = 1 "
+        f"GROUP BY payment_for, sender_name ")
     savings = cur.fetchall()
     cur.close()
     return datatable(savings)
@@ -3039,8 +3686,14 @@ def v_savings_report():
 @is_vendor_logged_in
 def v_savings_summary_json():
     cur = mysql.connection.cursor()
-    cur.execute(
-        "SELECT  max(vendor_name), max(sender_name), max(saving_target), max(amount_sent), max(amount_sent) FROM habahaba_trial.payments_table GROUP BY sender_phone")
+    cur.execute(f"""
+    SELECT max(transaction_id) as transaction_id, max(CONCAT_WS(' ', users.f_name, users.l_name)) as sender_name, max(crop_name) as crop_name,
+     max(saving_target) as saving_target, sum(amount_saved_daily) as amount_sent, sum(amount_saved_daily) as amount_sent
+       FROM habahaba_trial.payment_transactions RIGHT JOIN habahaba_trial.vendors 
+    ON payment_transactions.vendor_id = vendors.vendor_id RIGHT JOIN habahaba_trial.users ON 
+    sender_id = user_id RIGHT JOIN habahaba_trial.materials ON payment_for = material_id WHERE
+     payment_transactions.vendor_id = '{session['vendor_id']}' GROUP BY payment_for
+    """)
     saving_summary = cur.fetchall()
     cur.close()
     return datatable(saving_summary)
@@ -3098,15 +3751,32 @@ def v_commission_report_json():
 @is_user_logged_in
 def redeemable_items_json():
     cur = mysql.connection.cursor()
-    cur.execute(
-        f"SELECT payment_id, org_name, payment_for, redeemable_amount, saving_target, quantity_redeemed, amount_redeemed,"
-        f"sender_id, sender_name, sender_phone, vendor_id, vendor_name, vendor_phone, redeemable_amount, quantity_per_acre,"
-        f"price_per_kg, amount_redeemed, quantity_redeemed, redeemable_amount "
-        f" FROM habahaba_trial.payments_table WHERE sender_id = '{session['user_id']}' "
-        f"ORDER BY payment_id DESC")
+    cur.execute(f"""
+    SELECT max(transaction_id) as transaction_id, max(payment_transactions.org_name) as org_name, max(payment_for) as payment_for,
+     max(saving_target) as saving_target, max(sender_id) as sender_id, max(payment_transactions.vendor_id) as vendor_id,
+     max(quantity_per_acre) as quantity_per_acre, max(price_per_kg) as price_per_kg, sum(amount_saved_daily) as amount_saved_daily,
+     max(crop_name) as crop_name, sum(amount_redeemed) as amount_redeemed, sum(quantity_redeemed) as quantity_redeemed, 
+     max(material_id) as material_id
+      FROM habahaba_trial.payment_transactions RIGHT JOIN habahaba_trial.materials ON payment_for=material_id 
+      WHERE sender_id = '{session['user_id']}' GROUP BY payment_for
+    """)
     redeemable_items = cur.fetchall()
     cur.close()
     return json.dumps(redeemable_items)
+
+
+@app.route('/redeemable-quantities-json/', methods=['GET'])
+@is_user_logged_in
+def redeemable_quantities_json():
+    cur = mysql.connection.cursor()
+    cur.execute(f"""
+    SELECT sum(quantity_redeemed) as quantity_redeemed, sum(amount_redeemed) as amount_redeemed, 
+    max(crop_name) as crop_name, max(payment_for) as payment_for FROM habahaba_trial.redemption RIGHT JOIN habahaba_trial.materials
+     ON payment_for=material_id WHERE client_id='{session['user_id']}' GROUP BY payment_for
+    """)
+    quantities = cur.fetchall()
+    cur.close()
+    return json.dumps(quantities)
 
 
 @app.route('/redemption/', methods=['POST', 'GET'])
@@ -3118,91 +3788,70 @@ def redemption():
     current_time = right_now.strftime("%H:%M:%S")
 
     cur = mysql.connection.cursor()
-    cur.execute(
-        f"SELECT * FROM habahaba_trial.payments_table WHERE sender_id = '{session['user_id']}'"
-        f"AND amount_sent != saving_target AND amount_sent > 1 ORDER BY payment_id DESC ")
-    redeemable_items = cur.fetchall()
-    cur.close()
-
-    cur = mysql.connection.cursor()
-    cur.execute(
-        f"SELECT payment_for FROM habahaba_trial.payments_table WHERE sender_id = '{session['user_id']}' ORDER BY payment_id DESC ")
+    cur.execute(f"""
+    SELECT max(crop_name) as crop_name FROM habahaba_trial.payment_transactions RIGHT JOIN habahaba_trial.materials
+     ON payment_for = material_id WHERE sender_id = '{session['user_id']}' GROUP BY crop_name 
+    """)
     items = cur.fetchall()
     cur.close()
 
     if request.method == 'POST':
-        # redeemable_amount = request.form['redeemable_amount']
-        # payment_id = request.form['payment_id']
-        # quantity_redeemed = request.form['redeem']
-        # price_per_kg = request.form['price_per_kg']
-
-        # new_values
-        payment_id = request.form['payment_id']
         client_id = request.form['client_id']
-        client_name = request.form['client_name']
-        client_phone = request.form['client_phone']
         vendor_id = request.form['vendor_id']
         vendor_org = request.form['vendor_org']
-        item_redeemed = request.form['item_redeemed']
-        amount_to_redeem = request.form['amount_to_redeem']
-        redeemable_amount = request.form['redeemable_amount']
-        amountRedeemed = request.form['amount_redeemed']
-        quantity_redeemed = request.form['quantity_redeemed']
         quantity_per_acre = request.form['quantity_per_acre']
+        price_per_kg = request.form['price_per_kg']
+        redeemable_quantity = request.form['redeemable_quantity']
+        transaction_id = request.form['transaction_id']
+        item_redeemed = request.form['item_redeemed']
+        material_id = request.form['material_id']
+        quantity_redeemed = request.form['quantity_redeemed']
+        saving_target = request.form['saving_target']
+        current_quantity_redeemed = request.form['quantity_to_redeem']
 
-        client_vendor_crop = f"{client_id} {vendor_id} {item_redeemed}"
+        current_amount_redeemed = round((float(current_quantity_redeemed) * float(price_per_kg)), 2)
+        total_redeemable_quantity = round(((float(saving_target) / float(price_per_kg)) - float(quantity_redeemed)), 2)
 
-        cur = mysql.connection.cursor()
-        cur.execute(f"SELECT * FROM habahaba_trial.payments_table WHERE client_vendor_crop = '{client_vendor_crop}'")
-        redemption_details = cur.fetchone()
-        cur.close()
-
-        cur = mysql.connection.cursor()
-        cur.execute(f"SELECT category FROM habahaba_trial.payments_table WHERE payment_id = '{payment_id}'")
-        payment_category = cur.fetchone()
-        cur.close()
-        my_category = payment_category['category']
-
-        if amount_to_redeem < redeemable_amount:
-            # amount_redeemed = redemption_details['amount_redeemed'] + int(amount_to_redeem)
-            # quantity_to_redeem = int(amount_to_redeem) / int(redemption_details['quantity_per_acre'])
-            # quantity_redeemed = (int(amount_to_redeem) / int(redemption_details['quantity_per_acre'])
-            #                      + redemption_details['quantity_redeemed'])
-            # redeemable = int(redemption_details['redeemable_amount']) - int(amount_to_redeem)
-
-            amount_redeemed = int(amountRedeemed) + int(amount_to_redeem)
-            quantity_to_redeem = round(float(int(amount_to_redeem) / int(quantity_per_acre)), 2)
-            quantity_redeemed = round(float((int(amount_to_redeem) / int(quantity_per_acre)) + int(quantity_redeemed)),
-                                      2)
-            redeemable = int(redeemable_amount) - int(amount_to_redeem)
-            # inserting into redemption table
-            cur = mysql.connection.cursor()
-            cur.execute(
-                "INSERT INTO habahaba_trial.redemption (vendor_id, vendor_org, client_id, client_name, client_phone,"
-                " payment_for, amount_redeemed, date_redeemed, time_redeemed, quantity_redeemed, category)"
-                " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (
-                    vendor_id, vendor_org, client_id, client_name, client_phone, item_redeemed, amount_to_redeem, today,
-                    current_time, quantity_redeemed, my_category
-                ))
-            mysql.connection.commit()
-            cur.close()
-
-            # update payments table
-            cur = mysql.connection.cursor()
-            cur.execute("""UPDATE habahaba_trial.payments_table
-            SET amount_redeemed=%s, quantity_redeemed=%s, redeemable_amount=%s, redemption_date=%s
-            WHERE payment_id=%s
-            """, (
-                amount_redeemed, quantity_redeemed, redeemable, today, payment_id
-            ))
-            mysql.connection.commit()
-            cur.close()
-            flash(f'Redeemed {quantity_to_redeem}Kgs of {item_redeemed} Successfully', 'green lighten-2')
+        if (float(current_quantity_redeemed) + float(quantity_redeemed)) > total_redeemable_quantity:
+            flash(f'You can only redeem a maximum of {total_redeemable_quantity} KGs / L', 'red lighten-2')
             return redirect(url_for('redemption'))
         else:
-            flash(f'You can redeem a maximum of {redemption_details["redeemable_amount"]} KGs of {item_redeemed}')
-            return redirect(url_for('redemption'))
-    return render_template('ukulima_redemption.html', redeemable_items=redeemable_items, items=items)
+            time_redeemed = datetime.utcnow()
+
+            cur = mysql.connection.cursor()
+
+            try:
+                cur.execute(f"""
+                INSERT INTO habahaba_trial.redemption (vendor_id, vendor_org, client_id, payment_for, date_redeemed, 
+                quantity_redeemed, amount_redeemed) VALUES (%s, %s, %s, %s, %s, %s, %s)
+                """, (
+                    vendor_id, vendor_org, client_id, material_id, time_redeemed, current_quantity_redeemed,
+                    current_amount_redeemed
+                ))
+                mysql.connection.commit()
+                cur.close()
+
+                flash('Item redeemed successfully', 'green lighten-2')
+                return redirect(url_for('redemption'))
+
+            except(MySQLdb.Warning, MySQLdb.Error) as e:
+                action_performed = f'Failed to Redeem {item_redeemed}'
+                success = 0
+                action_time = datetime.utcnow()
+
+                cur = mysql.connection.cursor()
+                cur.execute(f"""
+                INSERT INTO habahaba_trial.audit_report (sender_id, action_performed, action_time, success,
+                 additional_details) VALUES (%s, %s, %s, %s, %s)
+                """, (
+                    client_id, action_performed, action_time, success, e
+                ))
+                mysql.connection.commit()
+                cur.close()
+
+                flash(f'Failed to redeem item', 'red lighten-2')
+                return redirect(url_for('redemption'))
+    return render_template('ukulima_redemption.html', items=items)
 
 
 @app.route('/redemption-history-json/', methods=['GET'])
@@ -3230,23 +3879,24 @@ def redemption_history():
 @app.route('/ukulima-funds/', methods=['POST', 'GET'])
 @is_user_logged_in
 def ukulima_funds():
-    cur = mysql.connection.cursor()
-    cur.execute(
-        f"SELECT * FROM habahaba_trial.payments_table WHERE sender_id= '{session['user_id']}' ORDER BY payment_id DESC ")
-    partners = cur.fetchall()
-    cur.close()
+    # cur = mysql.connection.cursor()
+    # cur.execute(
+    #     f"SELECT * FROM habahaba_trial.payments_table WHERE sender_id= '{session['user_id']}' ORDER BY payment_id DESC ")
+    # partners = cur.fetchall()
+    # cur.close()
 
-    cur = mysql.connection.cursor()
-    cur.execute(
-        f"SELECT amount_sent FROM habahaba_trial.payments_table WHERE sender_id = '{session['user_id']}' "
-        f"ORDER BY payment_id DESC ")
-    previous_value = cur.fetchone()
-    cur.close()
+    # cur = mysql.connection.cursor()
+    # cur.execute(
+    #     f"SELECT amount_sent FROM habahaba_trial.payments_table WHERE sender_id = '{session['user_id']}' "
+    #     f"ORDER BY payment_id DESC ")
+    # previous_value = cur.fetchone()
+    # cur.close()
 
     # list of crops that a client is subscribed to
     cur = mysql.connection.cursor()
-    cur.execute(f"SELECT distinct payment_for FROM habahaba_trial.payments_table"
-                f" WHERE amount_sent < saving_target AND sender_id = '{session['user_id']}' ")
+    cur.execute(
+        f"SELECT max(crop_name) as payment_for FROM habahaba_trial.payment_transactions RIGHT JOIN habahaba_trial.materials"
+        f" ON payment_for=material_id WHERE amount_sent < saving_target AND sender_id = '{session['user_id']}' GROUP BY crop_name")
     client_crops = cur.fetchall()
     cur.close()
 
@@ -3259,124 +3909,88 @@ def ukulima_funds():
 
     if request.method == 'POST':
         # vendor details
-        vendor_id = request.form['vendor_id']
-        vendor_name = request.form['vendor_name']
-        # vendor_email = request.form['vendor_email']
-        vendor_phone = request.form['vendor_phone']
-        vendor_org = request.form['vendor_org']
-        vendor_crop = request.form['vendor_crop']
-        vendor_commission = request.form['commission']
-        category = request.form['category']
-        selected_crop = request.form['selected_crop']
-
-        # crop_name = request.form['payment_for']
-
-        saving_target = request.form['saving_target']
-        amount_sent = request.form['amount_sent']
-
-        # client details
-        payment_id = request.form['payment_id']
         client_id = request.form['client_id']
-        client_name = request.form['client_name']
-        # client_email = request.form['client_email']
-        client_phone = request.form['client_phone']
-        value_entered = request.form['payment']
-        former_value = request.form['amount_sent']
-        # amount = int(value_entered) + int(previous_value['amount_sent'])
-        amount = int(value_entered) + int(former_value)
+        vendor_id = request.form['vendor_id']
+        vendor_org = request.form['vendor_org']
+        saving_target = request.form['saving_target']
+        category = request.form['category']
+        item_purchased = request.form['item_purchased']
+        total_paid = request.form['total_paid']
+        amount_saved = request.form['payment']
+        material_id = request.form['material_id']
+        client_phone = request.form['phone_number']
 
-        commission = int(value_entered) * (int(vendor_commission) / 100)
-        payment = int(value_entered) - commission
+        transaction_status = 0
 
-        client_vendor_crop = f"{vendor_id} {client_id} {vendor_crop}"
         date_counter = f"{this_month} {this_year}"
 
-        # if float(amount) > (float(saving_target) - float(amount_sent)):
-        if float(amount) > float(saving_target):
-            flash('Amount entered surpasses the target', 'orange lighten-2 white-text')
+        if int(amount_saved) + int(total_paid) > int(saving_target):
+            flash('The amount surpasses your target', 'orange lighten-2')
             return redirect(url_for('ukulima_funds'))
         else:
-            # fetching the redeemable amount
-            cur = mysql.connection.cursor()
-            cur.execute(
-                f"SELECT * FROM habahaba_trial.payments_table WHERE payment_id = '{payment_id}' ")
-            redeemable = cur.fetchone()
-            cur.close()
+            try:
+                amount_redeemed = 0
+                quantity_redeemed = 0
+                cur = mysql.connection.cursor()
+                cur.execute(f"""
+                INSERT INTO habahaba_trial.payment_transactions (sender_id, vendor_id, org_name, saving_target, category,
+                 payment_for, amount_saved_daily, amount_redeemed, quantity_redeemed) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                """, (
+                    client_id, vendor_id, vendor_org, saving_target, category, material_id, amount_saved,
+                    amount_redeemed, quantity_redeemed
+                ))
+                mysql.connection.commit()
+                cur.close()
+                flash('Amount sent successfully', 'green lighten-2')
+                return redirect(url_for('ukulima_funds'))
 
-            redeemable_amount = int(value_entered) + int(redeemable['redeemable_amount'])
+            except(MySQLdb.Error, MySQLdb.Warning) as e:
+                flash(f'Payment failed {e}', 'red lighten-2')
+                return redirect(url_for('ukulima_funds'))
 
-            payment_amount = float(redeemable['amount_sent']) + float(value_entered)
-
-            cur = mysql.connection.cursor()
-            cur.execute("""UPDATE habahaba_trial.payments_table 
-            SET amount_sent=%s, date_sent=%s, time_sent=%s, date_and_time=%s, redeemable_amount=%s
-            WHERE payment_id=%s""", (
-                payment_amount, today, now, right_now, redeemable_amount, payment_id
-            ))
-            mysql.connection.commit()
-            cur.close()
-
-            # add payment to transaction table
-            # try:
-            cur = mysql.connection.cursor()
-            cur.execute("INSERT INTO habahaba_trial.payment_transactions (vendor_id, vendor_name,"
-                        "vendor_phone, org_name, sender_id, sender_name, "
-                        "sender_phone, amount_sent, date_sent, time_sent, date_and_time, saving_target, payment_for,"
-                        " date_counter, amount_saved_daily, category ) "
-                        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) ", (
-                            vendor_id, vendor_name, vendor_phone, vendor_org, client_id, client_name,
-                            client_phone, amount, today, now, right_now, saving_target, selected_crop,
-                            date_counter, value_entered, category
-                        ))
-            mysql.connection.commit()
-            cur.close()
-
-            # except (MySQLdb.Error, MySQLdb.Warning) as e:
-            #     flash("Payment failed, please reload the page and try again.", "red lighten-2")
-            #     return redirect(url_for('ukulima_funds'))
-
-            # try:
-            # inserting into commissions table
-            cur = mysql.connection.cursor()
-            cur.execute(f"""
-            INSERT INTO habahaba_trial.commission (vendor_id, client_id, vendor_name, sender_name, 
-            item_name, amount_sent, commission_percentage, vendor_amount, commission, category, date_paid)
-             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            """, (
-                vendor_id, client_id, redeemable['org_name'], client_name, selected_crop, value_entered,
-                vendor_commission, payment, commission, category, today
-            ))
-            mysql.connection.commit()
-            cur.close()
-            flash(f'Amount sent successfully {vendor_crop}', 'green lighten-2 white-text')
-            return redirect(url_for('ukulima_funds'))
-    return render_template('ukulima_funds.html', partners=partners, client_crops=client_crops)
+        # flash(f'Amount sent successfully {vendor_crop}', 'green lighten-2 white-text')
+        # return redirect(url_for('ukulima_funds'))
+    # return render_template('ukulima_funds.html', partners=partners, client_crops=client_crops)
+    return render_template('ukulima_funds.html', client_crops=client_crops)
 
 
-@app.route('/ukulima-funds-json/', methods=['POST', 'GET'])
+@app.route('/waiting/', methods=['GET'])
+def waiting_page():
+    return render_template('waiting.html')
+
+
+@app.route('/ukulima-funds-json/', methods=['GET'])
 @is_user_logged_in
 def ukulima_funds_json():
     cur = mysql.connection.cursor()
-    cur.execute(
-        f"SELECT payment_id, payments_table.vendor_id, vendor_name, vendor_phone, payments_table.org_name, sender_id, sender_name, sender_phone,"
-        f" amount_sent, saving_target, payment_for, quantity_per_acre, price_per_kg, category, vendors.commission, format(amount_sent / price_per_kg, 2) as current_quantity,"
-        f" format(saving_target/payments_table.price_per_kg, 2) as target_quantity "
-        f"FROM habahaba_trial.payments_table INNER JOIN habahaba_trial.vendors ON "
-        f"payments_table.vendor_id = vendors.vendor_id WHERE sender_id= '{session['user_id']}' ")
+    cur.execute(f"""
+    SELECT max(client_id) as client_id, max(partnership.vendor_id) as vendor_id, max(vendor_org) as vendor_org,
+     max(payment_transactions.saving_target) as saving_target, max(partnership.category) as item_category,
+      max(crop_name) as crop_name, max(material_id) as material_id,sum(amount_saved_daily) as total_paid FROM habahaba_trial.partnership 
+    RIGHT JOIN habahaba_trial.materials ON item_id=material_id RIGHT JOIN habahaba_trial.payment_transactions 
+    ON material_id=payment_for WHERE client_id = '{session['user_id']}' GROUP BY payment_for, vendor_org, crop_name
+    """)
     partners = cur.fetchall()
     cur.close()
+
+    # cur = mysql.connection.cursor()
+    # cur.execute(f"""
+    # SELECT transaction_id, vendor_id, org_name,  FROM habahaba_trial.payment_transactions RIGHT JOIN habahaba_trial.materials ON payment_for=material_id
+    # RIGHT JOIN habahaba_trial.vendors ON payment_transactions.vendor_id=vendors.vendor_id
+    # """)
+
     return json.dumps(partners)
 
 
-@app.route('/funds-testing/', methods=['POST', 'GET'])
-@is_user_logged_in
-def funds_testing():
-    cur = mysql.connection.cursor()
-    cur.execute(
-        f"SELECT * FROM habahaba_trial.payments_table WHERE sender_id= '{session['user_id']}' ORDER BY payment_id DESC ")
-    partners = cur.fetchall()
-    cur.close()
-    return json.dumps(partners)
+# @app.route('/funds-testing/', methods=['POST', 'GET'])
+# @is_user_logged_in
+# def funds_testing():
+#     cur = mysql.connection.cursor()
+#     cur.execute(
+#         f"SELECT * FROM habahaba_trial.payments_table WHERE sender_id= '{session['user_id']}' ORDER BY payment_id DESC ")
+#     partners = cur.fetchall()
+#     cur.close()
+#     return json.dumps(partners)
 
 
 @app.route('/get_offers', methods=['GET'])
@@ -3491,22 +4105,24 @@ def testing_chart():
 
 
 # [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[MPESA DARAJA API]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
-consumer_key = 'AJhUyehvuTGoiANeIo8qW1hNPKdA10kS'
-consumer_secret = 'BzMPjAd4yKr97xhv'
-base_url = 'http://197.232.79.73:801'
+consumer_key = 'jFno3vaGAHGSq9vdiYrAg68DCGZ3jeie'
+consumer_secret = '2IqOGxgPUTL2BVbv'
+# base_url = 'http://197.232.79.73:801'
+base_url = 'http://habahaba.mzawadi.com'
 
 
 def ac_token():
     mpesa_auth_url = 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
     data = (requests.get(mpesa_auth_url, auth=HTTPBasicAuth(consumer_key, consumer_secret))).json()
-    return data
+    return data['access_token']
 
 
-@app.route('/token/', methods=['POST', 'GET'])
+# methods=['POST', 'GET']
+@app.route('/token/')
 def tokens():
     data = ac_token()
     print(data)
-    return data
+    return data['access_token']
 
 
 # register urls
@@ -3590,77 +4206,125 @@ def mpesa():
     return render_template('daraja.html')
 
 
-timestamp = datetime.now()
-times = timestamp.strftime("%Y%m%d%H%M%S")
-
-
+# amount, phone_number
 @app.route('/pay/', methods=['POST', 'GET'])
 def mpesa_express():
-    if request.method == 'POST':
-        # headers = {
-        #     'Content-Type': 'application/json',
-        #     'Authorization': f'Bearer {ac_token()}'
-        # }
-        my_endpoint = "https://5533-197-232-79-73.in.ngrok.io"
+    # my_endpoint = "https://804b-197-232-79-73.in.ngrok.io/"
+    my_endpoint = "http://habahaba.mzawadi.com"
 
-        amount = request.form['amount']
-        phone = request.form['phone']
+    # phone_no_str = str(phone_number)
+    # phone_no = phone_no_str.replace('0', '254', 1)
 
-        endpoint = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
-        access_token = ac_token()
-        headers = {
-            "Content-Type": "application/json",
-            # "Authentication": f"Bearer {ac_token()}"
-            "Authorization": f"Bearer {ac_token()}"
-        }
+    endpoint = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
+    access_token = ac_token()
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {ac_token()}"
+    }
 
-        password = "MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjIxMTI0MDk0NDE5"
-        password = base64.b64encode(password.encode('utf-8'))
+    password = "MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjMwMTIyMTYxMTMy"
+    password = base64.b64encode(password.encode('utf-8'))
 
-        # data = {
-        #     "BusinessShortCode": 174379,
-        #     "Password": "MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjIxMTI4MTE0MzE5",
-        #     "Timestamp": "20221128114319",
-        #     "TransactionType": "CustomerPayBillOnline",
-        #     "Amount": amount,
-        #     "PartyA": phone,
-        #     "PartyB": 174379,
-        #     "PhoneNumber": phone,
-        #     "CallBackURL": my_endpoint + "/callback/",
-        #     "AccountReference": "CompanyXLTD",
-        #     "TransactionDesc": "Payment of X"
-        # }
+    timestamps = datetime.now()
+    times = timestamps.strftime("%Y%m%d%H%M%S")
+    current_time = str(times)
+    data = {
+        "BusinessShortCode": 174379,
+        "Password": "MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjMwMTI0MDkzMjE3",
+        "Timestamp": "20230124093217",
+        "TransactionType": "CustomerPayBillOnline",
+        "Amount": 1,
+        "PartyA": 254713562964,
+        "PartyB": 174379,
+        "PhoneNumber": 254713562964,
+        "CallBackURL": my_endpoint + "/callback/",
+        "AccountReference": "CompanyXLTD",
+        "TransactionDesc": "Payment of X"
+    }
+    # print(data, headers)
+    # this_data = json.dumps(data)
+    res = requests.post(endpoint, json=data, headers=headers)
+    my_res = requests.request("POST", "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest",
+                              headers=headers, json=data)
+    # flash('Success', 'grey lighten-2')
+    print(times)
+    # print(phone_no)
+    # return res.json()
+    return res.json()
 
-        data = {
-            "BusinessShortCode": 174379,
-            "Password": "MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjIxMTI4MTE0MzE5",
-            "Timestamp": "20221128114319",
-            "TransactionType": "CustomerPayBillOnline",
-            "Amount": 1,
-            "PartyA": 254713562964,
-            "PartyB": 174379,
-            "PhoneNumber": 254713562964,
-            "CallBackURL": my_endpoint + "/callback/",
-            "AccountReference": "CompanyXLTD",
-            "TransactionDesc": "Payment of X"
-        }
-        # print(data, headers)
-        # this_data = json.dumps(data)
-        res = requests.post(endpoint, json=data, headers=headers)
-        my_res = requests.request("POST", "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest",
-                                  headers=headers, json=data)
-        flash('Success')
-        print(times)
-        # return res.json()
-        return my_res.json()
+
+@app.route('/validate-payment/', methods=['POST', 'GET'])
+def validate_payment():
+    headers = {
+        'Content-Type': 'application/json',
+        'Authorization': f'Bearer {ac_token()}'
+    }
+
+    payload = {
+        "Initiator": "testapi",
+        "SecurityCredential": "aF10wp7OT0xH61Cl4dA2gqxDJp9hR+TFPXrpnazle0da6YnwlhAvb4IZoArwNumy1uLdJ7Yy1N3xlFWpixD6cK/ZucF5I4Jo7EyvMv01TP3tPj54wI1NWBFbssBu/HNVsJ7+Q8IjTa8vDFs0j97M8nUkm8TM8jY87Q/QefM2iDEnimOH7HTL2tVA3QHp5boQSnjN5/gtmsalebN0valeWDMyHaUu8ZHbqGL5Szt6Z2XFm3tYj19jS6huBnkquxa4vz4UWzX6UxjuoMR8PW8o6gp15gny2yoFWSCTq+5X5Y3xA9G1xos/Ke0OaH5W2THiE8/Q9NHFOu7KcuEOPO6nwA==",
+        "CommandID": "TransactionStatusQuery",
+        "TransactionID": "OEI2AK4Q16",
+        "PartyA": 600997,
+        "IdentifierType": "4",
+        "ResultURL": "https://mydomain.com/TransactionStatus/result/",
+        "QueueTimeOutURL": "https://mydomain.com/TransactionStatus/queue/",
+        "Remarks": "Success",
+        "Occasion": "Paid",
+    }
+    responses = requests.request(
+        "POST",
+        'https://sandbox.safaricom.co.ke/mpesa/transactionstatus/v1/query',
+        headers=headers,
+        data=payload
+    )
+    response_value = requests.post(
+        'https://sandbox.safaricom.co.ke/mpesa/transactionstatus/v1/query',
+        headers=headers,
+        json=payload
+    )
+    response = responses.text.encode('utf-8')
+    print(response)
+    return jsonify({"value": 5})
 
 
 # consume M-PESA Express Callback
-@app.route('/callback/', methods=['POST', 'GET'])
+@app.route('/callback/', methods=['GET'])
 def incoming():
+    headers = {
+        'Content-Type': 'application/json',
+        'Authorization': f'Bearer {ac_token()}'
+
+    }
     data = request.get_json()
-    print(data)
-    return "ok"
+
+    merchantid = data['Body']['stkCallback']['MerchantRequestID']
+    checkoutid = data['Body']['stkCallback']['CheckoutRequestID']
+    status = data['Body']['stkCallback']['ResultCode']
+    if status == 0:
+        payload = data['Body']['stkCallback']['CallbackMetadata']
+        items = payload['Item']
+        amount = 0
+        mpesaref = ""
+        transdate = ""
+        phoneno = ""
+
+        for item in items:
+            match item['Name']:
+                case "Amount":
+                    amount = item['Value']
+                case "MpesaReceiptNumber":
+                    mpesaref = item['Value']
+                case "PhoneNumber":
+                    phoneno = item['Value']
+                case "TransactionDate":
+                    value = str(item['Value'])
+                    # transdate =  value[0:4] +"-"+ value[4:6] +"-"+ value[6:8]
+                    transdate = f'{value[0:4]}-{value[4:6]}-{value[6:8]} ' \
+                                f'{value[8:10]}:{value[10:12]}:{value[12:14]}'
+
+        print(amount, mpesaref, phoneno, transdate)
+    return 'ok'
 
 
 # [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[CSV]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]

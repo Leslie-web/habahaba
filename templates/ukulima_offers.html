@@ -21,10 +21,15 @@
 </head>
 <body>
 <style>
-    @media all and (max-width: 400px) {
+    @media all and (max-width: 600px) {
+        body {
+            height: 100vh;
+            overflow: scroll;
+        }
+
         .section2 {
             padding: 1em;
-            width: 90%;
+            width: 95%;
         }
 
         .offers_container {
@@ -48,6 +53,49 @@
         .offers_header {
             display: flex;
             align-items: center;
+        }
+
+        .offer_date {
+            padding-bottom: 5px;
+        }
+
+        .offer_details {
+            height: 3em;
+        }
+
+    }
+
+    @media all and (max-width: 640px) {
+        .section2 {
+            padding: 1em;
+            width: 95%;
+        }
+
+        .offers_container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .offers_card {
+            border: none;
+            box-shadow: 0 0 20px -5px black;
+            width: 90vw !important;
+        }
+
+        .offer_org, .offer_name {
+            font-family: "MV Boli", sans-serif;
+            font-size: 20px;
+        }
+
+        .offers_header {
+            display: flex;
+            align-items: center;
+        }
+
+        .offer_date {
+            padding-bottom: 5px;
         }
 
     }

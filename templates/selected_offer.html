@@ -147,7 +147,6 @@
             $('#saving_duration').on('input', function () {
                 $('.first_detail').show(300)
             });
-
             $.ajax({
                 url: '/selected-offer-json/',
                 type: 'get',
@@ -197,6 +196,12 @@
                         $('#amount_to_pay').val(amount_to_pay).css("background", "rgb(0 0 0 / 0.1)")
                     });
                 }
+            });
+            $('#size_of_land').on('input', function () {
+                $('.second_detail').show(300)
+
+                let amount_to_pay = (($('#quantity_per_acre').val() * $('#price_per_kg').val()) * $('#size_of_land').val()) * ((100 - $('#percentage_off').val()) / 100)
+                $('#amount_to_pay').val(amount_to_pay).css("background", "rgb(0 0 0 / 0.1)")
             });
         });
     </script>

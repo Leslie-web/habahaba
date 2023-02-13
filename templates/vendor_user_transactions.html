@@ -36,46 +36,7 @@
 {% endblock %}
 
 {% block content %}
-    <script>
-        //datatables
-        $(document).ready(function () {
-            {#$('#transactionsTable').dataTable();#}
-            var table = $('#transactionsTable').DataTable({
-                destroy: true,
-                responsive: false,
-                "ajax": {
-                    url: '/vendor-user-transactions-json/',
-                    type: 'get'
-                },
-                "order": [[2, "desc"]],
-                select: {
-                    style: 'none',
-                    selector: 'td:first-child'
-                },
-                scrollY: "800px",
-                scrollX: true,
-                scrollCollapse: true,
-                paging: true,
-                fixedColumns: true,
-                lengthChange: true,
-                "rowCallback": function (nRow, aData) {
-                    {#$('td', nRow).eq(2).html('<label class="label label-default">'+ aData[2] +'</label>'); #}
-                    {#if(aData[3]>0)#}
-                    {# $('td', nRow).eq(3).html('<label class="label label-success">OK</label>');#}
-                    {#else#}
-                    {#$('td', nRow).eq(3).html('<label class="label label-danger">FAIL</label>'); #}
-                },
-                columnDefs: [{
-                    targets: 0
-                }]
-            });
 
-            let buttons = new $.fn.dataTable.Buttons(table, {
-                buttons: ['csvHtml5', 'excelHtml5', 'pdfHtml5', 'colvis']
-            });
-            buttons.container().appendTo($('div.right.aligned.eight.column:eq(0)', table.table().container()));
-        })
-    </script>
     <br>
     <div class="content-top-1 box box-success">
         <div class="box-body">
@@ -86,12 +47,11 @@
                     <tr>
                         {#                        <th>#</th>#}
                         <th>Client Name</th>
-                        <th>Client Email</th>
+                        {#                        <th>Client Email</th>#}
                         <th>Client Phone</th>
                         <th>Amount Sent</th>
                         <th>Saving Target</th>
                         <th>Date Sent</th>
-                        {#                        <th>Time Sent</th>#}
                     </tr>
                     </thead>
 
@@ -113,7 +73,53 @@
             </div>
         </div>
     </div>
+
+    <script>
+        //datatables
+        $(document).ready(function () {
+            {#$('#myTable').DataTable();#}
+            let table = $('#transactionsTable').DataTable({
+                destroy: true,
+                responsive: false,
+                "ajax": {
+                    url: '/user-transactions-json/',
+                    type: 'get'
+                },
+                "order": [[0, "desc"]],
+                select: {
+                    style: 'single',
+                    selector: 'tr'
+                },
+                {#having a checkbox#}
+                // columnDefs: [{
+                {#orderable: false,#}
+                {#className: 'select-checkbox',#}
+                {#targets: 0#}
+                // }],
+                scrollY: "800px",
+                scrollX: true,
+                scrollCollapse: true,
+                paging: true,
+                fixedColumns: true,
+                lengthChange: true,
+                "rowCallback": function (nRow, aData) {
+                    {#removing the values on a checkbox#}
+                    $('td', nRow).eq(4).html(moment(aData[4]).format('MMMM Do YYYY'));
+                    {#let achievment_rate = ((aData[3] / aData[2]) * 100)#}
+                    {#$('td', nRow).eq(4).html(achievment_rate.toFixed(2) + ' %')#}
+
+                },
+                {#"footerCallback": function (row, data, start, end, display) {#}
+                // }
+            });
+            let buttons = new $.fn.dataTable.Buttons(table, {
+                buttons: ['excelHtml5', 'pdfHtml5', 'colvis']
+            });
+            buttons.container().appendTo($('div.right.aligned.eight.column:eq(0)', table.table().container()));
+        });
+    </script>
 {% endblock %}
+<script src="/static/js/moment.min.js"></script>
 {#        [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[JAVASCRIPT]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]#}
 {#        ionicons#}
 <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>

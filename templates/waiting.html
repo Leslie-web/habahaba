@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Css3 Loading Page Animation - CSS Animation Effects</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
+<body>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+    *, html, body {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+        font-family: 'Poppins', sans-serif;
+        perspective: 800px;
+        background-color: #218c74;
+    }
+
+    ::selection {
+        background-color: #2d98da;
+        color: #fff;
+    }
+
+    .containers {
+        background-color: #218c74;
+        display: grid;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        min-height: 50vh;
+    }
+
+    .Box {
+        position: relative;
+        width: 123px;
+        height: 123px;
+        background-color: #10ac84;
+        border: 5px solid #33d9b2;
+        box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+        transform-style: preserve-3d;
+        transform-origin: center;
+        transform: rotate(45deg);
+        display: flex;
+        flex-wrap: wrap;
+        box-sizing: content-box;
+    }
+
+    .Box span {
+        width: 40px;
+        height: 40px;
+        background: #fff;
+        box-sizing: content-box;
+        margin: .5px;
+        transform-style: preserve-3d;
+        transform-origin: center;
+        animation: Loader 2s linear infinite;
+    }
+
+    .Box span:nth-child(3) {
+        animation-delay: .8s;
+    }
+
+    .Box span:nth-child(2),
+    .Box span:nth-child(6) {
+        animation-delay: .6s;
+    }
+
+    .Box span:nth-child(1),
+    .Box span:nth-child(5),
+    .Box span:last-child {
+        animation-delay: .4s;
+    }
+
+    .Box span:nth-child(4),
+    .Box span:nth-child(8) {
+        animation-delay: .2s;
+    }
+
+    .Box span:nth-child(7) {
+        animation-delay: 0s;
+    }
+
+    @keyframes Loader {
+        0%, 100% {
+            transform: scale(1);
+        }
+        30% {
+            transform: scale(0);
+        }
+        50% {
+            transform: scale(0);
+        }
+        75% {
+            transform: scale(1);
+        }
+    }
+
+
+</style>
+
+<div class="containers" style="grid-template-rows: 100px 4fr">
+    <h3 style="text-align: center">Waiting for payment</h3>
+    <div class="Box">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+</div>
+
+</body>
+</html>

@@ -40,7 +40,14 @@
 
     <script>
         $(document).ready(function (string) {
-
+            {#$.ajax({#}
+            {#    url: '/vendor-insight-test-json/',#}
+            {#    type: 'get',#}
+            {#    success: function (data) {#}
+            {#        data = JSON.parse(data)#}
+            {#console.log(data)#}
+            {#    }#}
+            // })
             let table = $('#vendorInsigtTable').DataTable({
                 destroy: true,
                 responsive: false,
@@ -66,8 +73,12 @@
                 fixedColumns: true,
                 lengthChange: true,
                 "rowCallback": function (nRow, aData) {
-                    {#$('td', nRow).eq(0).html('')#}
-                    $('td', nRow).eq(3).html(aData[3] + ' %')
+                    $('td', nRow).eq(2).html(
+                        {#Math.round(aData[2]).toFixed(2)#}
+                        {#(aData[2] / aData.length) * 100#}
+                        aData[2] + " %"
+                    )
+                    {#$('td', nRow).eq(3).html(aData[3] + ' %')#}
                 }
             });
 
